@@ -1,12 +1,5 @@
 import React from 'react';
-import { 
-  Building2, 
-  Wrench, 
-  ShoppingBag, 
-  AlertTriangle, 
-  ShoppingCart, 
-  Home
-} from 'lucide-react';
+import { Building2, Wrench, ShoppingBag, AlertTriangle, ShoppingCart } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { DeltaLiftsLogo } from './DeltaLiftsLogo';
 
@@ -50,30 +43,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3">
-        {/* Left: Brand logo and Back to Portal button */}
-        <div className="flex items-center gap-3 md:gap-4">
-          <button
-            id="nav-back-portal-btn"
-            onClick={() => onSelectSection('portal')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-950/60 hover:bg-sky-900/60 text-sky-200 hover:text-white border border-sky-800/40 text-xs font-medium transition cursor-pointer"
-            title="Үндсэн портал хуудас руу буцах"
-          >
-            <Home className="w-3.5 h-3.5 text-[#F9A01B]" />
-            <span className="hidden md:inline">Портал</span>
-          </button>
-
-          <div 
-            onClick={() => onSelectSection('portal')}
-            className="flex items-center gap-2.5 cursor-pointer group"
-          >
-            <DeltaLiftsLogo size="sm" showText={false} className="lg:hidden" />
-            <DeltaLiftsLogo size="sm" showText={true} className="hidden lg:block" />
-            <div className="hidden xl:block h-5 w-px bg-sky-800/40 mx-1" />
-            <div className="hidden xl:block text-[11px] text-sky-300/70 uppercase tracking-wider font-semibold">
-              LIFT.MN
-            </div>
-          </div>
-        </div>
+        {/* Зүүн тал: зөвхөн лого. Дарахад портал руу буцна. */}
+        <button
+          type="button"
+          onClick={() => onSelectSection('portal')}
+          className="flex items-center shrink-0 cursor-pointer"
+          title="Үндсэн портал хуудас руу буцах"
+          aria-label="Үндсэн портал хуудас руу буцах"
+        >
+          <DeltaLiftsLogo size="sm" showText={false} className="lg:hidden" />
+          <DeltaLiftsLogo size="sm" showText={true} className="hidden lg:block" />
+        </button>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}
         <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-[#091B36] border border-sky-800/40 min-w-0 shrink">
