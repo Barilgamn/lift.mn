@@ -64,22 +64,44 @@ npm run dev -- --port=3001
 **`ERR_CONNECTION_REFUSED`** — `npm run dev` ажиллаагүй эсвэл зогссон байна.
 Terminal дээрээ `VITE ready` бичиг байгаа эсэхийг шалгана уу.
 
+## Хуудаснууд
+
+Сайт нь дараах хаягтай:
+
+| Хаяг | Хуудас |
+| --- | --- |
+| `/` | Портал нүүр |
+| `/delta-lift` | DELTA LIFT — компанийн танилцуулга |
+| `/parts` | Сэлбэг хэрэгсэл |
+| `/service` | Засвар үйлчилгээ |
+
+Танихгүй хаяг портал руу буцаана.
+
+> **Хостинг дээр анхаарах:** энэ бол нэг хуудаст програм (SPA). Хэрэглэгч
+> `lift.mn/delta-lift` руу шууд орох үед сервер `index.html`-ийг буцаах ёстой.
+> Netlify, Cloudflare Pages дээр `public/_redirects` файл үүнийг хийнэ. Nginx
+> дээр бол `try_files $uri /index.html;` мөр нэмнэ. Эс бөгөөс шууд хаягаар
+> орох үед 404 гарна.
+
 ## Бүтэц
 
 ```
 src/
-  App.tsx              Үндсэн бүрэлдэхүүн, хэсэг хооронд шилжих удирдлага
+  App.tsx              Үндсэн бүрэлдэхүүн, замчлал (routing)
+  routes.ts            Хаяг, хуудасны гарчгийн тодорхойлолт
   types.ts             TypeScript-ийн төрлүүд
   components/
     PortalHome.tsx     Порталын нүүр хуудас
     Navbar.tsx         Дээд цэс
+    Breadcrumb.tsx     Хаана байгааг харуулах мөр
     Footer.tsx         Хөл хэсэг
     DeltaLiftView.tsx  DELTA LIFT — брэнд, төсөл, түншүүд
     ServiceView.tsx    Засвар үйлчилгээ — тикет, захиалга, хяналт
     PartsView.tsx      Сэлбэгийн цахим худалдаа
     CartDrawer.tsx     Сагс ба төлбөрийн урсгал
     EmergencyModal.tsx Яаралтай дуудлага
-  data/mockData.ts     Түр зуурын өгөгдөл (брэнд, төсөл, сэлбэг, тариф)
+  data/deltaData.ts    DELTA LIFT-ийн бодит агуулга (танилцуулгаас)
+  data/mockData.ts     Түр зуурын өгөгдөл (сэлбэг, тариф, тикет)
 ```
 
 ## Технологи
