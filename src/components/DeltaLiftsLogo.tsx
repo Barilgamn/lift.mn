@@ -1,14 +1,26 @@
 import React from 'react';
 
-/** Корпорацийн цэнхэр — DELTA LIFTS брэндийн үндсэн өнгө */
+/**
+ * DELTA LIFTS-ийн албан ёсны лого.
+ *
+ * Брэндийн эх файл `public/logo.webp` (2431x454, тунгалаг дэвсгэртэй).
+ * Зөвхөн тэмдэг болон зөвхөн бичиг хэрэгтэй тохиолдолд түүнээс таслаж авсан
+ * хувилбарыг ашиглана. Гурвуулаа нэг эх зурагнаас гарсан тул хэлбэр, өнгө нь
+ * брэндийн эх хувилбартай яг тохирно.
+ */
+const LOCKUP_SRC = '/logo.webp';            // тэмдэг + DELTA LIFTS бичиг
+const MARK_SRC = '/logo-mark.webp';         // зөвхөн гурвалжин тэмдэг
+const WORDMARK_SRC = '/logo-wordmark.webp'; // зөвхөн DELTA LIFTS бичиг
+
+/** Корпорацийн цэнхэр — логоны үндсэн өнгө */
 export const DELTA_BLUE = '#0063A5';
 /** Тэмдгийн төв дэх алтлаг шар */
 export const DELTA_YELLOW = '#F9A01B';
 
 interface DeltaLiftsLogoProps {
   /**
-   * 'color' / 'official': Цэнхэр тэмдэг, цэнхэр бичиг — цайвар дэвсгэрт
-   * 'dark' / 'white': Цагаан тэмдэг, цагаан бичиг — бараан дэвсгэрт
+   * Лого нь эх зураг тул өнгө тогтмол. Энэ проп хуучин дуудлагуудтай
+   * нийцүүлэхийн тулд үлдсэн бөгөөд харагдацад нөлөөлөхгүй.
    */
   variant?: 'color' | 'official' | 'dark' | 'white';
   showText?: boolean;
@@ -16,101 +28,79 @@ interface DeltaLiftsLogoProps {
   layout?: 'horizontal' | 'stacked';
   className?: string;
   iconClassName?: string;
+  /** Бичиг нь эх зурагны нэг хэсэг тул өнгө солих класс үйлчлэхгүй. */
   textClassName?: string;
 }
 
 /**
- * DELTA LIFTS-ийн албан ёсны тэмдэг.
+ * Зөвхөн гурвалжин тэмдэг.
  *
- * Оройгоос доош чиглэсэн нэг бүтэн гурвалжин: зүүн талд нимгэн зүү, түүнээс
- * зайгаар тусгаарлагдсан үндсэн бие. Доод ирмэг нь дотогшоо нумарч баруун доод
- * буланд хурц үзүүр үүсгэнэ. Төвд нь дээшээ харсан шар гурвалжин байрлана.
+ * Өнгөний пропууд (bladeColor, yellowColor) хуучин дуудлагуудтай нийцүүлэхийн
+ * тулд хэвээр үлдсэн — эх зураг учраас өнгө нь тогтмол.
  */
 export const DeltaLiftsMark: React.FC<{
   className?: string;
   bladeColor?: string;
-  blueColor?: string; // хуучин нэршлийн нийцэл
+  blueColor?: string;
   yellowColor?: string;
-}> = ({
-  className = 'w-10 h-10',
-  bladeColor,
-  blueColor,
-  yellowColor = DELTA_YELLOW
-}) => {
-  const resolvedBladeColor = bladeColor || blueColor || DELTA_BLUE;
-
-  return (
-    <svg
-      viewBox="0 0 200 170"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      role="img"
-      aria-label="DELTA LIFTS"
-    >
-      {/* Зүүн нимгэн зүү */}
-      <path d="M94,16 L10,150 L44,138 Z" fill={resolvedBladeColor} />
-      {/* Үндсэн бие — нумарсан доод ирмэгтэй */}
-      <path d="M100,16 L194,148 Q118,120 52,139 Z" fill={resolvedBladeColor} />
-      {/* Төвийн шар гурвалжин */}
-      <polygon points="100,54 118,90 82,90" fill={yellowColor} />
-    </svg>
-  );
-};
+}> = ({ className = 'h-10 w-auto' }) => (
+  <img
+    src={MARK_SRC}
+    alt="DELTA LIFTS"
+    className={`object-contain select-none ${className}`}
+    draggable={false}
+  />
+);
 
 export const DeltaLiftsLogo: React.FC<DeltaLiftsLogoProps> = ({
-  variant = 'official',
   showText = true,
   size = 'md',
   layout = 'horizontal',
   className = '',
-  iconClassName = '',
-  textClassName = ''
+  iconClassName = ''
 }) => {
-  const sizeMap = {
-    sm: { icon: 'w-8 h-7', text: 'text-sm sm:text-base', gap: 'gap-2.5' },
-    md: { icon: 'w-10 h-9', text: 'text-lg sm:text-xl', gap: 'gap-3' },
-    lg: { icon: 'w-12 h-11', text: 'text-xl md:text-2xl', gap: 'gap-3.5' },
-    xl: { icon: 'w-20 h-17 md:w-24 md:h-20', text: 'text-2xl sm:text-3xl md:text-4xl', gap: 'gap-4' },
-    custom: { icon: '', text: '', gap: 'gap-2' }
+  // Өндрөөр удирдаж, өргөнийг зурагны харьцаагаар тооцуулна
+  const heightMap = {
+    sm: 'h-8 w-auto',
+    md: 'h-10 w-auto',
+    lg: 'h-12 w-auto',
+    xl: 'h-16 md:h-20 w-auto',
+    custom: ''
   };
 
-  const selectedSize = sizeMap[size];
-
-  const isColor = variant === 'color' || variant === 'official';
-  const textColorClass = isColor ? 'text-[#0063A5]' : 'text-white';
-  const bladeColor = isColor ? DELTA_BLUE : '#FFFFFF';
-
-  const wordmark = showText && (
-    <div
-      className={`font-['Inter',sans-serif] font-black uppercase tracking-tight ${textColorClass} ${selectedSize.text} ${textClassName}`}
-    >
-      DELTA LIFTS
-    </div>
-  );
-
-  const mark = (
-    <DeltaLiftsMark
-      className={`${selectedSize.icon} ${iconClassName} shrink-0`}
-      bladeColor={bladeColor}
-      yellowColor={DELTA_YELLOW}
-    />
-  );
+  const sizeClass = heightMap[size];
 
   if (layout === 'stacked') {
     return (
-      <div className={`flex flex-col items-center justify-center text-center select-none ${selectedSize.gap} ${className}`}>
-        {mark}
-        {wordmark}
+      <div className={`flex flex-col items-center justify-center gap-2 select-none ${className}`}>
+        <img
+          src={MARK_SRC}
+          alt="DELTA LIFTS"
+          className={`object-contain ${sizeClass} ${iconClassName}`}
+          draggable={false}
+        />
+        {showText && (
+          <img
+            src={WORDMARK_SRC}
+            alt=""
+            aria-hidden="true"
+            className="w-full max-w-40 object-contain"
+            draggable={false}
+          />
+        )}
       </div>
     );
   }
 
+  // Хэвтээ байрлалд бүтэн логог нэг зургаар — тэмдэг, бичиг хоёрын хоорондох
+  // зай болон харьцаа нь брэндийн эх файлынхаараа хэвээр хадгалагдана
   return (
-    <div className={`inline-flex items-center ${selectedSize.gap} select-none ${className}`}>
-      {mark}
-      {wordmark}
-    </div>
+    <img
+      src={showText ? LOCKUP_SRC : MARK_SRC}
+      alt="DELTA LIFTS"
+      className={`object-contain select-none ${sizeClass} ${iconClassName} ${className}`}
+      draggable={false}
+    />
   );
 };
 

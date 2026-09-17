@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { ELEVATOR_BRANDS, COMPLETED_PROJECTS, PARTNERS } from '../data/mockData';
 import { ElevatorBrand, ProjectItem } from '../types';
-import { DeltaLiftsLogo, DeltaLiftsMark } from './DeltaLiftsLogo';
+import { DeltaLiftsLogo } from './DeltaLiftsLogo';
 
 export const DeltaLiftView: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState<ElevatorBrand | null>(null);
@@ -107,16 +107,12 @@ export const DeltaLiftView: React.FC = () => {
                 <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-[#F9A01B]/15 rounded-full blur-2xl pointer-events-none" />
 
                 <div className="relative z-10 w-full flex flex-col items-center">
-                  {/* Exact Horizontal DELTA LIFTS Brand Lockup as uploaded */}
-                  <div className="w-full flex items-center justify-center gap-3 sm:gap-4 py-3 px-2">
-                    <DeltaLiftsMark 
-                      className="w-16 h-14 sm:w-20 sm:h-17 shrink-0 drop-shadow-[0_4px_12px_rgba(0,99,165,0.4)] group-hover:scale-105 transition-transform duration-300" 
-                      bladeColor="#0063A5" 
-                      yellowColor="#F9A01B" 
+                  {/* Брэндийн албан ёсны бүтэн лого — public/logo.webp */}
+                  <div className="w-full flex items-center justify-center py-3 px-2">
+                    <DeltaLiftsLogo
+                      size="custom"
+                      iconClassName="h-14 sm:h-16 md:h-20 drop-shadow-[0_4px_12px_rgba(0,99,165,0.4)] group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="font-black font-['Inter',sans-serif] uppercase text-[#0063A5] text-xl sm:text-2xl md:text-3xl tracking-tight text-left leading-tight drop-shadow-[0_2px_8px_rgba(0,99,165,0.3)]">
-                      DELTA LIFTS
-                    </div>
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-sky-900/40 w-full flex items-center justify-between text-[11px] text-slate-400 font-mono">
