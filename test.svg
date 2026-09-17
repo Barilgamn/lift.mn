@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 220" fill="none">
+  <!-- Mark -->
+  <g transform="translate(15, 10)">
+    <!-- Center Yellow Triangle -->
+    <polygon points="100,68 135,130 65,130" fill="#F9A01B" />
+    
+    <!-- Top-Left Blade -->
+    <polygon points="100,10 100,55 60,125 48,125 15,185 100,10" fill="#005C9E" />
+    
+    <!-- Right Blade -->
+    <!-- Bottom Blade -->
+  </g>
+</svg>

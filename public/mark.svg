@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" width="200" height="170" fill="none">
+  <!-- Central Yellow Equilateral Triangle -->
+  <polygon points="100,75 126.8,121 73.2,121" fill="#F9A01B" />
+  <!-- Blade 1: Top & Left -->
+  <polygon points="100,10 113.8,34 102.3,71 74.5,119 33.5,125" fill="currentColor" />
+  <!-- Blade 2: Right & Bottom-Right -->
+  <polygon points="182.3,152.5 154.6,152.5 128.3,124 100.6,75.9 115.9,37.4" fill="currentColor" />
+  <!-- Blade 3: Bottom & Bottom-Left -->
+  <polygon points="17.7,152.5 31.6,128.5 69.4,120 124.9,120.1 150.6,152.6" fill="currentColor" />
+</svg>

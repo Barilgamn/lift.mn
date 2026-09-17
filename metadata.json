@@ -1,0 +1,6 @@
+{
+  "name": "LIFT.MN - Лифт, Эскалаторын Нэгдсэн Портал",
+  "description": "Монголын Лифт, Эскалаторын нэгдсэн цахим портал: DELTA LIFT, Засвар үйлчилгээ, Сэлбэг хэрэгслийн цахим худалдаа",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
