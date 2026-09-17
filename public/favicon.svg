@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <rect width="200" height="200" rx="36" fill="#000000" />
-  <g transform="translate(0, 15)">
-    <!-- Central Golden Yellow Triangle -->
-    <polygon points="100,75 126.8,121 73.2,121" fill="#F9A01B" />
-    <!-- 3 Corporate Blue Blades -->
-    <polygon points="100,10 113.8,34 102.3,71 74.5,119 33.5,125" fill="#0063A5" />
-    <polygon points="182.3,152.5 154.6,152.5 128.3,124 100.6,75.9 115.9,37.4" fill="#0063A5" />
-    <polygon points="17.7,152.5 31.6,128.5 69.4,120 124.9,120.1 150.6,152.6" fill="#0063A5" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="DELTA LIFTS">
+  <rect width="200" height="200" rx="36" fill="#FFFFFF"/>
+  <g transform="translate(0, 17)">
+  <!-- Зүүн нимгэн зүү -->
+  <path d="M94,16 L10,150 L44,138 Z" fill="#0063A5"/>
+  <!-- Үндсэн бие -->
+  <path d="M100,16 L194,148 Q118,120 52,139 Z" fill="#0063A5"/>
+  <!-- Төвийн шар гурвалжин -->
+  <polygon points="100,54 118,90 82,90" fill="#F9A01B"/>
   </g>
 </svg>

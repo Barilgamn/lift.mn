@@ -114,7 +114,7 @@ export const DeltaLiftView: React.FC = () => {
                       bladeColor="#0063A5" 
                       yellowColor="#F9A01B" 
                     />
-                    <div className="font-black font-['Michroma',sans-serif] uppercase text-[#0063A5] text-xl sm:text-2xl md:text-3xl tracking-wider text-left leading-tight drop-shadow-[0_2px_8px_rgba(0,99,165,0.3)]">
+                    <div className="font-black font-['Inter',sans-serif] uppercase text-[#0063A5] text-xl sm:text-2xl md:text-3xl tracking-tight text-left leading-tight drop-shadow-[0_2px_8px_rgba(0,99,165,0.3)]">
                       DELTA LIFTS
                     </div>
                   </div>

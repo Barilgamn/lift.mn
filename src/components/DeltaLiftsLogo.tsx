@@ -1,10 +1,14 @@
 import React from 'react';
 
+/** Корпорацийн цэнхэр — DELTA LIFTS брэндийн үндсэн өнгө */
+export const DELTA_BLUE = '#0063A5';
+/** Тэмдгийн төв дэх алтлаг шар */
+export const DELTA_YELLOW = '#F9A01B';
+
 interface DeltaLiftsLogoProps {
   /**
-   * 'color' / 'official': Authentic uploaded logo — Blue blades (#0063A5), yellow center (#F9A01B), blue DELTA LIFTS text (#0063A5)
-   * 'dark': White text and white blades with yellow center (for high contrast on dark surfaces)
-   * 'white': All white mark & text
+   * 'color' / 'official': Цэнхэр тэмдэг, цэнхэр бичиг — цайвар дэвсгэрт
+   * 'dark' / 'white': Цагаан тэмдэг, цагаан бичиг — бараан дэвсгэрт
    */
   variant?: 'color' | 'official' | 'dark' | 'white';
   showText?: boolean;
@@ -16,24 +20,24 @@ interface DeltaLiftsLogoProps {
 }
 
 /**
- * Mathematically precise vector mark of the official DELTA LIFTS logo:
- * 3-blade cyclic delta triskelion in corporate blue (#0063A5)
- * with an equilateral golden-yellow (#F9A01B) triangle at the center,
- * exactly matching the user's uploaded official brand asset.
+ * DELTA LIFTS-ийн албан ёсны тэмдэг.
+ *
+ * Оройгоос доош чиглэсэн нэг бүтэн гурвалжин: зүүн талд нимгэн зүү, түүнээс
+ * зайгаар тусгаарлагдсан үндсэн бие. Доод ирмэг нь дотогшоо нумарч баруун доод
+ * буланд хурц үзүүр үүсгэнэ. Төвд нь дээшээ харсан шар гурвалжин байрлана.
  */
 export const DeltaLiftsMark: React.FC<{
   className?: string;
   bladeColor?: string;
-  blueColor?: string; // backwards compatibility alias
+  blueColor?: string; // хуучин нэршлийн нийцэл
   yellowColor?: string;
 }> = ({
   className = 'w-10 h-10',
   bladeColor,
   blueColor,
-  yellowColor = '#F9A01B'
+  yellowColor = DELTA_YELLOW
 }) => {
-  // Default to corporate blue (#0063A5) as seen in the official asset
-  const resolvedBladeColor = bladeColor || blueColor || '#0063A5';
+  const resolvedBladeColor = bladeColor || blueColor || DELTA_BLUE;
 
   return (
     <svg
@@ -41,28 +45,15 @@ export const DeltaLiftsMark: React.FC<{
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-label="DELTA LIFTS Mark"
+      role="img"
+      aria-label="DELTA LIFTS"
     >
-      {/* Central Golden-Yellow Equilateral Triangle */}
-      <polygon
-        points="100,75 126.8,121 73.2,121"
-        fill={yellowColor}
-      />
-      {/* Blade 1: Top Apex & Left Edge */}
-      <polygon
-        points="100,10 113.8,34 102.3,71 74.5,119 33.5,125"
-        fill={resolvedBladeColor}
-      />
-      {/* Blade 2: Bottom-Right Corner & Right Edge */}
-      <polygon
-        points="182.3,152.5 154.6,152.5 128.3,124 100.6,75.9 115.9,37.4"
-        fill={resolvedBladeColor}
-      />
-      {/* Blade 3: Bottom-Left Corner & Bottom Edge */}
-      <polygon
-        points="17.7,152.5 31.6,128.5 69.4,120 124.9,120.1 150.6,152.6"
-        fill={resolvedBladeColor}
-      />
+      {/* Зүүн нимгэн зүү */}
+      <path d="M94,16 L10,150 L44,138 Z" fill={resolvedBladeColor} />
+      {/* Үндсэн бие — нумарсан доод ирмэгтэй */}
+      <path d="M100,16 L194,148 Q118,120 52,139 Z" fill={resolvedBladeColor} />
+      {/* Төвийн шар гурвалжин */}
+      <polygon points="100,54 118,90 82,90" fill={yellowColor} />
     </svg>
   );
 };
@@ -77,52 +68,48 @@ export const DeltaLiftsLogo: React.FC<DeltaLiftsLogoProps> = ({
   textClassName = ''
 }) => {
   const sizeMap = {
-    sm: { icon: 'w-7 h-6', text: 'text-sm sm:text-base', gap: 'gap-2.5', tracking: 'tracking-wide' },
-    md: { icon: 'w-9 h-8', text: 'text-lg sm:text-xl', gap: 'gap-3', tracking: 'tracking-wide' },
-    lg: { icon: 'w-12 h-10', text: 'text-xl md:text-2xl', gap: 'gap-3.5', tracking: 'tracking-wide' },
-    xl: { icon: 'w-20 h-17 md:w-24 md:h-20', text: 'text-2xl sm:text-3xl md:text-4xl', gap: 'gap-4', tracking: 'tracking-wider' },
-    custom: { icon: '', text: '', gap: 'gap-2', tracking: 'tracking-wide' }
+    sm: { icon: 'w-8 h-7', text: 'text-sm sm:text-base', gap: 'gap-2.5' },
+    md: { icon: 'w-10 h-9', text: 'text-lg sm:text-xl', gap: 'gap-3' },
+    lg: { icon: 'w-12 h-11', text: 'text-xl md:text-2xl', gap: 'gap-3.5' },
+    xl: { icon: 'w-20 h-17 md:w-24 md:h-20', text: 'text-2xl sm:text-3xl md:text-4xl', gap: 'gap-4' },
+    custom: { icon: '', text: '', gap: 'gap-2' }
   };
 
   const selectedSize = sizeMap[size];
 
   const isColor = variant === 'color' || variant === 'official';
-  const textColorClass = isColor
-    ? 'text-[#0063A5]'
-    : 'text-white';
+  const textColorClass = isColor ? 'text-[#0063A5]' : 'text-white';
+  const bladeColor = isColor ? DELTA_BLUE : '#FFFFFF';
 
-  const bladeColor = isColor ? '#0063A5' : '#FFFFFF';
-  const yellowColor = '#F9A01B';
+  const wordmark = showText && (
+    <div
+      className={`font-['Inter',sans-serif] font-black uppercase tracking-tight ${textColorClass} ${selectedSize.text} ${textClassName}`}
+    >
+      DELTA LIFTS
+    </div>
+  );
+
+  const mark = (
+    <DeltaLiftsMark
+      className={`${selectedSize.icon} ${iconClassName} shrink-0`}
+      bladeColor={bladeColor}
+      yellowColor={DELTA_YELLOW}
+    />
+  );
 
   if (layout === 'stacked') {
     return (
       <div className={`flex flex-col items-center justify-center text-center select-none ${selectedSize.gap} ${className}`}>
-        <DeltaLiftsMark
-          className={`${selectedSize.icon} ${iconClassName} shrink-0 drop-shadow-md`}
-          bladeColor={bladeColor}
-          yellowColor={yellowColor}
-        />
-        {showText && (
-          <div className={`font-black font-['Michroma',sans-serif] uppercase ${textColorClass} ${selectedSize.text} ${selectedSize.tracking} ${textClassName}`}>
-            DELTA LIFTS
-          </div>
-        )}
+        {mark}
+        {wordmark}
       </div>
     );
   }
 
   return (
     <div className={`inline-flex items-center ${selectedSize.gap} select-none ${className}`}>
-      <DeltaLiftsMark
-        className={`${selectedSize.icon} ${iconClassName} shrink-0 drop-shadow-md`}
-        bladeColor={bladeColor}
-        yellowColor={yellowColor}
-      />
-      {showText && (
-        <div className={`font-black font-['Michroma',sans-serif] uppercase ${textColorClass} ${selectedSize.text} ${selectedSize.tracking} ${textClassName}`}>
-          DELTA LIFTS
-        </div>
-      )}
+      {mark}
+      {wordmark}
     </div>
   );
 };
