@@ -49,7 +49,7 @@ const SectionLabel: React.FC<{ icon: React.ComponentType<{ className?: string }>
   icon: Icon,
   children,
 }) => (
-  <div className="inline-flex items-center gap-2 px-3 h-7 rounded-full bg-[#0063A5]/15 border border-[#0063A5]/40 text-[#38BDF8] text-[11px] font-bold uppercase tracking-wider">
+  <div className="inline-flex items-center gap-2 px-3 h-7 rounded-full bg-brand/15 border border-brand/40 text-brand-bright text-[11px] font-bold uppercase tracking-wider">
     <Icon className="w-3.5 h-3.5" />
     <span>{children}</span>
   </div>
@@ -74,10 +74,10 @@ export const DeltaLiftView: React.FC = () => {
   };
 
   return (
-    <div id="delta-lift-view" className="w-full bg-[#051329] text-neutral-100">
+    <div id="delta-lift-view" className="w-full bg-surface-1 text-ink">
 
       {/* 1. Толгой хэсэг */}
-      <section className="relative overflow-hidden border-b border-sky-900/40">
+      <section className="relative overflow-hidden border-b border-line">
         <img
           src={PHOTOS.shaftWork}
           alt=""
@@ -95,18 +95,18 @@ export const DeltaLiftView: React.FC = () => {
               <h1 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-[1.1]">
                 {COMPANY.legalName}
               </h1>
-              <p className="mt-3 text-lg sm:text-xl font-bold text-[#38BDF8]">
+              <p className="mt-3 text-lg sm:text-xl font-bold text-brand-bright">
                 {COMPANY.role}
               </p>
 
-              <p className="mt-5 text-sm sm:text-[15px] text-slate-300 leading-relaxed max-w-2xl">
+              <p className="mt-5 text-sm sm:text-[15px] text-ink-muted leading-relaxed max-w-2xl">
                 {COMPANY.intro}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   href="#products"
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-[#0063A5] hover:bg-[#0074C1] text-white font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition-colors"
                 >
                   Бүтээгдэхүүн үзэх
                   <ArrowUpRight className="w-4 h-4" />
@@ -119,7 +119,7 @@ export const DeltaLiftView: React.FC = () => {
                 </a>
                 <a
                   href="#quote-section"
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-[#F9A01B] hover:bg-[#ffb13d] text-neutral-950 font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-accent hover:bg-accent-hover text-neutral-950 font-bold text-xs uppercase tracking-wider transition-colors"
                 >
                   Үнийн санал авах
                 </a>
@@ -130,8 +130,8 @@ export const DeltaLiftView: React.FC = () => {
             <div className="relative rounded-2xl bg-white p-8 sm:p-10 shadow-2xl shadow-black/40">
               <DeltaLiftsLogo size="custom" iconClassName="w-full h-auto" />
               <div className="mt-6 pt-5 border-t border-slate-200 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
-                <span className="text-slate-500">Худалдааны тэмдэг</span>
-                <span className="text-[#0063A5]">Албан ёсны лого</span>
+                <span className="text-ink-subtle">Худалдааны тэмдэг</span>
+                <span className="text-brand">Албан ёсны лого</span>
               </div>
             </div>
 
@@ -140,13 +140,13 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 2. Гол үзүүлэлтүүд */}
-      <section className="border-b border-sky-900/40 bg-[#040E20]">
+      <section className="border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <dl className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-sky-900/40">
+          <dl className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-line">
             {KEY_FACTS.map((f) => (
               <div key={f.label} className="py-7 px-4 sm:px-6 text-center">
-                <dt className="text-3xl sm:text-4xl font-black text-[#F9A01B] tabular-nums">{f.value}</dt>
-                <dd className="mt-1.5 text-[11px] sm:text-xs text-slate-400 leading-snug">{f.label}</dd>
+                <dt className="text-3xl sm:text-4xl font-black text-accent tabular-nums">{f.value}</dt>
+                <dd className="mt-1.5 text-[11px] sm:text-xs text-ink-muted leading-snug">{f.label}</dd>
               </div>
             ))}
           </dl>
@@ -154,7 +154,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 3. KLEEMANN брэнд */}
-      <section id="kleemann" className="py-16 md:py-20 border-b border-sky-900/40">
+      <section id="kleemann" className="py-16 md:py-20 border-b border-line">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-10 lg:gap-14 items-start">
 
@@ -163,15 +163,15 @@ export const DeltaLiftView: React.FC = () => {
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
                 KLEEMANN
               </h2>
-              <p className="mt-1.5 text-sm font-bold text-[#F9A01B] uppercase tracking-wider">
+              <p className="mt-1.5 text-sm font-bold text-accent uppercase tracking-wider">
                 {KLEEMANN.slogan}
               </p>
 
-              <p className="mt-5 text-sm text-slate-300 leading-relaxed">{KLEEMANN.overview}</p>
-              <p className="mt-4 text-sm text-slate-300 leading-relaxed">{KLEEMANN.standard}</p>
+              <p className="mt-5 text-sm text-ink-muted leading-relaxed">{KLEEMANN.overview}</p>
+              <p className="mt-4 text-sm text-ink-muted leading-relaxed">{KLEEMANN.standard}</p>
 
-              <div className="mt-6 p-5 rounded-xl bg-[#0063A5]/10 border-l-2 border-[#F9A01B]">
-                <p className="text-sm text-slate-200 leading-relaxed">{KLEEMANN.innovation}</p>
+              <div className="mt-6 p-5 rounded-xl bg-brand/10 border-l-2 border-accent">
+                <p className="text-sm text-ink leading-relaxed">{KLEEMANN.innovation}</p>
               </div>
             </div>
 
@@ -179,13 +179,13 @@ export const DeltaLiftView: React.FC = () => {
               <img
                 src={PHOTOS.cabin}
                 alt="KLEEMANN лифтний бүхээгний дотоод засал"
-                className="w-full h-full object-cover rounded-xl border border-sky-900/50"
+                className="w-full h-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
               <img
                 src={PHOTOS.glassLift}
                 alt="Шилэн бүхээгтэй цахилгаан шат"
-                className="w-full h-full object-cover rounded-xl border border-sky-900/50"
+                className="w-full h-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
             </div>
@@ -195,7 +195,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 4. Бүтээгдэхүүн */}
-      <section id="products" className="py-16 md:py-20 border-b border-sky-900/40 bg-[#040E20]">
+      <section id="products" className="py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={Building2}>Бүтээгдэхүүн</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -208,11 +208,11 @@ export const DeltaLiftView: React.FC = () => {
               return (
                 <div
                   key={p.id}
-                  className="p-5 rounded-xl bg-[#081B38]/80 border border-sky-900/50 hover:border-[#0063A5] transition-colors"
+                  className="p-5 rounded-xl bg-surface-3/80 border border-line hover:border-brand transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 shrink-0 rounded-lg bg-[#0063A5]/20 border border-[#0063A5]/40 flex items-center justify-center">
-                      <Icon className="w-4 h-4 text-[#38BDF8]" />
+                    <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-brand-bright" />
                     </div>
                     <h3 className="text-[15px] font-bold text-white leading-snug">{p.title}</h3>
                   </div>
@@ -222,7 +222,7 @@ export const DeltaLiftView: React.FC = () => {
                       {p.variants.map((v) => (
                         <span
                           key={v}
-                          className="inline-flex items-center h-6 px-2 rounded bg-[#0063A5]/15 border border-[#0063A5]/30 text-[11px] text-slate-300"
+                          className="inline-flex items-center h-6 px-2 rounded bg-brand/15 border border-brand/30 text-[11px] text-ink-muted"
                         >
                           {v}
                         </span>
@@ -230,7 +230,7 @@ export const DeltaLiftView: React.FC = () => {
                     </div>
                   )}
 
-                  {p.note && <p className="mt-3 text-xs text-[#38BDF8]">{p.note}</p>}
+                  {p.note && <p className="mt-3 text-xs text-brand-bright">{p.note}</p>}
                 </div>
               );
             })}
@@ -239,7 +239,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 5. Инженер, техникийн алба */}
-      <section id="engineering" className="py-16 md:py-20 border-b border-sky-900/40">
+      <section id="engineering" className="py-16 md:py-20 border-b border-line">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
 
@@ -247,19 +247,19 @@ export const DeltaLiftView: React.FC = () => {
               <img
                 src={PHOTOS.teamTablet}
                 alt="Инженерүүд удирдлагын самбар дээр оношилгоо хийж байна"
-                className="col-span-2 w-full object-cover rounded-xl border border-sky-900/50"
+                className="col-span-2 w-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
               <img
                 src={PHOTOS.techPanel}
                 alt="Техникч засвар үйлчилгээ хийж байна"
-                className="w-full h-44 object-cover rounded-xl border border-sky-900/50"
+                className="w-full h-44 object-cover rounded-xl border border-line"
                 loading="lazy"
               />
               <img
                 src={PHOTOS.techRail}
                 alt="Лифтний хөтөчийн шугамын угсралт"
-                className="w-full h-44 object-cover rounded-xl border border-sky-900/50"
+                className="w-full h-44 object-cover rounded-xl border border-line"
                 loading="lazy"
               />
             </div>
@@ -269,13 +269,13 @@ export const DeltaLiftView: React.FC = () => {
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
                 {ENGINEERING.title}
               </h2>
-              <p className="mt-5 text-sm text-slate-300 leading-relaxed">{ENGINEERING.body}</p>
+              <p className="mt-5 text-sm text-ink-muted leading-relaxed">{ENGINEERING.body}</p>
 
               <div className="mt-7 grid grid-cols-2 gap-4">
                 {ENGINEERING.highlights.map((h) => (
-                  <div key={h.label} className="p-5 rounded-xl bg-[#081B38]/80 border border-sky-900/50">
-                    <div className="text-3xl font-black text-[#F9A01B] tabular-nums">{h.value}</div>
-                    <div className="mt-1 text-[11px] text-slate-400 leading-snug">{h.label}</div>
+                  <div key={h.label} className="p-5 rounded-xl bg-surface-3/80 border border-line">
+                    <div className="text-3xl font-black text-accent tabular-nums">{h.value}</div>
+                    <div className="mt-1 text-[11px] text-ink-muted leading-snug">{h.label}</div>
                   </div>
                 ))}
               </div>
@@ -286,7 +286,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 6. Бид хэрхэн ажилладаг */}
-      <section id="how-we-work" className="py-16 md:py-20 border-b border-sky-900/40 bg-[#040E20]">
+      <section id="how-we-work" className="py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-center">
 
@@ -294,7 +294,7 @@ export const DeltaLiftView: React.FC = () => {
               <img
                 src={PHOTOS.consult}
                 alt="Захиалагчтай төслийн зөвлөгөө өгч буй байдал"
-                className="w-full object-cover rounded-xl border border-sky-900/50"
+                className="w-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
             </div>
@@ -304,22 +304,22 @@ export const DeltaLiftView: React.FC = () => {
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
                 {HOW_WE_WORK.title}
               </h2>
-              <p className="mt-5 text-sm text-slate-300 leading-relaxed">{HOW_WE_WORK.body}</p>
+              <p className="mt-5 text-sm text-ink-muted leading-relaxed">{HOW_WE_WORK.body}</p>
 
               <ol className="mt-7 space-y-3">
                 {HOW_WE_WORK.steps.map((s, i) => {
                   const Icon = STEP_ICONS[i] ?? ClipboardCheck;
                   return (
-                    <li key={s.title} className="flex gap-4 p-4 rounded-xl bg-[#081B38]/80 border border-sky-900/50">
-                      <div className="w-9 h-9 shrink-0 rounded-lg bg-[#0063A5]/20 border border-[#0063A5]/40 flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-[#38BDF8]" />
+                    <li key={s.title} className="flex gap-4 p-4 rounded-xl bg-surface-3/80 border border-line">
+                      <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
+                        <Icon className="w-4 h-4 text-brand-bright" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-white">
-                          <span className="text-[#F9A01B] tabular-nums mr-1.5">{i + 1}.</span>
+                          <span className="text-accent tabular-nums mr-1.5">{i + 1}.</span>
                           {s.title}
                         </h3>
-                        <p className="mt-1 text-xs text-slate-400 leading-relaxed">{s.body}</p>
+                        <p className="mt-1 text-xs text-ink-muted leading-relaxed">{s.body}</p>
                       </div>
                     </li>
                   );
@@ -332,7 +332,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 7. Засвар үйлчилгээний хамрах хүрээ */}
-      <section id="service-scope" className="py-16 md:py-20 border-b border-sky-900/40">
+      <section id="service-scope" className="py-16 md:py-20 border-b border-line">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.7fr] gap-10 lg:gap-14 items-center">
 
@@ -341,15 +341,15 @@ export const DeltaLiftView: React.FC = () => {
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
                 Хамрах хүрээ
               </h2>
-              <p className="mt-5 text-sm text-slate-300 leading-relaxed">
+              <p className="mt-5 text-sm text-ink-muted leading-relaxed">
                 Мэргэшсэн инженер, техникийн баг цахилгаан шат, урсдаг шатны техникийн бүрэн бүтэн
                 байдал, хэвийн үйл ажиллагааг хангах дараах үйлчилгээг үзүүлэн ажилладаг.
               </p>
 
               <ul className="mt-6 space-y-2.5">
                 {SERVICE_SCOPE.map((s) => (
-                  <li key={s} className="flex items-start gap-3 text-sm text-slate-200">
-                    <CheckCircle className="w-4 h-4 mt-0.5 text-[#38BDF8] shrink-0" />
+                  <li key={s} className="flex items-start gap-3 text-sm text-ink">
+                    <CheckCircle className="w-4 h-4 mt-0.5 text-brand-bright shrink-0" />
                     <span>{s}</span>
                   </li>
                 ))}
@@ -359,7 +359,7 @@ export const DeltaLiftView: React.FC = () => {
             <img
               src={PHOTOS.techField}
               alt="Талбай дээрх техникийн ажил"
-              className="w-full object-cover rounded-xl border border-sky-900/50"
+              className="w-full object-cover rounded-xl border border-line"
               loading="lazy"
             />
 
@@ -368,7 +368,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 8. Хамтран ажилласан төслүүд */}
-      <section id="projects" className="py-16 md:py-20 border-b border-sky-900/40 bg-[#040E20]">
+      <section id="projects" className="py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={Building2}>Туршлага</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -379,11 +379,11 @@ export const DeltaLiftView: React.FC = () => {
             {PROJECTS.map((p) => (
               <div
                 key={p.id}
-                className="p-5 rounded-xl bg-[#081B38]/80 border border-sky-900/50 hover:border-[#0063A5] transition-colors flex flex-col justify-center min-h-24"
+                className="p-5 rounded-xl bg-surface-3/80 border border-line hover:border-brand transition-colors flex flex-col justify-center min-h-24"
               >
                 <div className="text-sm font-bold text-white leading-snug">{p.name}</div>
                 {p.label && (
-                  <div className="mt-1 text-[11px] text-[#38BDF8] uppercase tracking-wider">{p.label}</div>
+                  <div className="mt-1 text-[11px] text-brand-bright uppercase tracking-wider">{p.label}</div>
                 )}
               </div>
             ))}
@@ -392,16 +392,16 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 9. Үнийн санал */}
-      <section id="quote-section" className="py-16 md:py-20 border-b border-sky-900/40">
+      <section id="quote-section" className="py-16 md:py-20 border-b border-line">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-7 sm:p-9 rounded-2xl bg-[#081B38]/80 border border-[#F9A01B]/40">
+          <div className="p-7 sm:p-9 rounded-2xl bg-surface-3/80 border border-accent/40">
 
             <div className="text-center max-w-lg mx-auto mb-8">
               <SectionLabel icon={Sparkles}>Шуурхай үнийн санал</SectionLabel>
               <h2 className="mt-4 text-2xl md:text-3xl font-black text-white tracking-tight">
                 Урьдчилсан тооцоо авах
               </h2>
-              <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+              <p className="mt-2 text-xs text-ink-muted leading-relaxed">
                 Барилгынхаа үзүүлэлтийг сонгон үлдээвэл манай төслийн инженер тантай холбогдож,
                 техникийн үзүүлэлт болон албан ёсны үнийн саналыг илгээнэ.
               </p>
@@ -411,14 +411,14 @@ export const DeltaLiftView: React.FC = () => {
               <div className="text-center py-6">
                 <CheckCircle className="w-14 h-14 text-emerald-400 mx-auto mb-3" />
                 <h3 className="text-xl font-bold text-white mb-2">Хүсэлт хүлээн авлаа</h3>
-                <p className="text-xs text-slate-300 max-w-md mx-auto mb-6">
+                <p className="text-xs text-ink-muted max-w-md mx-auto mb-6">
                   Манай төслийн инженер таны{' '}
-                  <strong className="text-[#F9A01B]">{quotePhone}</strong> дугаар луу удахгүй
+                  <strong className="text-accent">{quotePhone}</strong> дугаар луу удахгүй
                   холбогдоно.
                 </p>
                 <button
                   onClick={() => setQuoteSuccess(false)}
-                  className="h-10 px-5 rounded-xl bg-[#F9A01B] text-neutral-950 font-bold text-xs uppercase tracking-wider cursor-pointer"
+                  className="h-10 px-5 rounded-xl bg-accent text-neutral-950 font-bold text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Дахин тооцоолох
                 </button>
@@ -428,13 +428,13 @@ export const DeltaLiftView: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
                   <label className="block">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-1.5">
                       Төрөл
                     </span>
                     <select
                       value={quoteType}
                       onChange={(e) => setQuoteType(e.target.value)}
-                      className="w-full h-11 px-3 rounded-xl bg-[#040E20] border border-sky-900/60 text-white text-xs focus:border-[#38BDF8] focus:outline-none"
+                      className="w-full h-11 px-3 rounded-xl bg-surface-2 border border-line text-white text-xs focus:border-brand-bright focus:outline-none"
                     >
                       <option value="passenger">Зорчигчийн</option>
                       <option value="freight">Ачааны</option>
@@ -446,7 +446,7 @@ export const DeltaLiftView: React.FC = () => {
                   </label>
 
                   <label className="block">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-1.5">
                       Давхрын тоо
                     </span>
                     <input
@@ -455,18 +455,18 @@ export const DeltaLiftView: React.FC = () => {
                       max={60}
                       value={quoteFloors}
                       onChange={(e) => setQuoteFloors(Number(e.target.value))}
-                      className="w-full h-11 px-3 rounded-xl bg-[#040E20] border border-sky-900/60 text-white text-xs focus:border-[#38BDF8] focus:outline-none"
+                      className="w-full h-11 px-3 rounded-xl bg-surface-2 border border-line text-white text-xs focus:border-brand-bright focus:outline-none"
                     />
                   </label>
 
                   <label className="block">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-1.5">
                       Даац
                     </span>
                     <select
                       value={quoteCapacity}
                       onChange={(e) => setQuoteCapacity(e.target.value)}
-                      className="w-full h-11 px-3 rounded-xl bg-[#040E20] border border-sky-900/60 text-white text-xs focus:border-[#38BDF8] focus:outline-none"
+                      className="w-full h-11 px-3 rounded-xl bg-surface-2 border border-line text-white text-xs focus:border-brand-bright focus:outline-none"
                     >
                       <option value="450kg">450 кг</option>
                       <option value="630kg">630 кг</option>
@@ -479,7 +479,7 @@ export const DeltaLiftView: React.FC = () => {
                 </div>
 
                 <label className="block">
-                  <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-1.5">
                     Холбоо барих утас
                   </span>
                   <input
@@ -491,8 +491,8 @@ export const DeltaLiftView: React.FC = () => {
                     }}
                     placeholder="9911-XXXX"
                     aria-invalid={Boolean(quoteError)}
-                    className={`w-full h-11 px-3 rounded-xl bg-[#040E20] border text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none ${
-                      quoteError ? 'border-red-500' : 'border-sky-900/60 focus:border-[#38BDF8]'
+                    className={`w-full h-11 px-3 rounded-xl bg-surface-2 border text-white text-xs font-mono placeholder:text-ink-subtle focus:outline-none ${
+                      quoteError ? 'border-red-500' : 'border-line focus:border-brand-bright'
                     }`}
                   />
                   {quoteError && <span className="mt-1.5 block text-[11px] text-red-400">{quoteError}</span>}
@@ -500,7 +500,7 @@ export const DeltaLiftView: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full h-12 rounded-xl bg-[#F9A01B] hover:bg-[#ffb13d] text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full h-12 rounded-xl bg-accent hover:bg-accent-hover text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   Үнийн санал хүсэх
@@ -512,7 +512,7 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 10. Холбоо барих */}
-      <section id="contact" className="py-16 md:py-20 bg-[#040E20]">
+      <section id="contact" className="py-16 md:py-20 bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={MapPin}>Холбоо барих</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -520,35 +520,35 @@ export const DeltaLiftView: React.FC = () => {
           </h2>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-6 rounded-xl bg-[#081B38]/80 border border-sky-900/50">
-              <MapPin className="w-5 h-5 text-[#38BDF8]" />
-              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Хаяг</h3>
-              <p className="mt-1.5 text-sm text-slate-200 leading-relaxed">{COMPANY.address}</p>
+            <div className="p-6 rounded-xl bg-surface-3/80 border border-line">
+              <MapPin className="w-5 h-5 text-brand-bright" />
+              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">Хаяг</h3>
+              <p className="mt-1.5 text-sm text-ink leading-relaxed">{COMPANY.address}</p>
             </div>
 
-            <div className="p-6 rounded-xl bg-[#081B38]/80 border border-sky-900/50">
-              <PhoneCall className="w-5 h-5 text-[#38BDF8]" />
-              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Утас</h3>
+            <div className="p-6 rounded-xl bg-surface-3/80 border border-line">
+              <PhoneCall className="w-5 h-5 text-brand-bright" />
+              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">Утас</h3>
               <a
                 href={`tel:${COMPANY.phone.replace(/\D/g, '')}`}
-                className="mt-1.5 block text-lg font-bold text-white hover:text-[#38BDF8] transition-colors font-mono"
+                className="mt-1.5 block text-lg font-bold text-white hover:text-brand-bright transition-colors font-mono"
               >
                 {COMPANY.phone}
               </a>
             </div>
 
-            <div className="p-6 rounded-xl bg-[#081B38]/80 border border-sky-900/50">
-              <Mail className="w-5 h-5 text-[#38BDF8]" />
-              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">И-мэйл, вэб</h3>
+            <div className="p-6 rounded-xl bg-surface-3/80 border border-line">
+              <Mail className="w-5 h-5 text-brand-bright" />
+              <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">И-мэйл, вэб</h3>
               <a
                 href={`mailto:${COMPANY.email}`}
-                className="mt-1.5 block text-sm font-semibold text-white hover:text-[#38BDF8] transition-colors"
+                className="mt-1.5 block text-sm font-semibold text-white hover:text-brand-bright transition-colors"
               >
                 {COMPANY.email}
               </a>
               <a
                 href={`https://${COMPANY.web}`}
-                className="mt-0.5 block text-sm font-semibold text-[#38BDF8] hover:text-white transition-colors"
+                className="mt-0.5 block text-sm font-semibold text-brand-bright hover:text-white transition-colors"
               >
                 {COMPANY.web}
               </a>

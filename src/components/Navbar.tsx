@@ -19,23 +19,32 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCart,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#051329]/95 backdrop-blur-md border-b border-sky-900/50 text-white shadow-xl">
+    <header className="sticky top-0 z-40 w-full bg-surface-1/95 backdrop-blur-md border-b border-line text-white shadow-xl">
       {/* Top emergency announcement bar */}
-      <div className="bg-gradient-to-r from-red-950/80 via-[#07162C] to-sky-950/80 border-b border-sky-900/30 py-1.5 px-4 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+      <div className="bg-gradient-to-r from-red-950/80 via-[#07162C] to-sky-950/80 border-b border-line py-1.5 px-4 text-xs">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger-soft opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
             </span>
-            <span className="text-red-300 font-semibold">24/7 Лифт гацсан яаралтай дуудлагын алба:</span>
-            <a href="tel:+97677232222" className="font-mono font-bold text-amber-400 hover:text-white transition">(+976) 7723-2222</a>
+            {/* Нарийн дэлгэцэд богино хувилбар — өмнө нь хоёр мөр болж эвдэрдэг байв */}
+            <span className="text-danger-soft font-semibold truncate">
+              <span className="sm:hidden">24/7 яаралтай дуудлага</span>
+              <span className="hidden sm:inline">24/7 Лифт гацсан яаралтай дуудлагын алба:</span>
+            </span>
+            <a
+              href="tel:+97677232222"
+              className="font-mono font-bold text-accent hover:text-white transition shrink-0"
+            >
+              7723-2222
+            </a>
           </div>
-          <div className="hidden sm:flex items-center gap-4 text-sky-200/70">
-            <span>Цагийн хуваарь: Даваа - Ням 24 цаг</span>
-            <span>·</span>
+          <div className="hidden lg:flex items-center gap-4 text-ink-muted">
+            <span>Даваа - Ням 24 цаг</span>
+            <span aria-hidden="true">·</span>
             <a href="mailto:info@lift.mn" className="hover:text-white transition">info@lift.mn</a>
-            <span>·</span>
+            <span aria-hidden="true">·</span>
             <span>Улаанбаатар хот даяар</span>
           </div>
         </div>
@@ -56,7 +65,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}
-        <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-[#091B36] border border-sky-800/40 min-w-0 shrink">
+        <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-surface-2 border border-line min-w-0 shrink">
           
           {/* Sub-site 1: DELTA LIFT */}
           <button
@@ -66,8 +75,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectSection('delta-lift')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'delta-lift'
-                ? 'bg-[#005C9E] text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
-                : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
+                ? 'bg-brand text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
+                : 'text-brand-soft/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
             <Building2 className="w-4 h-4 shrink-0" />
@@ -82,8 +91,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectSection('parts')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'parts'
-                ? 'bg-[#005C9E] text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
-                : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
+                ? 'bg-brand text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
+                : 'text-brand-soft/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
             <ShoppingBag className="w-4 h-4 shrink-0" />
@@ -98,8 +107,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectSection('service')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'service'
-                ? 'bg-[#005C9E] text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
-                : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
+                ? 'bg-brand text-white shadow-md shadow-[#005C9E]/40 border border-sky-400/40'
+                : 'text-brand-soft/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
             <Wrench className="w-4 h-4 shrink-0" />
@@ -127,12 +136,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-cart-btn"
             onClick={onOpenCart}
-            className="relative p-2.5 rounded-lg bg-[#091B36] hover:bg-[#0D264A] border border-sky-800/50 text-white transition hover:border-sky-400 cursor-pointer"
+            className="relative p-2.5 rounded-lg bg-surface-2 hover:bg-surface-4 border border-line text-white transition hover:border-sky-400 cursor-pointer"
             title="Сэлбэгийн сагс харах"
           >
-            <ShoppingCart className="w-4 h-4 text-[#38BDF8]" />
+            <ShoppingCart className="w-4 h-4 text-brand-bright" />
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-[#F9A01B] text-neutral-950 font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+              <span className="absolute -top-1.5 -right-1.5 bg-accent text-neutral-950 font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
                 {cartCount}
               </span>
             )}

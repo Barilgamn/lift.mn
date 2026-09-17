@@ -1,6 +1,81 @@
 @import "tailwindcss";
 
-/* Хуудас солигдох үеийн орох хөдөлгөөн — шилжилт болсныг мэдрүүлнэ */
+/**
+ * LIFT.MN дизайн систем
+ *
+ * Өнгө, радиусыг нэг дор тодорхойлж, бүх хуудсанд ижил хэрэглэнэ.
+ * Өмнө нь зургаан өөр дэвсгэр өнгө, хоёр өөр өргөлтийн өнгө холилдсон байв.
+ */
+@theme {
+  /* Гадаргуу — хамгийн бараанаас цайвар руу */
+  --color-surface-0: #030A16; /* хуудасны хамгийн гүн дэвсгэр */
+  --color-surface-1: #061326; /* үндсэн дэвсгэр */
+  --color-surface-2: #0A1B33; /* хэсэг ялгах дэвсгэр */
+  --color-surface-3: #102541; /* карт, талбар */
+  --color-surface-4: #18324F; /* дээшлүүлсэн, hover */
+
+  /* Брэнд — KLEEMANN/DELTA LIFTS-ийн цэнхэр */
+  --color-brand: #0063A5;
+  --color-brand-hover: #0076C4;
+  --color-brand-bright: #38BDF8; /* бичиг, дүрсэнд */
+  --color-brand-soft: #7DD3FC;
+
+  /* Өргөлт — зөвхөн үйлдэл, гол тоонд. Хэт их хэрэглэхгүй. */
+  --color-accent: #F9A01B;
+  --color-accent-hover: #FFB13D;
+
+  /* Яаралтай */
+  --color-danger: #DC2626;
+  --color-danger-soft: #F87171;
+
+  /* Бичиг */
+  --color-ink: #F1F5F9;
+  --color-ink-muted: #94A3B8;
+  --color-ink-subtle: #64748B;
+
+  /* Зураас */
+  --color-line: #16304F;
+  --color-line-strong: #1E4372;
+
+  /* Булан — өмнөхөөс зөөлөн, том */
+  --radius-card: 1rem;
+  --radius-panel: 1.25rem;
+}
+
+/* Суурь */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Гар утсан дээр талбарт дарахад хөтөч томруулахаас сэргийлнэ (iOS 16px-ээс
+   бага фонттой талбарт автоматаар zoom хийдэг). */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Гарын товчлуураар явахад фокус тод харагдана */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-bright);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Хуудас солигдох үеийн орох хөдөлгөөн */
 @keyframes page-enter {
   from {
     opacity: 0;
@@ -16,7 +91,6 @@
   animation: page-enter 0.28s ease-out both;
 }
 
-/* Хөдөлгөөн багасгахыг хүссэн хэрэглэгчид зориулж унтраана */
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter {
     animation: none;

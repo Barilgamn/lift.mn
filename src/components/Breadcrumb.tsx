@@ -18,20 +18,20 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section }) => {
   return (
     <nav
       aria-label="Хаана байгаа"
-      className="border-b border-sky-900/40 bg-[#040E20]/80 backdrop-blur-sm"
+      className="border-b border-line bg-surface-2/80 backdrop-blur-sm"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <ol className="flex items-center gap-1.5 h-10 text-[11px] sm:text-xs">
           <li>
             <Link
               to={ROUTES.portal.path}
-              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-[#38BDF8] transition-colors"
+              className="inline-flex items-center gap-1.5 text-ink-muted hover:text-brand-bright transition-colors"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{ROUTES.portal.label}</span>
             </Link>
           </li>
-          <li aria-hidden="true" className="text-slate-600">
+          <li aria-hidden="true" className="text-ink-subtle">
             <ChevronRight className="w-3.5 h-3.5" />
           </li>
           <li>

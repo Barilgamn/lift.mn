@@ -69,7 +69,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
       <div 
         id="emergency-modal-card"
-        className="relative w-full max-w-xl bg-neutral-900 border-2 border-red-500/80 rounded-2xl shadow-2xl shadow-red-900/40 text-white overflow-hidden"
+        className="relative w-full max-w-xl bg-surface-2 border-2 border-red-500/80 rounded-2xl shadow-2xl shadow-red-900/40 text-white overflow-hidden"
       >
         {/* Urgent Header */}
         <div className="bg-gradient-to-r from-red-700 via-red-600 to-amber-600 p-5 flex items-center justify-between text-white">
@@ -101,14 +101,14 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
               <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4 animate-bounce">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">
+              <span className="text-xs font-bold text-accent uppercase tracking-widest">
                 ДУУДЛАГА БҮРТГЭГДЛЭЭ #EMG-{Math.floor(1000 + Math.random() * 9000)}
               </span>
               <h3 className="text-2xl font-black text-white mt-1 mb-2">
                 Шуурхай Бригад Гарлаа!
               </h3>
-              <p className="text-sm text-neutral-300 max-w-md mx-auto mb-6 leading-relaxed">
-                Манай жижүүрийн шуурхай инженерийн баг дуудлагыг хүлээн авч, тухайн байршил руу гарлаа. <strong className="text-amber-400">Очих хугацаа ойролцоогоор 12-18 минут.</strong>
+              <p className="text-sm text-ink-muted max-w-md mx-auto mb-6 leading-relaxed">
+                Манай жижүүрийн шуурхай инженерийн баг дуудлагыг хүлээн авч, тухайн байршил руу гарлаа. <strong className="text-accent">Очих хугацаа ойролцоогоор 12-18 минут.</strong>
               </p>
 
               {/* Crucial Safety Advice */}
@@ -117,7 +117,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                   <ShieldAlert className="w-4 h-4 text-red-400" />
                   <span>ЯАРАЛТАЙ САНАМЖ:</span>
                 </div>
-                <ul className="list-disc list-inside space-y-1 text-neutral-300">
+                <ul className="list-disc list-inside space-y-1 text-ink-muted">
                   <li>Лифтний хаалгыг гараар хүчээр хөшиж нээхгүй байх</li>
                   <li>Лифтний агааржуулагч хэвийн ажилладаг тул агаар дутагдахгүй, тайван амьсгалах</li>
                   <li>Лифтний доторх "Alarm" хонх товчийг дарж холбоо барих</li>
@@ -134,7 +134,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                 </a>
                 <button
                   onClick={handleReset}
-                  className="px-5 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold text-sm cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-surface-3 hover:bg-neutral-700 text-neutral-200 font-bold text-sm cursor-pointer"
                 >
                   Хаах
                 </button>
@@ -159,13 +159,13 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1">
                     Дүүрэг *
                   </label>
                   <select 
                     value={district} 
                     onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs focus:border-accent focus:outline-none"
                   >
                     <option value="Хан-Уул дүүрэг">Хан-Уул дүүрэг</option>
                     <option value="Сүхбаатар дүүрэг">Сүхбаатар дүүрэг</option>
@@ -177,7 +177,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1">
                     Утасны дугаар *
                   </label>
                   <input 
@@ -186,13 +186,13 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                     placeholder="9911-XXXX эсвэл 8800-XXXX"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs placeholder:text-neutral-500 focus:border-amber-400 focus:outline-none font-mono"
+                    className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs placeholder:text-ink-subtle focus:border-accent focus:outline-none font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                <label className="block text-xs font-semibold text-ink-muted mb-1">
                   Байршил, Хотхон, Байр, Орц *
                 </label>
                 <input 
@@ -201,13 +201,13 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                   placeholder="Жишээ: Хан-Уул 15-р хороо, Рапид Харш 22-р байр 2-р орц"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs placeholder:text-neutral-500 focus:border-amber-400 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs placeholder:text-ink-subtle focus:border-accent focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1">
                     Гацсан хүний тоо
                   </label>
                   <input 
@@ -216,12 +216,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                     max="30"
                     value={stuckCount}
                     onChange={(e) => setStuckCount(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs focus:border-accent focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1">
                     Аль давхар орчим
                   </label>
                   <input 
@@ -229,12 +229,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                     placeholder="Жишээ: 7-р давхарт"
                     value={floor}
                     onChange={(e) => setFloor(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs placeholder:text-neutral-500 focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs placeholder:text-ink-subtle focus:border-accent focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1">
                     Холбоо баригчийн нэр
                   </label>
                   <input 
@@ -242,7 +242,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                     placeholder="Нэр"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs placeholder:text-neutral-500 focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs placeholder:text-ink-subtle focus:border-accent focus:outline-none"
                   />
                 </div>
               </div>
@@ -255,13 +255,13 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                   onChange={(e) => setHasVulnerable(e.target.checked)}
                   className="rounded border-neutral-700 text-red-600 focus:ring-red-500 w-4 h-4 cursor-pointer"
                 />
-                <label htmlFor="vulnerable-check" className="text-xs text-neutral-300 cursor-pointer">
+                <label htmlFor="vulnerable-check" className="text-xs text-ink-muted cursor-pointer">
                   Дотор нь бага насны хүүхэд, өндөр настан эсвэл бие муу хүн байгаа
                 </label>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                <label className="block text-xs font-semibold text-ink-muted mb-1">
                   Нэмэлт тайлбар (Лифтний гэрэл унтарсан уу, сонин дуу гарсан уу г.м.)
                 </label>
                 <textarea 
@@ -269,7 +269,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                   placeholder="Нөхцөл байдлыг товч бичнэ үү..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs placeholder:text-neutral-500 focus:border-amber-400 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white text-xs placeholder:text-ink-subtle focus:border-accent focus:outline-none"
                 />
               </div>
 
@@ -277,7 +277,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-medium cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-medium cursor-pointer"
                 >
                   Болих
                 </button>
