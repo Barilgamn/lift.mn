@@ -88,37 +88,26 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
             </p>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Дэлхийн шилдэг лифт, эскалаторын брэндүүд, компанийн танилцуулга, хэрэгжүүлсэн томоохон төслүүд болон хамтран ажиллагч байгууллагууд
+              KLEEMANN брэндийн Монгол дахь албан ёсны онцгой эрхт дистрибьютер. Компанийн танилцуулга, бүтээгдэхүүн, хэрэгжүүлсэн төслүүд.
             </p>
 
-            {/* Brand Logos Row (Delta Lift Brands) */}
+            {/* KLEEMANN — албан ёсны онцгой эрхт дистрибьютер */}
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 max-w-md pt-1">
-              {/* OTIS */}
-              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="font-sans font-bold text-[11px] tracking-wider text-sky-300">OTIS</span>
-              </div>
-              {/* MITSUBISHI */}
-              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-red-400 shrink-0">
-                  <polygon points="12,2 15.5,8 12,14 8.5,8" />
-                  <polygon points="5.5,14 12,14 8.5,20 2,20" />
-                  <polygon points="18.5,14 12,14 15.5,20 22,20" />
-                </svg>
-                <span className="font-sans font-bold text-[11px] tracking-wider">MITSUBISHI</span>
-              </div>
-              {/* KONE */}
-              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="font-sans font-bold text-[11px] tracking-wider text-sky-200">KONE</span>
-              </div>
-              {/* SCHINDLER */}
-              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="w-3.5 h-3.5 rounded-full border border-red-400 flex items-center justify-center text-[7px] font-black text-red-400">S</span>
-                <span className="font-sans font-bold text-[11px] tracking-wider">Schindler</span>
-              </div>
-              {/* HYUNDAI */}
-              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="font-sans font-bold text-[11px] tracking-wider">HYUNDAI</span>
-              </div>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-[#0063A5]/25 border border-[#0063A5]/60 text-white text-[11px] font-black tracking-wider group-hover:bg-[#0063A5]/40 group-hover:border-sky-400 transition-all">
+                KLEEMANN
+              </span>
+              <span className="inline-flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-[11px] font-bold tracking-wider opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Цахилгаан шат
+              </span>
+              <span className="inline-flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-[11px] font-bold tracking-wider opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Урсдаг шат
+              </span>
+              <span className="inline-flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-[11px] font-bold tracking-wider opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Урсдаг зам
+              </span>
+              <span className="inline-flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-[11px] font-bold tracking-wider opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Авто зогсоол
+              </span>
             </div>
           </div>
 

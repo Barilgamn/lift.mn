@@ -1,44 +1,5 @@
 export type ActiveSection = 'portal' | 'delta-lift' | 'service' | 'parts';
 
-export interface ElevatorBrand {
-  id: string;
-  name: string;
-  origin: string;
-  logoText: string;
-  category: string;
-  description: string;
-  highlight: string;
-  image: string;
-  specs: {
-    maxCapacity: string;
-    speed: string;
-    floors: string;
-    tech: string;
-  };
-}
-
-export interface ProjectItem {
-  id: string;
-  title: string;
-  client: string;
-  location: string;
-  year: string;
-  category: 'residential' | 'commercial' | 'hotel' | 'public';
-  categoryLabel: string;
-  elevatorsInstalled: string;
-  brand: string;
-  image: string;
-  description: string;
-}
-
-export interface PartnerItem {
-  id: string;
-  name: string;
-  type: string;
-  logo: string;
-  description: string;
-}
-
 export interface TariffItem {
   id: string;
   title: string;

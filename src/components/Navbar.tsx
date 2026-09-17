@@ -66,7 +66,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectSection('portal')}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <DeltaLiftsLogo variant="official" size="sm" showText={true} textClassName="text-sky-300 group-hover:text-white transition" />
+            <DeltaLiftsLogo size="sm" showText={false} className="lg:hidden" />
+            <DeltaLiftsLogo size="sm" showText={true} className="hidden lg:block" />
             <div className="hidden xl:block h-5 w-px bg-sky-800/40 mx-1" />
             <div className="hidden xl:block text-[11px] text-sky-300/70 uppercase tracking-wider font-semibold">
               LIFT.MN
@@ -75,11 +76,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}
-        <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-[#091B36] border border-sky-800/40">
+        <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-[#091B36] border border-sky-800/40 min-w-0 shrink">
           
           {/* Sub-site 1: DELTA LIFT */}
           <button
             id="nav-tab-delta"
+            title="DELTA LIFT"
+            aria-label="DELTA LIFT"
             onClick={() => onSelectSection('delta-lift')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'delta-lift'
@@ -87,13 +90,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
-            <Building2 className="w-4 h-4" />
-            <span>DELTA LIFT</span>
+            <Building2 className="w-4 h-4 shrink-0" />
+            <span className="hidden lg:inline">DELTA LIFT</span>
           </button>
 
           {/* Sub-site 2: Сэлбэг хэрэгсэл */}
           <button
             id="nav-tab-parts"
+            title="Сэлбэг хэрэгсэл"
+            aria-label="Сэлбэг хэрэгсэл"
             onClick={() => onSelectSection('parts')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'parts'
@@ -101,13 +106,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>СЭЛБЭГ ХЭРЭГСЭЛ</span>
+            <ShoppingBag className="w-4 h-4 shrink-0" />
+            <span className="hidden lg:inline">СЭЛБЭГ ХЭРЭГСЭЛ</span>
           </button>
 
           {/* Sub-site 3: Засвар үйлчилгээ */}
           <button
             id="nav-tab-service"
+            title="Засвар үйлчилгээ"
+            aria-label="Засвар үйлчилгээ"
             onClick={() => onSelectSection('service')}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
               activeSection === 'service'
@@ -115,8 +122,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-sky-200/80 hover:text-white hover:bg-sky-900/40'
             }`}
           >
-            <Wrench className="w-4 h-4" />
-            <span>ЗАСВАР ҮЙЛЧИЛГЭЭ</span>
+            <Wrench className="w-4 h-4 shrink-0" />
+            <span className="hidden lg:inline">ЗАСВАР ҮЙЛЧИЛГЭЭ</span>
           </button>
 
         </nav>
@@ -133,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
             <span className="hidden xl:inline">Гацсан дуудлага</span>
-            <span className="xl:hidden">24/7</span>
+            <span className="hidden sm:inline xl:hidden">24/7</span>
           </button>
 
           {/* Cart button */}
