@@ -69,8 +69,8 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           {/* Card Middle: Icon, Titles & Brand Logos */}
           <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-sky-500/30 group-hover:border-[#0063A5] bg-black/80 group-hover:bg-black backdrop-blur-md flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 shadow-lg group-hover:shadow-[#0063A5]/30 shrink-0">
+            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-[#0063A5] bg-black/80 group-hover:bg-black backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-[#0063A5]/30 shrink-0">
                 <DeltaLiftsMark 
                   className="w-full h-full drop-shadow-md group-hover:scale-105 transition-transform duration-300" 
                   bladeColor="#0063A5" 
@@ -78,7 +78,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
                 />
               </div>
 
-              <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
                 DELTA LIFT
               </h2>
             </div>
@@ -94,11 +94,11 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
             {/* Brand Logos Row (Delta Lift Brands) */}
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 max-w-md pt-1">
               {/* OTIS */}
-              <div className="flex items-center px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="font-mono font-black text-xs tracking-tight text-sky-300">OTIS</span>
+              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                <span className="font-sans font-bold text-[11px] tracking-wider text-sky-300">OTIS</span>
               </div>
               {/* MITSUBISHI */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 fill-red-400 shrink-0">
                   <polygon points="12,2 15.5,8 12,14 8.5,8" />
                   <polygon points="5.5,14 12,14 8.5,20 2,20" />
@@ -107,16 +107,16 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
                 <span className="font-sans font-bold text-[11px] tracking-wider">MITSUBISHI</span>
               </div>
               {/* KONE */}
-              <div className="flex items-center px-2.5 py-0.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                <span className="font-sans font-black text-[11px] tracking-widest text-sky-200">KONE</span>
+              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                <span className="font-sans font-bold text-[11px] tracking-wider text-sky-200">KONE</span>
               </div>
               {/* SCHINDLER */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 <span className="w-3.5 h-3.5 rounded-full border border-red-400 flex items-center justify-center text-[7px] font-black text-red-400">S</span>
-                <span className="font-sans font-bold text-[11px] tracking-wide">Schindler</span>
+                <span className="font-sans font-bold text-[11px] tracking-wider">Schindler</span>
               </div>
               {/* HYUNDAI */}
-              <div className="flex items-center px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <div className="flex items-center h-7 px-2.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 opacity-70 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 <span className="font-sans font-bold text-[11px] tracking-wider">HYUNDAI</span>
               </div>
             </div>
@@ -155,12 +155,12 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           {/* Card Middle: Icon, Titles & Representative Keywords */}
           <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-sky-500/30 group-hover:border-[#38BDF8] bg-[#081B38]/90 group-hover:bg-[#005C9E]/40 backdrop-blur-md flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-sky-200 group-hover:text-white transition duration-300" strokeWidth={1.75} />
+            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-[#38BDF8] bg-[#081B38]/90 group-hover:bg-[#005C9E]/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-sky-200 group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
 
-              <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
                 СЭЛБЭГ ХЭРЭГСЭЛ
               </h2>
             </div>
@@ -175,16 +175,16 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
 
             {/* Representative Keywords Row */}
             <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Онлайн дэлгүүр
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Бэлэн нөөц
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Шуурхай хүргэлт
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Баталгаат сэлбэг
               </span>
             </div>
@@ -223,12 +223,12 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           {/* Card Middle: Icon, Titles & Representative Keywords */}
           <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-sky-500/30 group-hover:border-[#38BDF8] bg-[#081B38]/90 group-hover:bg-[#005C9E]/40 backdrop-blur-md flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <Wrench className="w-5 h-5 sm:w-6 sm:h-6 text-sky-200 group-hover:text-white transition duration-300" strokeWidth={1.75} />
+            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-[#38BDF8] bg-[#081B38]/90 group-hover:bg-[#005C9E]/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+                <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-sky-200 group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
 
-              <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-[#38BDF8] transition duration-300">
                 ЗАСВАР ҮЙЛЧИЛГЭЭ
               </h2>
             </div>
@@ -243,16 +243,16 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
 
             {/* Representative Keywords Row */}
             <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 24/7 Шуурхай алба
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 СӨХ гэрээт үйлчилгээ
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Хуваарьт үзлэг оношилгоо
               </span>
-              <span className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300 text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
                 Инженерийн баг
               </span>
             </div>
