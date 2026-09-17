@@ -33,6 +33,15 @@
   --color-ink-muted: #94A3B8;
   --color-ink-subtle: #64748B;
 
+  /* Цайвар гадаргуу — дээд цэс, хөл хэсэгт */
+  --color-paper: #FFFFFF;
+  --color-paper-2: #F8FAFC;
+  --color-paper-3: #F1F5F9;
+  --color-line-light: #E2E8F0;
+  --color-ink-dark: #0F172A;
+  --color-ink-dark-muted: #475569;
+  --color-ink-dark-subtle: #64748B;
+
   /* Зураас */
   --color-line: #16304F;
   --color-line-strong: #1E4372;

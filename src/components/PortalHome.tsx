@@ -28,12 +28,12 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
       {/* Top Header Bar: Centered & Enlarged Delta Lifts Logo */}
       <header 
         id="portal-header" 
-        className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 border-b border-line backdrop-blur-md bg-surface-1/90 shrink-0 shadow-md shadow-black/40"
+        className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 border-b border-line-light bg-paper shrink-0 shadow-sm"
       >
         <div className="flex items-center gap-3 sm:gap-4">
-          <DeltaLiftsLogo variant="official" size="lg" showText={true} textClassName="text-brand-bright group-hover:text-white" />
-          <div className="hidden md:block h-7 w-px bg-sky-800/50" />
-          <span className="hidden md:inline text-xs lg:text-sm font-bold tracking-widest text-brand-soft/90 uppercase">
+          <DeltaLiftsLogo size="lg" showText={true} />
+          <div className="hidden md:block h-7 w-px bg-line-light" />
+          <span className="hidden md:inline text-xs lg:text-sm font-bold tracking-widest text-ink-dark-muted uppercase">
             МОНГОЛЫН ЛИФТ, ЭСКАЛАТОРЫН НЭГДСЭН ЦАХИМ ТАЛБАР
           </span>
         </div>
@@ -260,10 +260,10 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
       {/* Footer Bar: Contains Emergency Hotline & Contacts */}
       <footer 
         id="portal-footer" 
-        className="relative z-30 w-full px-4 sm:px-8 py-2.5 md:py-3 flex flex-wrap items-center justify-between gap-3 border-t border-line backdrop-blur-md bg-[#020814]/95 text-[11px] md:text-xs text-brand-bright/70 shrink-0"
+        className="relative z-30 w-full px-4 sm:px-8 py-2.5 md:py-3 flex flex-wrap items-center justify-between gap-3 border-t border-line-light bg-paper text-[11px] md:text-xs text-ink-dark-muted shrink-0"
       >
         <div className="flex items-center gap-2">
-          <span>© 2026 <strong className="text-white">DELTA LIFTS</strong> · <strong className="text-brand-bright">LIFT.MN</strong>. Бүх эрх хуулиар хамгаалагдсан.</span>
+          <span>© 2026 <strong className="text-ink-dark">DELTA LIFTS</strong> · <strong className="text-brand">LIFT.MN</strong>. Бүх эрх хуулиар хамгаалагдсан.</span>
         </div>
 
         {/* Emergency Call Button & Contacts in Footer */}
@@ -271,37 +271,37 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <button 
             id="footer-emergency-call-btn"
             onClick={onOpenEmergency}
-            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold tracking-wide transition-all shadow-lg shadow-red-600/30 border border-red-400/40 hover:scale-105 active:scale-95 cursor-pointer"
+            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-danger hover:bg-red-700 text-white text-xs font-bold tracking-wide transition-colors shadow-sm border border-transparent active:scale-95 cursor-pointer"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+            <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
             <span className="font-mono font-bold">24/7 Дуудлага: (+976) 7723-2222</span>
           </button>
 
           <a 
             href="tel:+97677232222"
-            className="flex items-center gap-1.5 text-brand-soft/90 hover:text-white transition"
+            className="flex items-center gap-1.5 hover:text-brand transition-colors"
           >
-            <PhoneCall className="w-3.5 h-3.5 text-brand-bright" />
+            <PhoneCall className="w-3.5 h-3.5 text-brand" />
             <span className="font-mono font-semibold">(+976) 7723-2222</span>
           </a>
 
-          <span className="hidden xl:inline text-brand-bright/30">·</span>
+          <span className="hidden xl:inline text-ink-dark-subtle" aria-hidden="true">·</span>
 
-          <span className="hidden md:flex items-center gap-1.5 text-brand-soft/80">
-            <Mail className="w-3.5 h-3.5 text-brand-bright" />
-            <a href="mailto:info@lift.mn" className="hover:text-white transition">info@lift.mn</a>
-            <span className="text-sky-500/50">,</span>
-            <a href="mailto:sales@lift.mn" className="hover:text-white transition">sales@lift.mn</a>
+          <span className="hidden md:flex items-center gap-1.5">
+            <Mail className="w-3.5 h-3.5 text-brand" />
+            <a href="mailto:info@lift.mn" className="hover:text-brand transition-colors">info@lift.mn</a>
+            <span className="text-ink-dark-subtle">,</span>
+            <a href="mailto:sales@lift.mn" className="hover:text-brand transition-colors">sales@lift.mn</a>
           </span>
 
-          <span className="hidden xl:inline text-brand-bright/30">·</span>
+          <span className="hidden xl:inline text-ink-dark-subtle" aria-hidden="true">·</span>
 
-          <span className="hidden lg:flex items-center gap-1.5 text-brand-bright/80">
-            <MapPin className="w-3.5 h-3.5 text-brand-bright shrink-0" />
+          <span className="hidden lg:flex items-center gap-1.5 text-ink-dark-muted">
+            <MapPin className="w-3.5 h-3.5 text-brand shrink-0" />
             <span title="Union Building, Unesco St, Sunroad-62, 1st khoroo, Sukhbaatar district, Ulaanbaatar">
               Union Building, Unesco St, Сүхбаатар дүүрэг, 1-р хороо
             </span>
