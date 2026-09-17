@@ -22,11 +22,17 @@
 
   /* Өргөлт — зөвхөн үйлдэл, гол тоонд. Хэт их хэрэглэхгүй. */
   --color-accent: #F9A01B;
+  /* Шар бичигт — цайвар дэвсгэр дээр тодрох хувилбартай */
+  --color-accent-ink: #F9A01B;
   --color-accent-hover: #FFB13D;
 
   /* Яаралтай */
   --color-danger: #DC2626;
   --color-danger-soft: #F87171;
+
+  /* Семантик — цайвар хэсэгт өөр өнгөнд шилжинэ */
+  --color-success: #34D399;
+  --color-warn: #FCD34D;
 
   /* Бичиг */
   --color-ink: #F1F5F9;
@@ -49,6 +55,38 @@
   /* Булан — өмнөхөөс зөөлөн, том */
   --radius-card: 1rem;
   --radius-panel: 1.25rem;
+}
+
+/**
+ * Цайвар хэсэг.
+ *
+ * Дотроо токенуудыг дахин тодорхойлдог тул уг хэсэг доторх бүх элемент
+ * (карт, зураас, бичиг) автоматаар цайвар хувилбарт шилжинэ. Markup
+ * өөрчлөх шаардлагагүй — зөвхөн энэ классыг хэсэгт өгнө.
+ */
+.theme-light {
+  --color-surface-0: #E2E8F0;
+  --color-surface-1: #FFFFFF;
+  --color-surface-2: #F8FAFC;
+  --color-surface-3: #FFFFFF;
+  --color-surface-4: #F1F5F9;
+
+  --color-line: #E2E8F0;
+  --color-line-strong: #CBD5E1;
+
+  --color-ink: #0F172A;
+  --color-ink-muted: #475569;
+  --color-ink-subtle: #64748B;
+
+  /* Цайвар цэнхэр цагаан дээр уншигдахгүй тул брэндийн үндсэн өнгө рүү */
+  --color-brand-bright: #0063A5;
+  --color-brand-soft: #0063A5;
+  --color-danger-soft: #B91C1C;
+  /* Цагаан дээр #F9A01B нь 2.1:1 болдог тул бараан шар */
+  --color-accent-ink: #B45309;
+  /* Цайвар ногоон, шар цагаан дээр уншигдахгүй тул гүн өнгөнд */
+  --color-success: #047857;
+  --color-warn: #B45309;
 }
 
 /* Суурь */

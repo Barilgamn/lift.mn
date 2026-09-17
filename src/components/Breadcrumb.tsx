@@ -18,7 +18,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section }) => {
   return (
     <nav
       aria-label="Хаана байгаа"
-      className="border-b border-line bg-surface-2/80 backdrop-blur-sm"
+      className="border-b border-line bg-surface-2 backdrop-blur-sm"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <ol className="flex items-center gap-1.5 h-10 text-[11px] sm:text-xs">

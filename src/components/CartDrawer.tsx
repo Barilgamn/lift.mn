@@ -71,7 +71,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         {/* Drawer Header */}
         <div className="p-4 sm:p-5 border-b border-line flex items-center justify-between bg-surface-0">
           <div className="flex items-center gap-2.5">
-            <ShoppingBag className="w-5 h-5 text-accent" />
+            <ShoppingBag className="w-5 h-5 text-accent-ink" />
             <h2 className="text-base font-bold tracking-tight">
               {step === 'cart' && `Таны Сэлбэгийн Сагс (${cartItems.length})`}
               {step === 'checkout' && 'Захиалга Баталгаажуулах'}
@@ -93,7 +93,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <>
               {cartItems.length === 0 ? (
                 <div className="text-center py-16 text-ink-muted">
-                  <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-accent" />
+                  <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-accent-ink" />
                   <p className="text-sm font-medium">Таны сагс хоосон байна</p>
                   <p className="text-xs text-ink-subtle mt-1">
                     Сэлбэг хэрэгслийн каталогоос өөрт хэрэгтэй эд ангийг сонгон сагсанд нэмнэ үү.
@@ -115,7 +115,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         <div className="text-xs font-bold text-white truncate">
                           {item.part.name}
                         </div>
-                        <div className="text-[11px] text-accent font-mono">
+                        <div className="text-[11px] text-accent-ink font-mono">
                           Код: {item.part.oemCode}
                         </div>
                         <div className="text-xs font-bold text-neutral-200 mt-1">
@@ -131,7 +131,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                             >
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="px-2 py-1 font-mono font-bold text-accent">
+                            <span className="px-2 py-1 font-mono font-bold text-accent-ink">
                               {item.quantity}
                             </span>
                             <button
@@ -144,7 +144,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                           <button 
                             onClick={() => onRemoveItem(item.part.id)}
-                            className="p-1 text-ink-subtle hover:text-red-400 transition ml-auto cursor-pointer"
+                            className="p-1 text-ink-subtle hover:text-danger-soft transition ml-auto cursor-pointer"
                             title="Устгах"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -170,7 +170,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     onClick={() => setClientType('company')}
                     className={`py-2 px-3 rounded-lg border text-center font-medium transition cursor-pointer ${
                       clientType === 'company' 
-                        ? 'bg-accent/20 border-accent text-amber-300' 
+                        ? 'bg-accent/20 border-accent text-warn' 
                         : 'bg-surface-3 border-neutral-700 text-ink-muted'
                     }`}
                   >
@@ -181,7 +181,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     onClick={() => setClientType('person')}
                     className={`py-2 px-3 rounded-lg border text-center font-medium transition cursor-pointer ${
                       clientType === 'person' 
-                        ? 'bg-accent/20 border-accent text-amber-300' 
+                        ? 'bg-accent/20 border-accent text-warn' 
                         : 'bg-surface-3 border-neutral-700 text-ink-muted'
                     }`}
                   >
@@ -254,35 +254,35 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   Төлбөрийн хэлбэр
                 </label>
                 <div className="space-y-1.5">
-                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3/80 border border-neutral-700 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3 border border-neutral-700 cursor-pointer">
                     <input 
                       type="radio" 
                       name="payment" 
                       checked={paymentMethod === 'invoice'} 
                       onChange={() => setPaymentMethod('invoice')}
-                      className="text-accent focus:ring-amber-400"
+                      className="text-accent-ink focus:ring-amber-400"
                     />
-                    <FileText className="w-4 h-4 text-accent" />
+                    <FileText className="w-4 h-4 text-accent-ink" />
                     <span>Байгууллагын нэхэмжлэх илгээх (Банкаар шилжүүлэх)</span>
                   </label>
-                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3/80 border border-neutral-700 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3 border border-neutral-700 cursor-pointer">
                     <input 
                       type="radio" 
                       name="payment" 
                       checked={paymentMethod === 'qpay'} 
                       onChange={() => setPaymentMethod('qpay')}
-                      className="text-accent focus:ring-amber-400"
+                      className="text-accent-ink focus:ring-amber-400"
                     />
-                    <CreditCard className="w-4 h-4 text-accent" />
+                    <CreditCard className="w-4 h-4 text-accent-ink" />
                     <span>QPay / Бүх банкны апп-аар шууд уншуулах</span>
                   </label>
-                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3/80 border border-neutral-700 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-3 border border-neutral-700 cursor-pointer">
                     <input 
                       type="radio" 
                       name="payment" 
                       checked={paymentMethod === 'cash'} 
                       onChange={() => setPaymentMethod('cash')}
-                      className="text-accent focus:ring-amber-400"
+                      className="text-accent-ink focus:ring-amber-400"
                     />
                     <span>Хүргэлтийн ажилтанд бэлнээр төлөх</span>
                   </label>
@@ -303,11 +303,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {step === 'success' && (
             <div className="text-center py-10 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-success border border-emerald-500/40 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
-                <span className="text-xs font-mono font-bold text-accent">
+                <span className="text-xs font-mono font-bold text-accent-ink">
                   {orderNumber}
                 </span>
                 <h3 className="text-xl font-black text-white mt-1">
@@ -315,21 +315,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </h3>
               </div>
               <p className="text-xs text-ink-muted leading-relaxed max-w-sm mx-auto">
-                Таны захиалгыг манай сэлбэгийн менежер хүлээн авлаа. Таны <strong className="text-accent">{phone}</strong> дугаар луу нэхэмжлэх болон хүргэлтийн товч мэдээллийг 15 минутын дотор илгээх болно.
+                Таны захиалгыг манай сэлбэгийн менежер хүлээн авлаа. Таны <strong className="text-accent-ink">{phone}</strong> дугаар луу нэхэмжлэх болон хүргэлтийн товч мэдээллийг 15 минутын дотор илгээх болно.
               </p>
 
-              <div className="p-3.5 rounded-xl bg-surface-3/80 border border-neutral-700 text-left text-xs space-y-1 text-ink-muted">
+              <div className="p-3.5 rounded-xl bg-surface-3 border border-neutral-700 text-left text-xs space-y-1 text-ink-muted">
                 <div className="flex justify-between">
                   <span className="text-ink-muted">Захиалгын дугаар:</span>
                   <span className="font-mono font-bold text-white">{orderNumber}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-ink-muted">Төлбөрийн хэлбэр:</span>
-                  <span className="text-accent font-semibold">{paymentMethod.toUpperCase()}</span>
+                  <span className="text-accent-ink font-semibold">{paymentMethod.toUpperCase()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-ink-muted">Нийт дүн (НӨАТ орсон):</span>
-                  <span className="font-bold text-emerald-400">{total.toLocaleString()} ₮</span>
+                  <span className="font-bold text-success">{total.toLocaleString()} ₮</span>
                 </div>
               </div>
 
@@ -358,7 +358,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </div>
               <div className="flex justify-between text-sm font-bold text-white pt-1 border-t border-line">
                 <span>Нийт төлөх:</span>
-                <span className="text-accent font-mono text-base">{total.toLocaleString()} ₮</span>
+                <span className="text-accent-ink font-mono text-base">{total.toLocaleString()} ₮</span>
               </div>
             </div>
 

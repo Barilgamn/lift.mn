@@ -203,7 +203,7 @@ export const Field: React.FC<FieldProps> = ({
       className="block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-1.5"
     >
       {label}
-      {required && <span className="text-accent ml-0.5">*</span>}
+      {required && <span className="text-accent-ink ml-0.5">*</span>}
     </label>
     {children}
     {error ? (
@@ -223,7 +223,7 @@ export const Stat: React.FC<{ value: string; label: string; className?: string }
   className = '',
 }) => (
   <div className={className}>
-    <div className="text-3xl sm:text-4xl font-black text-accent tabular-nums">{value}</div>
+    <div className="text-3xl sm:text-4xl font-black text-accent-ink tabular-nums">{value}</div>
     <div className="mt-1.5 text-[11px] sm:text-xs text-ink-muted leading-snug">{label}</div>
   </div>
 );

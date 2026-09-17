@@ -75,10 +75,10 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
         <div className="bg-gradient-to-r from-red-700 via-red-600 to-amber-600 p-5 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white animate-pulse">
-              <AlertTriangle className="w-6 h-6 text-amber-300" />
+              <AlertTriangle className="w-6 h-6 text-warn" />
             </div>
             <div>
-              <div className="text-xs uppercase tracking-widest font-black text-amber-200">
+              <div className="text-xs uppercase tracking-widest font-black text-warn">
                 24/7 Шуурхай Алба
               </div>
               <h2 className="text-xl font-black tracking-tight">
@@ -98,23 +98,23 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
         <div className="p-6">
           {isSubmitted ? (
             <div className="text-center py-6">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-success border border-emerald-500/40 flex items-center justify-center mx-auto mb-4 animate-bounce">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
-              <span className="text-xs font-bold text-accent uppercase tracking-widest">
+              <span className="text-xs font-bold text-accent-ink uppercase tracking-widest">
                 ДУУДЛАГА БҮРТГЭГДЛЭЭ #EMG-{Math.floor(1000 + Math.random() * 9000)}
               </span>
               <h3 className="text-2xl font-black text-white mt-1 mb-2">
                 Шуурхай Бригад Гарлаа!
               </h3>
               <p className="text-sm text-ink-muted max-w-md mx-auto mb-6 leading-relaxed">
-                Манай жижүүрийн шуурхай инженерийн баг дуудлагыг хүлээн авч, тухайн байршил руу гарлаа. <strong className="text-accent">Очих хугацаа ойролцоогоор 12-18 минут.</strong>
+                Манай жижүүрийн шуурхай инженерийн баг дуудлагыг хүлээн авч, тухайн байршил руу гарлаа. <strong className="text-accent-ink">Очих хугацаа ойролцоогоор 12-18 минут.</strong>
               </p>
 
               {/* Crucial Safety Advice */}
-              <div className="p-4 rounded-xl bg-red-950/60 border border-red-800 text-left text-xs text-red-200 mb-6 space-y-2">
-                <div className="font-bold flex items-center gap-1.5 text-red-300">
-                  <ShieldAlert className="w-4 h-4 text-red-400" />
+              <div className="p-4 rounded-xl bg-red-950/60 border border-red-800 text-left text-xs text-danger-soft mb-6 space-y-2">
+                <div className="font-bold flex items-center gap-1.5 text-danger-soft">
+                  <ShieldAlert className="w-4 h-4 text-danger-soft" />
                   <span>ЯАРАЛТАЙ САНАМЖ:</span>
                 </div>
                 <ul className="list-disc list-inside space-y-1 text-ink-muted">
@@ -145,13 +145,13 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
               
               {/* Emergency Callout Box */}
               <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2 text-red-300">
-                  <PhoneCall className="w-4 h-4 shrink-0 text-red-400" />
+                <div className="flex items-center gap-2 text-danger-soft">
+                  <PhoneCall className="w-4 h-4 shrink-0 text-danger-soft" />
                   <span>Шууд ярих шаардлагатай бол:</span>
                 </div>
                 <a 
                   href="tel:+97677232222" 
-                  className="font-mono font-bold text-sm text-amber-300 hover:underline px-2 py-1 rounded bg-red-900/60"
+                  className="font-mono font-bold text-sm text-warn hover:underline px-2 py-1 rounded bg-red-900/60"
                 >
                   (+976) 7723-2222
                 </a>

@@ -103,7 +103,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
     <div id="service-view" className="w-full bg-surface-1 text-ink min-h-screen">
       
       {/* 1. Header Banner */}
-      <section className="relative py-14 border-b border-line overflow-hidden bg-[#071326]">
+      <section className="relative py-14 border-b border-line overflow-hidden bg-surface-2">
         {/* Authentic Service Background Photo Overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none"
@@ -119,7 +119,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                 <span>Засвар, Оношилгоо, Үзлэг</span>
               </div>
               
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-3">
                 Лифтний Засвар Үйлчилгээ
               </h1>
               
@@ -131,14 +131,14 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
             {/* Emergency Quick Action Box */}
             <div className="p-6 rounded-2xl bg-red-950/40 border-2 border-red-600/60 shadow-xl shadow-red-950/40 max-w-md">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-red-600/30 flex items-center justify-center text-red-400 animate-pulse">
+                <div className="w-10 h-10 rounded-full bg-red-600/30 flex items-center justify-center text-danger-soft animate-pulse">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs uppercase font-extrabold text-red-300 tracking-wider">
+                  <div className="text-xs uppercase font-extrabold text-danger-soft tracking-wider">
                     НЭН ЯАРАЛТАЙ ДУУДЛАГА
                   </div>
-                  <div className="text-lg font-black text-white">
+                  <div className="text-lg font-black text-ink">
                     Лифтэнд хүн гацсан уу?
                   </div>
                 </div>
@@ -216,7 +216,8 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
       </section>
 
       {/* 2. Main Tab Contents */}
-      <section className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="theme-light bg-surface-1 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* TAB 1: ЗАХИАЛГЫН ХҮСЭЛТ ИЛГЭЭХ */}
         {activeTab === 'request' && (
@@ -224,7 +225,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
             <div className="p-6 md:p-8 rounded-2xl bg-surface-2 border border-line shadow-2xl">
               
               <div className="mb-6">
-                <h2 className="text-xl md:text-2xl font-black text-white">
+                <h2 className="text-xl md:text-2xl font-black text-ink">
                   Лифтний Засварын Хүсэлт Илгээх Маягт
                 </h2>
                 <p className="text-xs text-ink-muted mt-1">
@@ -234,13 +235,13 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
 
               {submittedTicket ? (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-success border border-emerald-500/40 flex items-center justify-center mx-auto mb-4">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
                   <span className="text-xs font-mono font-bold text-brand-bright uppercase tracking-wider">
                     ТИКЕТ ДУГААР: {submittedTicket.id}
                   </span>
-                  <h3 className="text-2xl font-black text-white mt-1 mb-2">
+                  <h3 className="text-2xl font-black text-ink mt-1 mb-2">
                     Таны хүсэлт амжилттай бүртгэгдлээ!
                   </h3>
                   <p className="text-xs text-ink-muted max-w-md mx-auto mb-6 leading-relaxed">
@@ -250,7 +251,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   <div className="p-4 rounded-xl bg-surface-1 border border-line text-left text-xs max-w-md mx-auto space-y-2 mb-6">
                     <div className="flex justify-between">
                       <span className="text-ink-muted">Хаяг:</span>
-                      <span className="text-white font-medium">{submittedTicket.address}</span>
+                      <span className="text-ink font-medium">{submittedTicket.address}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-ink-muted">Эвдрэлийн төрөл:</span>
@@ -258,11 +259,11 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                     <div className="flex justify-between">
                       <span className="text-ink-muted">Төлөв:</span>
-                      <span className="text-emerald-400 font-bold">{submittedTicket.status}</span>
+                      <span className="text-success font-bold">{submittedTicket.status}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-ink-muted">Очих баримжаа хугацаа:</span>
-                      <span className="text-white font-semibold">{submittedTicket.estimatedArrival}</span>
+                      <span className="text-ink font-semibold">{submittedTicket.estimatedArrival}</span>
                     </div>
                   </div>
 
@@ -273,7 +274,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         setDetails('');
                         setAddress('');
                       }}
-                      className="px-5 py-2.5 rounded-xl bg-surface-3 hover:bg-neutral-700 text-white font-bold text-xs uppercase cursor-pointer"
+                      className="px-5 py-2.5 rounded-xl bg-surface-3 hover:bg-neutral-700 text-ink font-bold text-xs uppercase cursor-pointer"
                     >
                       Шинэ хүсэлт илгээх
                     </button>
@@ -305,7 +306,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                           onClick={() => setClientType(t)}
                           className={`py-2 px-3 rounded-lg border text-center font-medium transition cursor-pointer ${
                             clientType === t 
-                              ? 'bg-brand/20 border-brand text-brand-bright' 
+                              ? 'bg-brand border-brand text-white' 
                               : 'bg-surface-3 border-line text-ink-muted'
                           }`}
                         >
@@ -327,7 +328,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         placeholder="Жишээ: Б. Болд (СӨХ-ийн дарга)"
                         value={contactName}
                         onChange={(e) => setContactName(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                     <div>
@@ -340,7 +341,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         placeholder="9911-XXXX"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white font-mono focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink font-mono focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                   </div>
@@ -354,7 +355,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       <select
                         value={district}
                         onChange={(e) => setDistrict(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       >
                         <option value="Хан-Уул дүүрэг">Хан-Уул дүүрэг</option>
                         <option value="Сүхбаатар дүүрэг">Сүхбаатар дүүрэг</option>
@@ -374,7 +375,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         placeholder="Жишээ: 15-р хороо, Рапид Харш 21-р байр 2-р орц"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                   </div>
@@ -388,7 +389,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       <select
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       >
                         <option value="OTIS">OTIS Elevator</option>
                         <option value="Mitsubishi">Mitsubishi Electric</option>
@@ -404,7 +405,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       <select
                         value={issueType}
                         onChange={(e) => setIssueType(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       >
                         <option value="Хаалга гацах / Нээгдэхгүй байх">Хаалга гацах / Нээгдэхгүй байх</option>
                         <option value="Лифт бүрэн ажиллахгүй зогссон">Лифт бүрэн ажиллахгүй зогссон</option>
@@ -427,7 +428,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         onClick={() => setUrgency('high')}
                         className={`p-2 rounded-lg border text-center font-bold transition cursor-pointer ${
                           urgency === 'high' 
-                            ? 'bg-red-600/30 border-red-500 text-red-300' 
+                            ? 'bg-danger border-danger text-white' 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
@@ -438,7 +439,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         onClick={() => setUrgency('medium')}
                         className={`p-2 rounded-lg border text-center font-bold transition cursor-pointer ${
                           urgency === 'medium' 
-                            ? 'bg-brand/20 border-brand text-brand-bright' 
+                            ? 'bg-brand border-brand text-white' 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
@@ -449,7 +450,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         onClick={() => setUrgency('low')}
                         className={`p-2 rounded-lg border text-center font-bold transition cursor-pointer ${
                           urgency === 'low' 
-                            ? 'bg-blue-500/20 border-blue-400 text-blue-300' 
+                            ? 'bg-brand border-brand text-white' 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
@@ -468,7 +469,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       placeholder="Лифтний нөхцөл байдал, ямар код зааж байгаа эсвэл хэзээнээс эхэлснийг бичнэ үү..."
                       value={details}
                       onChange={(e) => setDetails(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     />
                   </div>
 
@@ -495,7 +496,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
             <div className="p-6 md:p-8 rounded-2xl bg-surface-2 border border-line shadow-2xl">
               
               <div className="mb-6">
-                <h2 className="text-xl md:text-2xl font-black text-white">
+                <h2 className="text-xl md:text-2xl font-black text-ink">
                   Үзлэг Оношилгооны Цаг Захиалах
                 </h2>
                 <p className="text-xs text-ink-muted mt-1">
@@ -505,10 +506,10 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
 
               {bookingSuccess ? (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-success border border-emerald-500/40 flex items-center justify-center mx-auto mb-3">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="text-2xl font-black text-white mb-2">
+                  <h3 className="text-2xl font-black text-ink mb-2">
                     Цаг амжилттай товлогдлоо!
                   </h3>
                   <p className="text-xs text-ink-muted max-w-md mx-auto mb-6">
@@ -531,7 +532,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     <select
                       value={bookingService}
                       onChange={(e) => setBookingService(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     >
                       <option value="Сар тутмын хуваарьт техникийн үйлчилгээ">Сар тутмын хуваарьт техникийн үйлчилгээ (СӨХ гэрээ)</option>
                       <option value="1 удаагийн компьютерийн оношилгоо">1 удаагийн компьютерийн оношилгоо & алдаа тайлах</option>
@@ -551,7 +552,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         required
                         value={bookingDate}
                         onChange={(e) => setBookingDate(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                     <div>
@@ -561,7 +562,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       <select
                         value={bookingTime}
                         onChange={(e) => setBookingTime(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       >
                         <option value="09:00 - 11:00">09:00 - 11:00 (Өглөө)</option>
                         <option value="11:00 - 13:00">11:00 - 13:00 (Үдээс өмнө)</option>
@@ -582,7 +583,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         placeholder="9911-XXXX"
                         value={bookingPhone}
                         onChange={(e) => setBookingPhone(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white font-mono focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink font-mono focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                     <div>
@@ -593,7 +594,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         type="text"
                         required
                         placeholder="Жишээ: Сүхбаатар 1-р хороо, 5-р байр"
-                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                        className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                   </div>
@@ -622,7 +623,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
               <div className="text-xs font-bold text-brand-bright uppercase tracking-widest mb-2">
                 ИЛ ТОД ҮНЭ ТАРИФ
               </div>
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight mb-2">
+              <h2 className="text-2xl md:text-4xl font-extrabold text-ink tracking-tight mb-2">
                 Засвар Үйлчилгээний Хөлс ба Багцууд
               </h2>
               <p className="text-xs md:text-sm text-ink-muted">
@@ -647,7 +648,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                       </span>
                     )}
 
-                    <h3 className="text-base font-black text-white mb-1">
+                    <h3 className="text-base font-black text-ink mb-1">
                       {tariff.title}
                     </h3>
                     <div className="text-xs text-ink-muted mb-4">
@@ -655,7 +656,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
 
                     <div className="p-4 rounded-xl bg-surface-1 border border-line mb-6">
-                      <div className="text-2xl md:text-3xl font-black text-accent font-mono">
+                      <div className="text-2xl md:text-3xl font-black text-accent-ink font-mono">
                         {tariff.price}
                       </div>
                       <div className="text-[11px] text-ink-subtle">
@@ -691,8 +692,8 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
             </div>
 
             {/* Tariff Notes */}
-            <div className="p-6 rounded-2xl bg-surface-2/60 border border-line text-xs text-ink-muted space-y-2 max-w-4xl mx-auto">
-              <div className="font-bold text-white flex items-center gap-2">
+            <div className="p-6 rounded-2xl bg-surface-2 border border-line text-xs text-ink-muted space-y-2 max-w-4xl mx-auto">
+              <div className="font-bold text-ink flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-brand-bright" />
                 <span>ТАРИФЫН ТУХАЙ ТАЙЛБАР БА САНАМЖ:</span>
               </div>
@@ -715,7 +716,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
             <div className="p-6 md:p-8 rounded-2xl bg-surface-2 border border-line shadow-2xl">
               
               <div className="mb-6">
-                <h2 className="text-xl md:text-2xl font-black text-white">
+                <h2 className="text-xl md:text-2xl font-black text-ink">
                   Засварын Дуудлага / Тикетийн Явц Шалгах
                 </h2>
                 <p className="text-xs text-ink-muted mt-1">
@@ -732,7 +733,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     placeholder="Жишээ: DL-2026-9041 эсвэл DL-2026-9039"
                     value={searchTicketId}
                     onChange={(e) => setSearchTicketId(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-white font-mono text-xs focus:border-brand-bright focus:outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-ink font-mono text-xs focus:border-brand-bright focus:outline-none"
                   />
                 </div>
                 <button
@@ -744,7 +745,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
               </form>
 
               {searchError && (
-                <div className="p-4 rounded-xl bg-red-950/40 border border-red-800 text-xs text-red-300 text-center">
+                <div className="p-4 rounded-xl bg-red-950/40 border border-red-800 text-xs text-danger-soft text-center">
                   Уучлаарай, "{searchTicketId}" дугаартай тикет олдсонгүй. Дугаараа зөв эсэхийг шалгана уу.
                 </div>
               )}
@@ -754,16 +755,16 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
                     <div>
                       <span className="text-[10px] font-mono text-ink-muted">Тикет дугаар:</span>
-                      <div className="text-lg font-mono font-black text-accent">{searchedTicket.id}</div>
+                      <div className="text-lg font-mono font-black text-accent-ink">{searchedTicket.id}</div>
                     </div>
-                    <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30">
+                    <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-success font-bold text-xs border border-emerald-500/30">
                       {searchedTicket.status}
                     </div>
                   </div>
 
                   {/* Visual Status Step Indicator */}
                   <div className="grid grid-cols-4 gap-2 pt-2 text-center text-[10px]">
-                    <div className="p-2 rounded bg-accent/20 border border-accent text-amber-300 font-bold">
+                    <div className="p-2 rounded bg-accent/20 border border-accent text-warn font-bold">
                       1. Хүлээн авсан
                     </div>
                     <div className={`p-2 rounded border ${
@@ -782,7 +783,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                     <div className={`p-2 rounded border ${
                       searchedTicket.status === 'Амжилттай шийдвэрлэсэн'
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 font-bold' 
+                        ? 'bg-emerald-500/20 border-emerald-500 text-success font-bold' 
                         : 'bg-surface-2 border-line text-ink-subtle'
                     }`}>
                       4. Дууссан
@@ -790,21 +791,21 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
-                    <div className="p-3 rounded-lg bg-surface-2 border border-line/80">
+                    <div className="p-3 rounded-lg bg-surface-2 border border-line">
                       <span className="text-ink-subtle block">Байршил:</span>
-                      <span className="font-semibold text-white">{searchedTicket.address}</span>
+                      <span className="font-semibold text-ink">{searchedTicket.address}</span>
                     </div>
-                    <div className="p-3 rounded-lg bg-surface-2 border border-line/80">
+                    <div className="p-3 rounded-lg bg-surface-2 border border-line">
                       <span className="text-ink-subtle block">Лифтний марк:</span>
                       <span className="font-semibold text-brand-bright">{searchedTicket.brand}</span>
                     </div>
-                    <div className="p-3 rounded-lg bg-surface-2 border border-line/80">
+                    <div className="p-3 rounded-lg bg-surface-2 border border-line">
                       <span className="text-ink-subtle block">Томилогдсон инженер:</span>
-                      <span className="font-semibold text-white">{searchedTicket.assignedEngineer}</span>
+                      <span className="font-semibold text-ink">{searchedTicket.assignedEngineer}</span>
                     </div>
-                    <div className="p-3 rounded-lg bg-surface-2 border border-line/80">
+                    <div className="p-3 rounded-lg bg-surface-2 border border-line">
                       <span className="text-ink-subtle block">Хүлээгдэж буй хугацаа:</span>
-                      <span className="font-semibold text-emerald-400">{searchedTicket.estimatedArrival}</span>
+                      <span className="font-semibold text-success">{searchedTicket.estimatedArrival}</span>
                     </div>
                   </div>
 
@@ -841,6 +842,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
           </div>
         )}
 
+        </div>
       </section>
 
     </div>

@@ -111,7 +111,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
       )}
 
       {/* 1. Header Banner */}
-      <section className="relative py-14 border-b border-line overflow-hidden bg-gradient-to-b from-neutral-900 to-neutral-950">
+      <section className="relative py-14 border-b border-line overflow-hidden bg-gradient-to-b from-surface-2 to-surface-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-2xl">
@@ -120,7 +120,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 <span>Лифтний Оригинал Сэлбэгийн Дэлгүүр</span>
               </div>
               
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-3">
                 Лифт, Эскалаторын Сэлбэг Хэрэгсэл
               </h1>
               
@@ -137,7 +137,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 </div>
                 <div>
                   <div className="text-xs text-ink-muted">Таны сагс:</div>
-                  <div className="text-lg font-black text-white">{cartCount} бараа</div>
+                  <div className="text-lg font-black text-ink">{cartCount} бараа</div>
                 </div>
               </div>
               <button
@@ -154,7 +154,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
           {/* Quick value props */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-line text-xs text-ink-muted">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <ShieldCheck className="w-4 h-4 text-success shrink-0" />
               <span>100% Оригинал OEM эд анги</span>
             </div>
             <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
               <span>УБ хотод өдөрт нь хүргэнэ</span>
             </div>
             <div className="flex items-center gap-2">
-              <FileCheck2 className="w-4 h-4 text-blue-400 shrink-0" />
+              <FileCheck2 className="w-4 h-4 text-brand-bright shrink-0" />
               <span>НӨАТ-ын баримт & Нэхэмжлэх</span>
             </div>
             <div className="flex items-center gap-2">
@@ -174,7 +174,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
       </section>
 
       {/* 2. Catalog & Search & Filters */}
-      <section className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="theme-light bg-surface-1 py-10 border-b border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Search & Brand Filter Bar */}
         <div className="p-4 rounded-2xl bg-surface-2 border border-line mb-6 flex flex-col md:flex-row gap-3 items-center justify-between">
@@ -186,7 +187,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
               placeholder="Сэлбэгийн нэр эсвэл кодоор хайх (Жишээ: NICE, AT120, 10mm)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-white text-xs placeholder:text-ink-subtle focus:border-brand-bright focus:outline-none"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-ink text-xs placeholder:text-ink-subtle focus:border-brand-bright focus:outline-none"
             />
           </div>
 
@@ -196,7 +197,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-surface-3 border border-line text-white text-xs focus:border-brand-bright focus:outline-none cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-surface-3 border border-line text-ink text-xs focus:border-brand-bright focus:outline-none cursor-pointer"
             >
               <option value="all">Бүх брэнд</option>
               {brands.filter(b => b !== 'all').map(b => (
@@ -225,9 +226,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
         {/* Products Grid */}
         {filteredParts.length === 0 ? (
-          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2/60 border border-line text-ink-muted">
+          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
             <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright" />
-            <p className="text-sm font-semibold text-white">Хайлтад тохирох сэлбэг олдсонгүй</p>
+            <p className="text-sm font-semibold text-ink">Хайлтад тохирох сэлбэг олдсонгүй</p>
             <p className="text-xs text-ink-subtle mt-1 mb-4">
               Та доорх "Олдохгүй байгаа сэлбэг захиалах" тусгай маягтаар хүсэлтээ илгээнэ үү.
             </p>
@@ -259,11 +260,11 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
                     <div className="absolute top-2.5 right-2.5">
                       {part.inStock ? (
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 text-[10px] font-bold">
                           Бэлэн ({part.stockCount})
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-warn border border-amber-500/40 text-[10px] font-bold">
                           Захиалгаар
                         </span>
                       )}
@@ -275,7 +276,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     <div className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
                       {part.oemCode}
                     </div>
-                    <h3 className="text-xs font-bold text-white line-clamp-2 mb-2 group-hover:text-amber-300 transition">
+                    <h3 className="text-xs font-bold text-ink line-clamp-2 mb-2 group-hover:text-warn transition">
                       {part.name}
                     </h3>
                     <div className="text-[11px] text-ink-muted line-clamp-2 mb-3">
@@ -289,7 +290,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
                     <div className="pt-2 border-t border-line flex items-baseline justify-between">
                       <span className="text-xs text-ink-subtle">Үнэ:</span>
-                      <span className="text-base font-black text-accent font-mono">
+                      <span className="text-base font-black text-accent-ink font-mono">
                         {part.price.toLocaleString()} ₮
                       </span>
                     </div>
@@ -319,10 +320,11 @@ export const PartsView: React.FC<PartsViewProps> = ({
           </div>
         )}
 
+        </div>
       </section>
 
       {/* 3. Олдохгүй байгаа сэлбэг захиалах (Custom Sourcing Form) */}
-      <section id="source-section" className="py-16 md:py-20 border-t border-line bg-surface-2/40">
+      <section id="source-section" className="py-16 md:py-20 border-t border-line bg-surface-2">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="p-8 md:p-10 rounded-2xl bg-surface-2 border border-line shadow-2xl">
@@ -331,7 +333,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Тусгай Захиалга</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white">
+              <h2 className="text-2xl md:text-3xl font-black text-ink">
                 Олдохгүй Байгаа Сэлбэг Захиалах
               </h2>
               <p className="text-xs text-ink-muted mt-1">
@@ -341,12 +343,12 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
             {sourceSuccess ? (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto mb-3" />
-                <h3 className="text-xl font-bold text-white mb-2">
+                <CheckCircle2 className="w-14 h-14 text-success mx-auto mb-3" />
+                <h3 className="text-xl font-bold text-ink mb-2">
                   Сэлбэгийн хүсэлт хүлээн авлаа!
                 </h3>
                 <p className="text-xs text-ink-muted max-w-md mx-auto mb-6">
-                  Манай гадаад худалдааны менежер тухайн сэлбэгийн үйлдвэрийн нийлүүлэлт, тээврийн хугацаа болон үнийн тооцоог таны <strong className="text-accent">{sourcePhone}</strong> дугаарт 2 цагийн дотор мэдэгдэх болно.
+                  Манай гадаад худалдааны менежер тухайн сэлбэгийн үйлдвэрийн нийлүүлэлт, тээврийн хугацаа болон үнийн тооцоог таны <strong className="text-accent-ink">{sourcePhone}</strong> дугаарт 2 цагийн дотор мэдэгдэх болно.
                 </p>
                 <button
                   onClick={() => setSourceSuccess(false)}
@@ -365,7 +367,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     <select
                       value={sourceBrand}
                       onChange={(e) => setSourceBrand(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     >
                       <option value="OTIS">OTIS</option>
                       <option value="Mitsubishi">Mitsubishi</option>
@@ -387,7 +389,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       placeholder="Жишээ: 2012 эсвэл 2005 он"
                       value={sourceYear}
                       onChange={(e) => setSourceYear(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     />
                   </div>
                 </div>
@@ -402,7 +404,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     placeholder="Жишээ: Хаалганы серво мотор, Редукторын араа, Дэлгэцийн хавтан..."
                     value={sourcePartName}
                     onChange={(e) => setSourcePartName(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                   />
                 </div>
 
@@ -417,7 +419,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       placeholder="9911-XXXX"
                       value={sourcePhone}
                       onChange={(e) => setSourcePhone(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white font-mono focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink font-mono focus:border-brand-bright focus:outline-none"
                     />
                   </div>
 
@@ -428,7 +430,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     <input 
                       type="text"
                       placeholder="Жишээ: Шинэ Өргөө СӨХ"
-                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     />
                   </div>
                 </div>
@@ -442,7 +444,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     placeholder="Хэрэв сэлбэгийн пайз (Model/Part No), вольт, ватт бичигдсэн бол энд бичнэ үү..."
                     value={sourceNotes}
                     onChange={(e) => setSourceNotes(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-white focus:border-brand-bright focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                   />
                 </div>
 
@@ -466,7 +468,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
       {/* Product Detail Modal */}
       {detailPart && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-surface-2 border border-line rounded-2xl shadow-2xl p-6 text-white">
+          <div className="relative w-full max-w-lg bg-surface-2 border border-line rounded-2xl shadow-2xl p-6 text-ink">
             <div className="flex items-center justify-between mb-4 border-b border-line pb-3">
               <div>
                 <span className="text-[10px] font-mono text-brand-bright font-bold uppercase">{detailPart.brand} OEM</span>
@@ -474,7 +476,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
               </div>
               <button 
                 onClick={() => setDetailPart(null)}
-                className="p-1.5 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted hover:text-white cursor-pointer"
+                className="p-1.5 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted hover:text-ink cursor-pointer"
               >
                 ✕
               </button>
@@ -492,26 +494,26 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
             {/* Specs Table */}
             <div className="p-3.5 rounded-xl bg-surface-1 border border-line text-xs space-y-1.5 mb-4">
-              <div className="flex justify-between border-b border-line/80 pb-1">
+              <div className="flex justify-between border-b border-line pb-1">
                 <span className="text-ink-subtle">OEM Код:</span>
                 <span className="font-mono font-bold text-brand-bright">{detailPart.oemCode}</span>
               </div>
               {Object.entries(detailPart.specs).map(([key, val]) => (
-                <div key={key} className="flex justify-between border-b border-line/80 pb-1">
+                <div key={key} className="flex justify-between border-b border-line pb-1">
                   <span className="text-ink-subtle">{key}:</span>
                   <span className="font-semibold text-neutral-200">{val}</span>
                 </div>
               ))}
               <div className="flex justify-between pt-1">
                 <span className="text-ink-subtle">Хүргэлт:</span>
-                <span className="font-semibold text-emerald-400">{detailPart.deliveryDays}</span>
+                <span className="font-semibold text-success">{detailPart.deliveryDays}</span>
               </div>
             </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className="text-[10px] text-ink-subtle">Нэгжийн үнэ:</div>
-                <div className="text-lg font-black text-accent font-mono">
+                <div className="text-lg font-black text-accent-ink font-mono">
                   {detailPart.price.toLocaleString()} ₮
                 </div>
               </div>

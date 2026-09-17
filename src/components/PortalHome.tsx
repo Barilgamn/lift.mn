@@ -145,7 +145,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
             <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3/90 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
 
@@ -213,7 +213,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
             <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3/90 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
                 <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
 
