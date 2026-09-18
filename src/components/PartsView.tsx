@@ -30,7 +30,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
   onOpenCart, 
   cartCount 
 }) => {
-  const { products: SPARE_PARTS } = useProducts();
+  const { products: SPARE_PARTS, loading: productsLoading } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -248,7 +248,12 @@ export const PartsView: React.FC<PartsViewProps> = ({
         </div>
 
         {/* Products Grid */}
-        {filteredParts.length === 0 ? (
+        {productsLoading ? (
+          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
+            <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright animate-pulse" />
+            <p className="text-sm font-semibold text-ink">Сэлбэгийн жагсаалт ачаалж байна…</p>
+          </div>
+        ) : filteredParts.length === 0 ? (
           <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
             <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright" />
             <p className="text-sm font-semibold text-ink">Хайлтад тохирох сэлбэг олдсонгүй</p>
