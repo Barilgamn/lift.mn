@@ -10,6 +10,18 @@
 --   - Шинээр бүртгүүлсэн хэрэглэгч автоматаар 'viewer' болно — ямар ч
 --     эрхгүй. Хэн нэгэн санамсаргүй бүртгүүлсэн ч өгөгдөл харахгүй.
 
+-- Өмнөх хувилбарын кирилл нэртэй бодлогуудыг цэвэрлэнэ.
+-- Тэр хувилбарыг ажиллуулж байгаагүй бол эдгээр мөр юу ч хийхгүй.
+drop policy if exists "profiles: өөрийгөө унших" on public.profiles;
+drop policy if exists "elevators: админ бүрэн эрх" on public.elevators;
+drop policy if exists "service_records: админ бүрэн эрх" on public.service_records;
+drop policy if exists "submissions: зочин илгээх" on public.submissions;
+drop policy if exists "submissions: админ унших" on public.submissions;
+drop policy if exists "submissions: админ засах" on public.submissions;
+drop policy if exists "submissions: админ устгах" on public.submissions;
+drop policy if exists "products: нийтэд унших" on public.products;
+drop policy if exists "products: админ засах" on public.products;
+
 -- ============================================================ profiles
 
 create table if not exists public.profiles (
@@ -23,8 +35,8 @@ create table if not exists public.profiles (
 alter table public.profiles enable row level security;
 
 -- Хэрэглэгч зөвхөн өөрийн профайлыг уншина
-drop policy if exists "profiles: өөрийгөө унших" on public.profiles;
-create policy "profiles: өөрийгөө унших"
+drop policy if exists "profiles: self read" on public.profiles;
+create policy "profiles: self read"
   on public.profiles for select
   using (id = auth.uid());
 
@@ -96,8 +108,8 @@ create table if not exists public.elevators (
 
 alter table public.elevators enable row level security;
 
-drop policy if exists "elevators: админ бүрэн эрх" on public.elevators;
-create policy "elevators: админ бүрэн эрх"
+drop policy if exists "elevators: admin all" on public.elevators;
+create policy "elevators: admin all"
   on public.elevators for all
   using (public.is_admin()) with check (public.is_admin());
 
@@ -124,8 +136,8 @@ create index if not exists idx_records_date on public.service_records(date desc)
 
 alter table public.service_records enable row level security;
 
-drop policy if exists "service_records: админ бүрэн эрх" on public.service_records;
-create policy "service_records: админ бүрэн эрх"
+drop policy if exists "service_records: admin all" on public.service_records;
+create policy "service_records: admin all"
   on public.service_records for all
   using (public.is_admin()) with check (public.is_admin());
 
@@ -170,8 +182,8 @@ alter table public.submissions enable row level security;
 
 -- Сайтын маягт — нэвтрээгүй зочин ЗӨВХӨН нэмнэ. Уншиж чадахгүй тул
 -- бусдын илгээсэн хүсэлт, утасны дугаар гадагш гарахгүй.
-drop policy if exists "submissions: зочин илгээх" on public.submissions;
-create policy "submissions: зочин илгээх"
+drop policy if exists "submissions: guest insert" on public.submissions;
+create policy "submissions: guest insert"
   on public.submissions for insert
   to anon, authenticated
   with check (
@@ -181,17 +193,17 @@ create policy "submissions: зочин илгээх"
     and status = 'new'
   );
 
-drop policy if exists "submissions: админ унших" on public.submissions;
-create policy "submissions: админ унших"
+drop policy if exists "submissions: admin read" on public.submissions;
+create policy "submissions: admin read"
   on public.submissions for select using (public.is_admin());
 
-drop policy if exists "submissions: админ засах" on public.submissions;
-create policy "submissions: админ засах"
+drop policy if exists "submissions: admin update" on public.submissions;
+create policy "submissions: admin update"
   on public.submissions for update
   using (public.is_admin()) with check (public.is_admin());
 
-drop policy if exists "submissions: админ устгах" on public.submissions;
-create policy "submissions: админ устгах"
+drop policy if exists "submissions: admin delete" on public.submissions;
+create policy "submissions: admin delete"
   on public.submissions for delete using (public.is_admin());
 
 -- ============================================================ products
@@ -215,11 +227,11 @@ create table if not exists public.products (
 alter table public.products enable row level security;
 
 -- Дэлгүүр нийтэд нээлттэй тул бүтээгдэхүүнийг хэн ч уншина
-drop policy if exists "products: нийтэд унших" on public.products;
-create policy "products: нийтэд унших"
+drop policy if exists "products: public read" on public.products;
+create policy "products: public read"
   on public.products for select to anon, authenticated using (true);
 
-drop policy if exists "products: админ засах" on public.products;
-create policy "products: админ засах"
+drop policy if exists "products: admin all" on public.products;
+create policy "products: admin all"
   on public.products for all
   using (public.is_admin()) with check (public.is_admin());
