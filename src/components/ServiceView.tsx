@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { submitForm, HOTLINE } from '../lib/submitForm';
+
+/** Энэ төхөөрөмжөөс илгээсэн хүсэлтүүдийн түлхүүр */
+const MY_TICKETS_KEY = 'lift.mn:my-tickets';
 import { 
   Wrench, 
   AlertTriangle, 
@@ -14,7 +18,7 @@ import {
   HelpCircle,
   Truck
 } from 'lucide-react';
-import { TARIFF_PLANS, INITIAL_TICKETS } from '../data/mockData';
+import { TARIFF_PLANS } from '../data/mockData';
 import { ServiceTicket } from '../types';
 
 interface ServiceViewProps {
@@ -23,7 +27,27 @@ interface ServiceViewProps {
 
 export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => {
   const [activeTab, setActiveTab] = useState<'request' | 'booking' | 'tariffs' | 'track'>('request');
-  const [tickets, setTickets] = useState<ServiceTicket[]>(INITIAL_TICKETS);
+  // Энэ хөтөч дээрээс илгээсэн хүсэлтүүд. Өгөгдлийн сангийн бодлого зочинд
+  // `submissions`-ыг унших эрх өгдөггүй (бусдын утасны дугаар хамгаалагдана),
+  // тиймээс явцыг зөвхөн илгээсэн төхөөрөмж дээрээ хардаг.
+  const [tickets, setTickets] = useState<ServiceTicket[]>(() => {
+    try {
+      const saved = localStorage.getItem(MY_TICKETS_KEY);
+      return saved ? (JSON.parse(saved) as ServiceTicket[]) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const rememberTicket = (ticket: ServiceTicket) => {
+    const next = [ticket, ...tickets].slice(0, 20);
+    setTickets(next);
+    try {
+      localStorage.setItem(MY_TICKETS_KEY, JSON.stringify(next));
+    } catch {
+      // Хувийн горимд хадгалалт хаагдсан байж болно — тоохгүй өнгөрнө
+    }
+  };
   
   // Service Request Form State
   const [clientType, setClientType] = useState('СӨХ');
@@ -36,28 +60,62 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
   const [urgency, setUrgency] = useState<'low' | 'medium' | 'high'>('high');
   const [details, setDetails] = useState('');
   const [submittedTicket, setSubmittedTicket] = useState<ServiceTicket | null>(null);
+  const [serviceSending, setServiceSending] = useState(false);
+  const [serviceError, setServiceError] = useState('');
 
   // Booking Form State
   const [bookingService, setBookingService] = useState('Сар тутмын хуваарьт техникийн үйлчилгээ');
   const [bookingDate, setBookingDate] = useState('2026-09-18');
   const [bookingTime, setBookingTime] = useState('10:00 - 12:00');
   const [bookingPhone, setBookingPhone] = useState('');
+  const [bookingAddress, setBookingAddress] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingSending, setBookingSending] = useState(false);
+  const [bookingError, setBookingError] = useState('');
 
   // Ticket Tracker State
   const [searchTicketId, setSearchTicketId] = useState('');
   const [searchedTicket, setSearchedTicket] = useState<ServiceTicket | null>(null);
   const [searchError, setSearchError] = useState(false);
 
-  const handleServiceSubmit = (e: React.FormEvent) => {
+  const URGENCY_LABELS: Record<string, string> = {
+    high: 'Яаралтай',
+    medium: 'Хэвийн',
+    low: 'Сул',
+  };
+
+  const handleServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !address || !contactName) {
-      alert('Шаардлагатай талбаруудыг бүрэн бөглөнө үү!');
+      setServiceError('Нэр, утас, хаяг гурвыг бүрэн бөглөнө үү.');
+      return;
+    }
+    setServiceError('');
+    setServiceSending(true);
+
+    const result = await submitForm('service-ticket', {
+      contactName,
+      phone,
+      summary: `${issueType} — ${district}`,
+      details: {
+        'Харилцагчийн төрөл': clientType,
+        'Дүүрэг': district,
+        'Хаяг': address,
+        'Тоноглолын брэнд': brand,
+        'Асуудлын төрөл': issueType,
+        'Яаралтай байдал': URGENCY_LABELS[urgency] ?? urgency,
+        'Нэмэлт тайлбар': details,
+      },
+    });
+
+    setServiceSending(false);
+    if (result.status === 'failed') {
+      setServiceError(result.message);
       return;
     }
 
     const newTicket: ServiceTicket = {
-      id: `DL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: result.id,
       createdAt: new Date().toLocaleString('mn-MN'),
       clientType,
       contactName,
@@ -73,17 +131,33 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
       estimatedArrival: urgency === 'high' ? '30 минутын дотор' : 'Өнөөдөртөө'
     };
 
-    setTickets([newTicket, ...tickets]);
+    rememberTicket(newTicket);
     setSubmittedTicket(newTicket);
   };
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookingPhone) {
-      alert('Утасны дугаараа оруулна уу!');
+      setBookingError('Утасны дугаараа оруулна уу.');
       return;
     }
-    setBookingSuccess(true);
+    setBookingError('');
+    setBookingSending(true);
+
+    const result = await submitForm('booking', {
+      phone: bookingPhone,
+      summary: `${bookingService} · ${bookingDate} ${bookingTime}`,
+      details: {
+        'Үйлчилгээний төрөл': bookingService,
+        'Барилгын хаяг': bookingAddress,
+        'Товлосон огноо': bookingDate,
+        'Товлосон цаг': bookingTime,
+      },
+    });
+
+    setBookingSending(false);
+    if (result.status === 'sent') setBookingSuccess(true);
+    else setBookingError(result.message);
   };
 
   const handleSearchTicket = (e: React.FormEvent) => {
@@ -473,13 +547,20 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     />
                   </div>
 
+                  {serviceError && (
+                    <p role="alert" className="text-[11px] text-danger-soft leading-relaxed">
+                      {serviceError}
+                    </p>
+                  )}
+
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30"
+                      disabled={serviceSending}
+                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
                     >
                       <Wrench className="w-4 h-4" />
-                      <span>Засварын дуудлага / хүсэлт илгээх</span>
+                      <span>{serviceSending ? 'Илгээж байна…' : 'Засварын дуудлага / хүсэлт илгээх'}</span>
                     </button>
                   </div>
 
@@ -594,18 +675,27 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         type="text"
                         required
                         placeholder="Жишээ: Сүхбаатар 1-р хороо, 5-р байр"
+                        value={bookingAddress}
+                        onChange={(e) => setBookingAddress(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       />
                     </div>
                   </div>
 
+                  {bookingError && (
+                    <p role="alert" className="text-[11px] text-danger-soft leading-relaxed">
+                      {bookingError}
+                    </p>
+                  )}
+
                   <div className="pt-3">
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30"
+                      disabled={bookingSending}
+                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
                     >
                       <Calendar className="w-4 h-4" />
-                      <span>Үзлэгийн цаг захиалгыг илгээх</span>
+                      <span>{bookingSending ? 'Илгээж байна…' : 'Үзлэгийн цаг захиалгыг илгээх'}</span>
                     </button>
                   </div>
 
@@ -745,8 +835,13 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
               </form>
 
               {searchError && (
-                <div className="p-4 rounded-xl bg-red-950/40 border border-red-800 text-xs text-danger-soft text-center">
-                  Уучлаарай, "{searchTicketId}" дугаартай тикет олдсонгүй. Дугаараа зөв эсэхийг шалгана уу.
+                <div className="p-4 rounded-xl bg-red-950/40 border border-red-800 text-xs text-danger-soft text-center leading-relaxed">
+                  <strong>{searchTicketId}</strong> дугаар энэ төхөөрөмжөөс илгээсэн
+                  хүсэлтүүдийн дунд алга байна.
+                  <br />
+                  Явцыг зөвхөн хүсэлтээ илгээсэн хөтчөөсөө хардаг. Өөр утас, компьютер
+                  ашигласан бол <strong className="font-mono">{HOTLINE}</strong> дугаар луу
+                  залгаж лавлана уу.
                 </div>
               )}
 
@@ -816,10 +911,10 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                 </div>
               )}
 
-              {/* Sample Tickets for easy testing */}
-              <div className="mt-8 pt-6 border-t border-line">
+              {/* Энэ төхөөрөмжөөс илгээсэн хүсэлтүүд */}
+              <div className={`mt-8 pt-6 border-t border-line ${tickets.length ? '' : 'hidden'}`}>
                 <div className="text-xs font-semibold text-ink-muted mb-2">
-                  Идэвхтэй байгаа тикетүүд (Тест хийхдээ дарна уу):
+                  Энэ төхөөрөмжөөс илгээсэн хүсэлтүүд:
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {tickets.slice(0, 3).map(t => (

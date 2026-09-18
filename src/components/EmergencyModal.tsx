@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { submitForm, HOTLINE } from '../lib/submitForm';
 import { 
   X, 
   AlertTriangle, 
@@ -31,15 +32,42 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
   const [floor, setFloor] = useState('');
   const [notes, setNotes] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !address) {
-      alert('Утасны дугаар болон байршлын хаягийг заавал оруулна уу!');
+      setError('Утасны дугаар болон байршлын хаягийг заавал оруулна уу.');
       return;
     }
+    setError('');
+    setSending(true);
+
+    const result = await submitForm('emergency', {
+      contactName,
+      phone,
+      summary: `${district} · ${address} · ${stuckCount} хүн`,
+      details: {
+        'Дүүрэг': district,
+        'Хаяг': address,
+        'Гацсан хүний тоо': stuckCount,
+        'Давхар': floor,
+        'Эмзэг бүлэг байгаа': hasVulnerable ? 'Тийм' : 'Үгүй',
+        'Нэмэлт тайлбар': notes,
+      },
+    });
+
+    setSending(false);
+
+    if (result.status === 'failed') {
+      // Хүн лифтэнд гацсан байж болзошгүй — залгах дугаарыг тэргүүнд гаргана
+      setError(`${HOTLINE} дугаар луу ЯАРАЛТАЙ залгана уу. Хүсэлт илгээгдсэнгүй: ${result.message}`);
+      return;
+    }
+
     setIsSubmitted(true);
     if (onSubmitEmergency) {
       onSubmitEmergency({
@@ -58,6 +86,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
 
   const handleReset = () => {
     setIsSubmitted(false);
+    setError('');
     setAddress('');
     setPhone('');
     setContactName('');
@@ -283,12 +312,22 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-red-600/30 cursor-pointer"
+                  disabled={sending}
+                  className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-red-600/30 cursor-pointer disabled:opacity-60 disabled:cursor-wait"
                 >
                   <AlertTriangle className="w-4 h-4" />
-                  <span>Шуурхай дуудлага илгээх</span>
+                  <span>{sending ? 'Илгээж байна…' : 'Шуурхай дуудлага илгээх'}</span>
                 </button>
               </div>
+
+              {error && (
+                <div
+                  role="alert"
+                  className="mt-3 p-3 rounded-lg bg-red-600/15 border border-red-500/50 text-red-200 text-xs leading-relaxed"
+                >
+                  {error}
+                </div>
+              )}
 
             </form>
           )}

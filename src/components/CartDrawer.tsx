@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { submitForm } from '../lib/submitForm';
 import { 
   X, 
   Trash2, 
@@ -38,6 +39,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'invoice' | 'qpay' | 'cash'>('invoice');
   const [orderNumber, setOrderNumber] = useState('');
+  const [orderSending, setOrderSending] = useState(false);
+  const [orderError, setOrderError] = useState('');
 
   if (!isOpen) return null;
 
@@ -45,14 +48,50 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const vat = Math.round(subtotal * 0.1);
   const total = subtotal + vat;
 
-  const handleCheckoutSubmit = (e: React.FormEvent) => {
+  const PAYMENT_LABELS: Record<string, string> = {
+    invoice: 'Нэхэмжлэхээр',
+    qpay: 'QPay',
+    cash: 'Бэлнээр',
+  };
+
+  const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !deliveryAddress) {
-      alert('Утас болон хүргэлтийн хаягаа заавал оруулна уу!');
+      setOrderError('Утас болон хүргэлтийн хаягаа оруулна уу.');
       return;
     }
-    const newOrderNo = `LIFT-ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-    setOrderNumber(newOrderNo);
+    setOrderError('');
+    setOrderSending(true);
+
+    // Захиалгын мөр бүрийг админд уншигдахаар бичнэ
+    const lines = cartItems
+      .map((item) => `${item.part.name} × ${item.quantity} = ${(item.part.price * item.quantity).toLocaleString()}₮`)
+      .join('\n');
+
+    const result = await submitForm('order', {
+      contactName: clientType === 'company' ? companyName : '',
+      phone,
+      summary: `${cartItems.length} нэр төрөл · ${total.toLocaleString()}₮`,
+      details: {
+        'Харилцагчийн төрөл': clientType === 'company' ? 'Байгууллага' : 'Хувь хүн',
+        'Байгууллагын нэр': companyName,
+        'Регистр': registerNo,
+        'Хүргэлтийн хаяг': deliveryAddress,
+        'Төлбөрийн хэлбэр': PAYMENT_LABELS[paymentMethod] ?? paymentMethod,
+        'Захиалга': lines,
+        'Дүн (НӨАТ-гүй)': `${subtotal.toLocaleString()}₮`,
+        'НӨАТ': `${vat.toLocaleString()}₮`,
+        'Нийт': `${total.toLocaleString()}₮`,
+      },
+    });
+
+    setOrderSending(false);
+    if (result.status === 'failed') {
+      setOrderError(result.message);
+      return;
+    }
+
+    setOrderNumber(result.id);
     setStep('success');
     onClearCart();
   };
@@ -289,12 +328,23 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
               </div>
 
+              {orderError && (
+                <p role="alert" className="text-[11px] text-danger-soft leading-relaxed">
+                  {orderError}
+                </p>
+              )}
+
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 px-4 rounded-xl bg-accent hover:bg-amber-300 text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-400/20"
+                  disabled={orderSending}
+                  className="w-full py-2.5 px-4 rounded-xl bg-accent hover:bg-amber-300 text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-400/20 disabled:opacity-60 disabled:cursor-wait"
                 >
-                  <span>Захиалга баталгаажуулах ({total.toLocaleString()} ₮)</span>
+                  <span>
+                    {orderSending
+                      ? 'Илгээж байна…'
+                      : `Захиалга баталгаажуулах (${total.toLocaleString()} ₮)`}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

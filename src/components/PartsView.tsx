@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { submitForm } from '../lib/submitForm';
 import { 
   ShoppingBag, 
   Search, 
@@ -41,7 +42,10 @@ export const PartsView: React.FC<PartsViewProps> = ({
   const [sourceYear, setSourceYear] = useState('2018');
   const [sourcePhone, setSourcePhone] = useState('');
   const [sourceNotes, setSourceNotes] = useState('');
+  const [sourceOrg, setSourceOrg] = useState('');
   const [sourceSuccess, setSourceSuccess] = useState(false);
+  const [sourceSending, setSourceSending] = useState(false);
+  const [sourceError, setSourceError] = useState('');
   const [addedToast, setAddedToast] = useState<string | null>(null);
 
   const categories = [
@@ -85,13 +89,31 @@ export const PartsView: React.FC<PartsViewProps> = ({
     }, 3000);
   };
 
-  const handleSourceSubmit = (e: React.FormEvent) => {
+  const handleSourceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sourcePartName || !sourcePhone) {
-      alert('Сэлбэгийн нэр болон утасны дугаараа оруулна уу!');
+      setSourceError('Сэлбэгийн нэр болон утасны дугаараа оруулна уу.');
       return;
     }
-    setSourceSuccess(true);
+    setSourceError('');
+    setSourceSending(true);
+
+    const result = await submitForm('sourcing', {
+      contactName: sourceOrg,
+      phone: sourcePhone,
+      summary: `${sourcePartName} — ${sourceBrand}`,
+      details: {
+        'Брэнд': sourceBrand,
+        'Тоноглолын он': sourceYear,
+        'Сэлбэгийн нэр': sourcePartName,
+        'Байгууллага / СӨХ': sourceOrg,
+        'Нэмэлт тайлбар': sourceNotes,
+      },
+    });
+
+    setSourceSending(false);
+    if (result.status === 'sent') setSourceSuccess(true);
+    else setSourceError(result.message);
   };
 
   return (
@@ -431,6 +453,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     <input 
                       type="text"
                       placeholder="Жишээ: Шинэ Өргөө СӨХ"
+                      value={sourceOrg}
+                      onChange={(e) => setSourceOrg(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     />
                   </div>
@@ -449,13 +473,20 @@ export const PartsView: React.FC<PartsViewProps> = ({
                   />
                 </div>
 
+                {sourceError && (
+                  <p role="alert" className="text-[11px] text-danger-soft text-center leading-relaxed">
+                    {sourceError}
+                  </p>
+                )}
+
                 <div className="pt-2 text-center">
                   <button
                     type="submit"
-                    className="px-8 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 mx-auto cursor-pointer shadow-lg shadow-brand/30"
+                    disabled={sourceSending}
+                    className="px-8 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 mx-auto cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
                   >
                     <Send className="w-4 h-4" />
-                    <span>Үйлдвэрээс захиалах үнийн санал авах</span>
+                    <span>{sourceSending ? 'Илгээж байна…' : 'Үйлдвэрээс захиалах үнийн санал авах'}</span>
                   </button>
                 </div>
               </form>

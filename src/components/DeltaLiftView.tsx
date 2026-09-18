@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+import { submitForm } from '../lib/submitForm';
+
+/** Сонголтын утгыг админд ойлгомжтой нэр болгоно */
+const QUOTE_TYPE_LABELS: Record<string, string> = {
+  passenger: 'Зорчигчийн',
+  freight: 'Ачааны',
+  hospital: 'Эмнэлгийн',
+  home: 'Хаусны',
+  food: 'Хоолны',
+  escalator: 'Урсдаг шат',
+};
 import {
   Accessibility,
   ArrowUpRight,
@@ -62,15 +73,30 @@ export const DeltaLiftView: React.FC = () => {
   const [quotePhone, setQuotePhone] = useState<string>('');
   const [quoteError, setQuoteError] = useState<string>('');
   const [quoteSuccess, setQuoteSuccess] = useState<boolean>(false);
+  const [quoteSending, setQuoteSending] = useState<boolean>(false);
 
-  const handleQuoteSubmit = (e: React.FormEvent) => {
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quotePhone.trim()) {
       setQuoteError('Утасны дугаараа оруулна уу.');
       return;
     }
     setQuoteError('');
-    setQuoteSuccess(true);
+    setQuoteSending(true);
+
+    const result = await submitForm('quote', {
+      phone: quotePhone,
+      summary: `${QUOTE_TYPE_LABELS[quoteType] ?? quoteType} · ${quoteFloors} давхар · ${quoteCapacity}`,
+      details: {
+        'Төрөл': QUOTE_TYPE_LABELS[quoteType] ?? quoteType,
+        'Давхрын тоо': quoteFloors,
+        'Даац': quoteCapacity,
+      },
+    });
+
+    setQuoteSending(false);
+    if (result.status === 'sent') setQuoteSuccess(true);
+    else setQuoteError(result.message);
   };
 
   return (
@@ -500,10 +526,11 @@ export const DeltaLiftView: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full h-12 rounded-xl bg-accent hover:bg-accent-hover text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  disabled={quoteSending}
+                  className="w-full h-12 rounded-xl bg-accent hover:bg-accent-hover text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
                 >
                   <Send className="w-4 h-4" />
-                  Үнийн санал хүсэх
+                  {quoteSending ? 'Илгээж байна…' : 'Үнийн санал хүсэх'}
                 </button>
               </form>
             )}
