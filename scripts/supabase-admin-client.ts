@@ -26,8 +26,10 @@ export function serviceClient(): SupabaseClient {
   if (!url) {
     console.error(
       'VITE_SUPABASE_URL алга эсвэл жишээ утга хэвээр байна.\n' +
-        'Supabase Dashboard -> Project Settings -> API -> Project URL хэсгээс\n' +
-        'авч .env файлд бөглөнө үү.'
+        'Supabase Dashboard дээрх Connect товч, эсвэл Settings -> Data API\n' +
+        'хэсгээс авна. Олдохгүй бол хөтчийн хаяг дахь\n' +
+        '.../project/АБВГД/... доторх АБВГД-г аваад https://АБВГД.supabase.co\n' +
+        'болгож .env файлд бөглөнө үү.'
     );
     process.exit(1);
   }

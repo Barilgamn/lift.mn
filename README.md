@@ -64,11 +64,16 @@ cp .env.example .env
 
 | Хувьсагч | Хаанаас | Хэлбэр | Нууц эсэх |
 | --- | --- | --- | --- |
-| `VITE_SUPABASE_URL` | Project Settings → API → Project URL | `https://xxx.supabase.co` | Үгүй — хөтөч рүү явна |
+| `VITE_SUPABASE_URL` | Дээд талын **Connect** товч, эсвэл Settings → Data API | `https://xxx.supabase.co` | Үгүй — хөтөч рүү явна |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | API Keys → Publishable key → `default` | `sb_publishable_...` | Үгүй — хөтөч рүү явна |
 | `SUPABASE_SECRET_KEY` | API Keys → Secret keys → `default` | `sb_secret_...` | **Тийм** |
 
 Secret түлхүүр дэлгэц дээр далдлагдсан байна — нүдний тэмдэг дарж харуулна.
+
+> **Project URL олдохгүй бол** хөтчийнхөө хаягийг хараарай. Dashboard-ын хаяг
+> `supabase.com/dashboard/project/АБВГД/...` хэлбэртэй байна. Тэр `АБВГД`
+> хэсгийг аваад `https://АБВГД.supabase.co` болгоно — энэ л таны Project URL.
+> Supabase цэсээ үе үе өөрчилдөг тул энэ арга хамгийн найдвартай.
 
 > Secret түлхүүр өгөгдлийн сангийн **бүх хамгаалалтыг тойрдог**. Зөвхөн
 > энэ компьютер дээрх терминалын скрипт ашиглана. Хэнд ч дамжуулж болохгүй,
