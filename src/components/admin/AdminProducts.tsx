@@ -47,17 +47,22 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
     reader.readAsDataURL(file);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!p.name.trim()) { setError('Бүтээгдэхүүний нэрийг бөглөнө үү.'); return; }
     if (p.price <= 0) { setError('Үнийг оруулна уу.'); return; }
     const cat = CATEGORIES.find((c) => c.value === p.category);
-    saveProduct({
+    setBusy(true);
+    const err = await saveProduct({
       ...p,
       name: p.name.trim(),
       categoryLabel: cat?.label ?? p.categoryLabel,
       inStock: p.stockCount > 0,
     });
+    setBusy(false);
+    if (err) { setError(err); return; }
     onDone();
   };
 
@@ -150,8 +155,9 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
       {error && <p className="text-xs text-red-700">{error}</p>}
 
       <div className="flex gap-2 pt-1">
-        <button type="submit" className="h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover text-white text-xs font-bold cursor-pointer transition-colors">
-          Хадгалах
+        <button type="submit" disabled={busy}
+          className="h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover disabled:opacity-60 text-white text-xs font-bold cursor-pointer transition-colors">
+          {busy ? 'Хадгалж байна…' : 'Хадгалах'}
         </button>
         <button type="button" onClick={onDone}
           className="h-10 px-4 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors">
@@ -228,7 +234,7 @@ export const AdminProducts: React.FC = () => {
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button type="button" aria-label={`${p.name} устгах`}
-                    onClick={() => { if (confirm(`"${p.name}" бүтээгдэхүүнийг устгах уу?`)) deleteProduct(p.id); }}
+                    onClick={() => { if (confirm(`"${p.name}" бүтээгдэхүүнийг устгах уу?`)) void deleteProduct(p.id).then((err) => { if (err) alert(err); }); }}
                     className="p-2 rounded-lg border border-line-light text-ink-dark-muted hover:text-red-700 hover:border-red-300 cursor-pointer transition-colors">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

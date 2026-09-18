@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Өгөгдлийн сангийн файл
+data/

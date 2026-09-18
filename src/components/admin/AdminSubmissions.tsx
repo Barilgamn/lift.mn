@@ -208,8 +208,10 @@ export const AdminSubmissions: React.FC = () => {
                       key={st}
                       type="button"
                       onClick={() => {
-                        setSubmissionStatus(open.id, st);
-                        setOpen({ ...open, status: st });
+                        void setSubmissionStatus(open.id, st).then((err) => {
+                          if (err) alert(err);
+                          else setOpen({ ...open, status: st });
+                        });
                       }}
                       className={`h-9 px-3.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
                         open.status === st

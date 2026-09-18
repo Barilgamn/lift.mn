@@ -26,20 +26,24 @@ const AddRecordForm: React.FC<{ elevator: Elevator; onDone: () => void }> = ({ e
   const area = 'w-full px-3 py-2 rounded-lg bg-paper-2 border border-line-light text-sm text-ink-dark focus:border-brand focus:outline-none';
   const label = 'block text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted mb-1.5';
 
-  const submit = (e: React.FormEvent) => {
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!engineer.trim() || !issue.trim()) {
       setError('Инженерийн нэр болон илэрсэн асуудлыг бөглөнө үү.');
       return;
     }
-    addServiceRecord({
-      id: `sr-${Date.now()}`,
+    setBusy(true);
+    const err = await addServiceRecord({
       elevatorId: elevator.id,
       date, engineer: engineer.trim(), kind,
       issue: issue.trim(), resolution: resolution.trim(),
       partsUsed: parts.split(',').map((p) => p.trim()).filter(Boolean),
       durationMin: duration, outcome,
     });
+    setBusy(false);
+    if (err) { setError(err); return; }
     onDone();
   };
 
@@ -98,8 +102,9 @@ const AddRecordForm: React.FC<{ elevator: Elevator; onDone: () => void }> = ({ e
       {error && <p className="text-xs text-red-700">{error}</p>}
 
       <div className="flex gap-2 pt-1">
-        <button type="submit" className="h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover text-white text-xs font-bold cursor-pointer transition-colors">
-          Бүртгэл хадгалах
+        <button type="submit" disabled={busy}
+          className="h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover disabled:opacity-60 text-white text-xs font-bold cursor-pointer transition-colors">
+          {busy ? 'Хадгалж байна…' : 'Бүртгэл хадгалах'}
         </button>
         <button type="button" onClick={onDone} className="h-10 px-4 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors">
           Болих
@@ -221,7 +226,7 @@ export const AdminElevators: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 {STATUS_LIST.map((s) => (
                   <button key={s} type="button"
-                    onClick={() => updateElevator(selected.id, { status: s })}
+                    onClick={() => { void updateElevator(selected.id, { status: s }).then((err) => { if (err) alert(err); }); }}
                     className={`h-9 px-3 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
                       selected.status === s
                         ? 'bg-brand border-brand text-white'
