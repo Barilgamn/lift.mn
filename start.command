@@ -33,9 +33,20 @@ else
 fi
 
 # --- Тохиргоо шалгах ---
+# Хөтчийн түлхүүр бөглөгдсөн эсэх. Жишээ утга (xxxxxxxx) -ыг бөглөгдөөгүйд тооцно.
+browser_key_ok() {
+  grep -E '^[[:space:]]*(VITE_SUPABASE_PUBLISHABLE_KEY|VITE_SUPABASE_ANON_KEY)=' .env 2>/dev/null \
+    | sed 's/^[^=]*=//' \
+    | grep -qvE '^[[:space:]]*$|x{8,}|\.\.\.[[:space:]]*$'
+}
+
 if [ ! -f .env ]; then
   printf '\n\033[33m.env файл алга — удирдлагын хэсэг (/admin) ажиллахгүй.\033[0m\n'
   printf '\033[33mНээлттэй хуудсууд хэвийн ажиллана. Заавар: README.md\033[0m\n'
+elif ! browser_key_ok; then
+  printf '\n\033[33m.env дотор хөтчийн түлхүүр бөглөгдөөгүй байна.\033[0m\n'
+  printf '\033[33m/admin хуудас "Supabase тохируулагдаагүй" гэж харуулна.\033[0m\n'
+  printf '\033[33mДэлгэрэнгүй: npm run supabase:check\033[0m\n'
 fi
 
 # --- Порт чөлөөлөх ---
