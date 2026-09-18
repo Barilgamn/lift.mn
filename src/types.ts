@@ -47,3 +47,71 @@ export interface ServiceTicket {
   assignedEngineer?: string;
   estimatedArrival?: string;
 }
+
+/* ------------------------------------------------------------- Админ хэсэг */
+
+export type ElevatorStatus = 'operational' | 'maintenance' | 'fault' | 'offline';
+
+export interface Elevator {
+  id: string;
+  /** Тоноглолын дугаар, тавцан дээрх пайз дээрх код */
+  code: string;
+  building: string;
+  district: string;
+  address: string;
+  /** Газрын зурагт тэмдэглэх байршил */
+  lat: number;
+  lng: number;
+  brand: string;
+  model: string;
+  floors: number;
+  capacityKg: number;
+  installedAt: string;
+  /** Гэрээний төрөл — сар бүрийн гэрээт эсвэл дуудлагаар */
+  contractType: 'monthly' | 'on-call';
+  status: ElevatorStatus;
+  lastServiceAt: string;
+  nextServiceAt: string;
+  contactName: string;
+  contactPhone: string;
+}
+
+export type ServiceKind = 'routine' | 'repair' | 'emergency' | 'inspection';
+
+export interface ServiceRecord {
+  id: string;
+  elevatorId: string;
+  date: string;
+  engineer: string;
+  kind: ServiceKind;
+  /** Ямар асуудал гарсан */
+  issue: string;
+  /** Хэрхэн шийдсэн */
+  resolution: string;
+  partsUsed: string[];
+  durationMin: number;
+  outcome: 'resolved' | 'awaiting-parts' | 'monitoring';
+}
+
+export type SubmissionKind =
+  | 'service-ticket'
+  | 'emergency'
+  | 'booking'
+  | 'quote'
+  | 'sourcing'
+  | 'order';
+
+export type SubmissionStatus = 'new' | 'in-progress' | 'done';
+
+export interface Submission {
+  id: string;
+  kind: SubmissionKind;
+  createdAt: string;
+  contactName: string;
+  phone: string;
+  /** Жагсаалтад харагдах товч утга */
+  summary: string;
+  status: SubmissionStatus;
+  /** Маягтын бүрэн агуулга — дэлгэрэнгүйд харуулна */
+  details: Record<string, string>;
+}

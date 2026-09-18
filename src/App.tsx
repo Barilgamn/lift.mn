@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ActiveSection, CartItem, SparePart } from './types';
 import { ROUTES, sectionFromPath } from './routes';
@@ -15,6 +15,17 @@ import { DeltaLiftView } from './components/DeltaLiftView';
 import { ServiceView } from './components/ServiceView';
 import { PartsView } from './components/PartsView';
 import { EmergencyModal } from './components/EmergencyModal';
+
+/**
+ * Удирдлагын хэсгийг тусад нь ачаална. Сайтад зочлогчид админы код
+ * болон газрын зургийн сангийн жинг татахгүй.
+ */
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+const AdminSubmissions = lazy(() => import('./components/admin/AdminSubmissions'));
+const AdminMap = lazy(() => import('./components/admin/AdminMap'));
+const AdminElevators = lazy(() => import('./components/admin/AdminElevators'));
+const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 import { CartDrawer } from './components/CartDrawer';
 
 export default function App() {
@@ -42,11 +53,15 @@ export default function App() {
     }
   }, [cartItems]);
 
+  const isAdmin = location.pathname.startsWith('/admin');
+
   // Хуудас солигдох бүрд гарчгийг шинэчилж, дээш нь гүйлгэнэ
   useEffect(() => {
-    document.title = ROUTES[activeSection].title;
+    document.title = isAdmin
+      ? 'Удирдлагын хэсэг | LIFT.MN'
+      : ROUTES[activeSection].title;
     window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [activeSection]);
+  }, [activeSection, isAdmin, location.pathname]);
 
   const handleSelectSection = (section: ActiveSection) => {
     navigate(ROUTES[section].path);
@@ -153,6 +168,22 @@ export default function App() {
             </SubPage>
           }
         />
+
+        {/* Удирдлагын хэсэг — өөрийн бүрхүүлтэй, нийтийн цэс, хөл хэсэггүй */}
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<div className="p-10 text-sm text-neutral-400">Ачаалж байна…</div>}>
+              <AdminLayout />
+            </Suspense>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="submissions" element={<AdminSubmissions />} />
+          <Route path="map" element={<AdminMap />} />
+          <Route path="elevators" element={<AdminElevators />} />
+          <Route path="products" element={<AdminProducts />} />
+        </Route>
 
         {/* Танихгүй зам — портал руу буцаана */}
         <Route path="*" element={<Navigate to={ROUTES.portal.path} replace />} />
