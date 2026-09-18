@@ -100,27 +100,63 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
 Supabase Dashboard дотроо **SQL Editor → New query** нээнэ. `supabase/schema.sql`
 файлыг бүхэлд нь хуулж тавиад **Run** дарна. Дахин ажиллуулахад аюулгүй.
 
+> Энэ алхмыг ч автоматаар хийлгэж болно — доорх 4-р алхмын доторх
+> `SUPABASE_DB_URL` тайлбарыг үзнэ үү.
+
 Энэ нь таван хүснэгт (`profiles`, `elevators`, `service_records`, `submissions`,
 `products`), Row Level Security-ийн бодлогууд болон шинэ хэрэглэгчийг
 автоматаар `viewer` (эрхгүй) болгодог trigger-ийг үүсгэнэ.
 
 ### 4. Өгөгдөл ачаалж, админ үүсгэх
 
-`.env` бэлэн болсны дараа терминал дээрээ:
+`.env` бэлэн болсны дараа терминал дээрээ нэг тушаал:
 
 ```bash
-npm run supabase:seed          # эхлэлийн жишээ өгөгдөл (хүснэгт хоосон үед л)
-npm run supabase:create-admin  # админ хэрэглэгч
+npm run supabase:setup
 ```
 
-`create-admin` нь имэйл, нэр, нууц үгийг асууна (нууц үг бичихэд дэлгэцэнд
-харагдахгүй). Асуулгагүйгээр:
+Энэ нь гурван зүйлийг дараалан хийнэ: хүснэгт шалгах → эхлэлийн өгөгдөл
+ачаалах → админ хэрэглэгч үүсгэх. Сүүлийн алхам дээр имэйл, нэр, нууц үгийг
+асууна (нууц үг бичихэд дэлгэцэнд харагдахгүй). Асуулгагүйгээр:
 
 ```bash
-npm run supabase:create-admin -- --email=та@lift.mn --name="Нэр" --password=...
+npm run supabase:setup -- --email=та@lift.mn --name="Нэр" --password=...
 ```
 
-Дараа нь <http://localhost:3000/admin> хаягаар нэвтэрнэ.
+Дахин ажиллуулахад аюулгүй — байгаа өгөгдлийг дарж бичихгүй.
+
+Дараа нь `npm run dev` асааж <http://localhost:3000/admin> хаягаар нэвтэрнэ.
+
+<details>
+<summary>3-р алхмыг ч автоматаар хийлгэх бол</summary>
+
+Dashboard → **Connect** товч дээр дарж холболтын мөрийг хуулна
+(`postgresql://postgres.xxxx:...@...pooler.supabase.com:5432/postgres`).
+`[YOUR-PASSWORD]` хэсгийг төсөл үүсгэхдээ өгсөн нууц үгээрээ солино. Дараа нь
+`.env` файлдаа нэмнэ:
+
+```bash
+SUPABASE_DB_URL=postgresql://postgres.xxxx:НУУЦҮГ@...pooler.supabase.com:5432/postgres
+```
+
+Ингэвэл `npm run supabase:setup` нь `supabase/schema.sql`-ийг өөрөө ажиллуулна
+— SQL Editor руу орох шаардлагагүй болно. Энэ мөр өгөгдлийн сангийн нууц үг
+агуулдаг тул secret түлхүүртэй адил хамгаална.
+
+</details>
+
+<details>
+<summary>Алхам тус бүрийг тусад нь ажиллуулах</summary>
+
+```bash
+npm run supabase:seed          # зөвхөн эхлэлийн өгөгдөл
+npm run supabase:create-admin  # зөвхөн админ хэрэглэгч
+```
+
+`supabase:create-admin` нь аль хэдийн бүртгэлтэй имэйл дээр зөвхөн админ эрх
+олгоно — шинэ хэрэглэгч үүсгэхгүй.
+
+</details>
 
 ## Тушаалууд
 
@@ -129,8 +165,9 @@ npm run supabase:create-admin -- --email=та@lift.mn --name="Нэр" --password
 | `npm run dev` | Хөгжүүлэлтийн сервер (порт 3000) |
 | `npm run build` | Production хувилбар угсарч `dist/` дотор гаргана |
 | `npm run preview` | Угсарсан хувилбарыг шалгах |
-| `npm run supabase:seed` | Эхлэлийн жишээ өгөгдөл ачаална |
-| `npm run supabase:create-admin` | Админ хэрэглэгч үүсгэх / эрх олгох |
+| `npm run supabase:setup` | Supabase-ийн бүх тохиргоог нэг дор хийнэ |
+| `npm run supabase:seed` | Зөвхөн эхлэлийн жишээ өгөгдөл ачаална |
+| `npm run supabase:create-admin` | Зөвхөн админ хэрэглэгч үүсгэх / эрх олгох |
 | `npm run lint` | TypeScript-ийн шалгалт (вэб ба скриптүүд) |
 
 ## Түгээмэл алдаа
@@ -295,6 +332,7 @@ supabase/
   schema.sql           Хүснэгт, RLS бодлого, trigger
 scripts/
   supabase-admin-client.ts  secret түлхүүрийн холболт (зөвхөн терминал)
+  supabase-setup.ts         Бүх тохиргоог нэг дор (schema + seed + admin)
   supabase-seed.ts          Эхлэлийн өгөгдөл ачаалах
   supabase-create-admin.ts  Админ хэрэглэгч үүсгэх
 .env                   Түлхүүрүүд (git-д ордоггүй)

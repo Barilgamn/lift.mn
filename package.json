@@ -8,6 +8,7 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
+    "supabase:setup": "tsx scripts/supabase-setup.ts",
     "supabase:seed": "tsx scripts/supabase-seed.ts",
     "supabase:create-admin": "tsx scripts/supabase-create-admin.ts",
     "clean": "rm -rf dist",
@@ -32,10 +33,12 @@
   "devDependencies": {
     "@types/leaflet": "^1.9.22",
     "@types/node": "^22.14.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
+    "pg": "^8.23.0",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.2",
     "vite": "^6.2.3"
