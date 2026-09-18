@@ -13,12 +13,27 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * хөтөч рүү ХЭЗЭЭ Ч оруулж болохгүй.
  */
 
-const url = import.meta.env.VITE_SUPABASE_URL;
+/**
+ * .env.example доторх жишээ утгыг бөглөгдөөгүйд тооцно.
+ *
+ * Хэрэглэгч гурван мөрийн заримыг нь л сольсон тохиолдолд үлдсэн `xxxxxxxx`
+ * утга нь жинхэнэ түлхүүрийг дарж болзошгүй. Мөн түлхүүрийг бүтнээр нь
+ * хуулаагүй (төгсгөлд нь `...` үлдсэн) тохиолдлыг ч энд барина.
+ */
+function filled(value?: string): string | undefined {
+  if (!value) return undefined;
+  const v = value.trim();
+  if (!v || /x{8,}/i.test(v) || v.endsWith('...')) return undefined;
+  return v;
+}
+
+const url = filled(import.meta.env.VITE_SUPABASE_URL);
 
 // Supabase-ийн шинэ түлхүүр (sb_publishable_...), эсвэл хуучин anon JWT.
 // Хоёулаа ажиллана — хуучин төслүүд эвдрэхгүйн тулд аль алиныг нь дэмжив.
 const publishableKey =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+  filled(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) ||
+  filled(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 /** Тохиргоо хийгдсэн эсэх. Энэ шалгалт supabase-js-ийг татахгүй. */
 export const isSupabaseConfigured = Boolean(url && publishableKey);
