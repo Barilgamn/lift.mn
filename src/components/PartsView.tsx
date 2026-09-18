@@ -15,7 +15,7 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
-import { SPARE_PARTS } from '../data/mockData';
+import { useProducts } from '../lib/useProducts';
 import { SparePart, CartItem } from '../types';
 
 interface PartsViewProps {
@@ -29,6 +29,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
   onOpenCart, 
   cartCount 
 }) => {
+  const { products: SPARE_PARTS } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');

@@ -116,6 +116,7 @@ const AdminGate: React.FC = () => {
     );
   }
 
+  // anonymous, unauthorized, тохируулагдаагүй — бүгд нэвтрэх дэлгэц рүү
   return status === 'authenticated' ? <AdminChrome /> : <AdminLogin />;
 };
 

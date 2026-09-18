@@ -1,12 +1,18 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { Session } from '@supabase/supabase-js';
 import { Elevator, ServiceRecord, SparePart, Submission, SubmissionStatus } from '../types';
+import { friendlyError, getSupabase, isSupabaseConfigured } from '../lib/supabase';
+import {
+  elevatorToRow, productToRow, recordToRow,
+  rowToElevator, rowToProduct, rowToRecord, rowToSubmission,
+} from '../lib/mappers';
 
 /**
- * Админ хэсгийн өгөгдөл — сервертэй ажиллана.
+ * Админ хэсгийн өгөгдөл — Supabase-тэй шууд ажиллана.
  *
- * Нэвтрэлт нь httpOnly cookie-д суурилдаг тул JavaScript токен барьж
- * авах шаардлагагүй, хүсэлт бүрт автоматаар явна. `credentials: 'include'`
- * нь тэр cookie-г хавсаргана.
+ * Тусдаа сервер ажиллуулах шаардлагагүй. Нэвтрэлтийг Supabase Auth,
+ * эрхийн хяналтыг өгөгдлийн сан дээрх Row Level Security хийнэ. Өөрөөр
+ * хэлбэл хэн юуг харах, засахыг сервер биш, өгөгдлийн сан өөрөө шийднэ.
  */
 
 export interface AdminUser {
@@ -16,18 +22,17 @@ export interface AdminUser {
   role: string;
 }
 
-type Status = 'loading' | 'anonymous' | 'authenticated';
+type Status = 'loading' | 'anonymous' | 'unauthorized' | 'authenticated';
 
 interface AdminStore {
   status: Status;
   user: AdminUser | null;
-  /** Сервер дээр админ бүртгэл огт байхгүй */
-  needsSetup: boolean;
+  /** .env дэх түлхүүр бөглөгдөөгүй */
+  notConfigured: boolean;
   loadError: string | null;
 
   login: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
-  reload: () => Promise<void>;
 
   elevators: Elevator[];
   serviceRecords: ServiceRecord[];
@@ -43,31 +48,9 @@ interface AdminStore {
 
 const Ctx = createContext<AdminStore | null>(null);
 
-interface ApiResult<T> {
-  data?: T;
-  error?: string;
-}
-
-/** Сервер рүү хүсэлт илгээх нийтлэг функц */
-async function api<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
-  try {
-    const res = await fetch(`/api${path}`, {
-      credentials: 'include',
-      headers: init?.body ? { 'Content-Type': 'application/json' } : undefined,
-      ...init,
-    });
-    const body = (await res.json().catch(() => ({}))) as ApiResult<T>;
-    if (!res.ok) return { error: body.error || `Алдаа гарлаа (${res.status})` };
-    return { data: body.data as T };
-  } catch {
-    return { error: 'Сервертэй холбогдож чадсангүй. Сервер ажиллаж байгаа эсэхийг шалгана уу.' };
-  }
-}
-
 export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [status, setStatus] = useState<Status>('loading');
+  const [status, setStatus] = useState<Status>(isSupabaseConfigured ? 'loading' : 'anonymous');
   const [user, setUser] = useState<AdminUser | null>(null);
-  const [needsSetup, setNeedsSetup] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [elevators, setElevators] = useState<Elevator[]>([]);
@@ -75,88 +58,131 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [products, setProducts] = useState<SparePart[]>([]);
 
-  const loadData = useCallback(async () => {
-    const r = await api<{
-      elevators: Elevator[]; serviceRecords: ServiceRecord[];
-      submissions: Submission[]; products: SparePart[];
-    }>('/admin/bootstrap');
-    if (r.error) { setLoadError(r.error); return; }
-    setLoadError(null);
-    setElevators(r.data!.elevators);
-    setServiceRecords(r.data!.serviceRecords);
-    setSubmissions(r.data!.submissions);
-    setProducts(r.data!.products);
+  const clearData = () => {
+    setElevators([]); setServiceRecords([]); setSubmissions([]); setProducts([]);
+  };
+
+  /** Нэвтэрсэн хэрэглэгчийн профайлыг уншиж, админ эсэхийг шалгана */
+  const loadProfile = useCallback(async (session: Session): Promise<AdminUser | null> => {
+    const sb = await getSupabase();
+    const { data, error } = await sb
+      .from('profiles')
+      .select('id, email, name, role')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    if (error) { setLoadError(friendlyError(error)); return null; }
+    if (!data) return null;
+    return { id: data.id, email: data.email, name: data.name || data.email, role: data.role };
   }, []);
 
-  const refreshSession = useCallback(async () => {
-    const r = await api<{ user: AdminUser | null; needsSetup: boolean }>('/auth/me');
-    if (r.error) { setStatus('anonymous'); setLoadError(r.error); return; }
-    setNeedsSetup(r.data!.needsSetup);
-    if (r.data!.user) {
-      setUser(r.data!.user);
-      setStatus('authenticated');
-      await loadData();
-    } else {
-      setUser(null);
-      setStatus('anonymous');
+  const loadData = useCallback(async () => {
+    const sb = await getSupabase();
+    const [el, rec, sub, prod] = await Promise.all([
+      sb.from('elevators').select('*').order('building'),
+      sb.from('service_records').select('*').order('date', { ascending: false }),
+      sb.from('submissions').select('*').order('created_at', { ascending: false }),
+      sb.from('products').select('*').order('name'),
+    ]);
+    const firstError = el.error || rec.error || sub.error || prod.error;
+    if (firstError) { setLoadError(friendlyError(firstError)); return; }
+    setLoadError(null);
+    setElevators((el.data ?? []).map(rowToElevator));
+    setServiceRecords((rec.data ?? []).map(rowToRecord));
+    setSubmissions((sub.data ?? []).map(rowToSubmission));
+    setProducts((prod.data ?? []).map(rowToProduct));
+  }, []);
+
+  /** Нэвтрэлтийн төлөв солигдох бүрд дуудагдана */
+  const applySession = useCallback(async (session: Session | null) => {
+    if (!session) { setUser(null); setStatus('anonymous'); clearData(); return; }
+    const profile = await loadProfile(session);
+    if (!profile || profile.role !== 'admin') {
+      // Нэвтэрсэн ч эрх нь хүрэхгүй — өгөгдөл татахгүй
+      setUser(profile);
+      setStatus('unauthorized');
+      clearData();
+      return;
     }
-  }, [loadData]);
-
-  useEffect(() => { void refreshSession(); }, [refreshSession]);
-
-  const login = useCallback(async (email: string, password: string) => {
-    const r = await api<{ user: AdminUser }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    if (r.error) return r.error;
-    setUser(r.data!.user);
+    setUser(profile);
     setStatus('authenticated');
     await loadData();
-    return null;
-  }, [loadData]);
+  }, [loadProfile, loadData]);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let alive = true;
+    let unsubscribe: (() => void) | undefined;
+
+    void getSupabase().then(async (sb) => {
+      if (!alive) return;
+      const { data } = await sb.auth.getSession();
+      if (!alive) return;
+      await applySession(data.session);
+      const { data: sub } = sb.auth.onAuthStateChange((_event, session) => {
+        if (alive) void applySession(session);
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+    }).catch((e) => {
+      if (alive) { setLoadError(friendlyError(e)); setStatus('anonymous'); }
+    });
+
+    return () => { alive = false; unsubscribe?.(); };
+  }, [applySession]);
+
+  const login = useCallback(async (email: string, password: string) => {
+    if (!isSupabaseConfigured) return 'Supabase тохируулагдаагүй байна';
+    try {
+      const sb = await getSupabase();
+      const { error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
+      return error ? friendlyError(error) : null;
+    } catch (e) {
+      return friendlyError(e);
+    }
+  }, []);
 
   const logout = useCallback(async () => {
-    await api('/auth/logout', { method: 'POST' });
+    if (isSupabaseConfigured) {
+      const sb = await getSupabase();
+      await sb.auth.signOut();
+    }
     setUser(null);
     setStatus('anonymous');
-    setElevators([]); setServiceRecords([]); setSubmissions([]); setProducts([]);
+    clearData();
   }, []);
 
   const setSubmissionStatus = useCallback(async (id: string, s: SubmissionStatus) => {
-    const r = await api(`/admin/submissions/${encodeURIComponent(id)}`, {
-      method: 'PATCH', body: JSON.stringify({ status: s }),
-    });
-    if (r.error) return r.error;
+    const sb = await getSupabase();
+    const { error } = await sb.from('submissions').update({ status: s }).eq('id', id);
+    if (error) return friendlyError(error);
     setSubmissions((prev) => prev.map((x) => (x.id === id ? { ...x, status: s } : x)));
     return null;
   }, []);
 
   const addServiceRecord = useCallback(async (record: Omit<ServiceRecord, 'id'> & { id?: string }) => {
-    const r = await api<{ serviceRecords: ServiceRecord[]; elevators: Elevator[] }>('/admin/service-records', {
-      method: 'POST', body: JSON.stringify(record),
-    });
-    if (r.error) return r.error;
-    setServiceRecords(r.data!.serviceRecords);
-    setElevators(r.data!.elevators);
+    const sb = await getSupabase();
+    const { data, error } = await sb.from('service_records').insert(recordToRow(record)).select().single();
+    if (error) return friendlyError(error);
+    setServiceRecords((prev) => [rowToRecord(data), ...prev]);
+    // Лифтний "сүүлд үйлчилсэн" огноог өгөгдлийн сан дээрх trigger шинэчилдэг
+    setElevators((prev) =>
+      prev.map((e) => (e.id === record.elevatorId ? { ...e, lastServiceAt: record.date } : e))
+    );
     return null;
   }, []);
 
   const updateElevator = useCallback(async (id: string, patch: Partial<Elevator>) => {
-    const r = await api(`/admin/elevators/${encodeURIComponent(id)}`, {
-      method: 'PATCH', body: JSON.stringify(patch),
-    });
-    if (r.error) return r.error;
+    const sb = await getSupabase();
+    const { error } = await sb.from('elevators').update(elevatorToRow(patch)).eq('id', id);
+    if (error) return friendlyError(error);
     setElevators((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
     return null;
   }, []);
 
   const saveProduct = useCallback(async (product: SparePart) => {
-    const r = await api<SparePart>(`/admin/products/${encodeURIComponent(product.id)}`, {
-      method: 'PUT', body: JSON.stringify(product),
-    });
-    if (r.error) return r.error;
-    const saved = r.data!;
+    const sb = await getSupabase();
+    const { data, error } = await sb.from('products').upsert(productToRow(product)).select().single();
+    if (error) return friendlyError(error);
+    const saved = rowToProduct(data);
     setProducts((prev) =>
       prev.some((x) => x.id === saved.id)
         ? prev.map((x) => (x.id === saved.id ? saved : x))
@@ -166,19 +192,19 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, []);
 
   const deleteProduct = useCallback(async (id: string) => {
-    const r = await api(`/admin/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
-    if (r.error) return r.error;
+    const sb = await getSupabase();
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) return friendlyError(error);
     setProducts((prev) => prev.filter((p) => p.id !== id));
     return null;
   }, []);
 
   const value = useMemo<AdminStore>(() => ({
-    status, user, needsSetup, loadError,
-    login, logout, reload: refreshSession,
+    status, user, notConfigured: !isSupabaseConfigured, loadError,
+    login, logout,
     elevators, serviceRecords, submissions, products,
     setSubmissionStatus, addServiceRecord, updateElevator, saveProduct, deleteProduct,
-  }), [status, user, needsSetup, loadError, login, logout, refreshSession,
-       elevators, serviceRecords, submissions, products,
+  }), [status, user, loadError, login, logout, elevators, serviceRecords, submissions, products,
        setSubmissionStatus, addServiceRecord, updateElevator, saveProduct, deleteProduct]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
