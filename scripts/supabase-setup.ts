@@ -77,26 +77,69 @@ async function applySchema(dbUrl: string) {
   }
 }
 
-/** Хүснэгтүүд үүссэн эсэхийг REST-ээр шалгах */
-async function schemaExists(): Promise<boolean> {
-  const sb = serviceClient();
-  const { error } = await sb.from('profiles').select('id', { count: 'exact', head: true });
-  if (!error) return true;
-  if (/does not exist|schema cache|Could not find the table/i.test(error.message)) return false;
-  if (/fetch failed|ENOTFOUND|ECONNREFUSED|network/i.test(error.message)) {
-    throw new Error(
+/**
+ * schema.sql бүрэн ажилласан эсэхийг шалгана.
+ *
+ * Хүснэгт бүрийг тус тусад нь, мөн profiles-ийн багануудыг шалгах нь чухал:
+ * Supabase-ийн бэлэн загвар (User Management) ч `profiles` нэртэй хүснэгт
+ * үүсгэдэг тул зөвхөн нэгийг шалгавал буруу дүгнэлт гарна.
+ */
+const REQUIRED_TABLES = [
+  'profiles',
+  'elevators',
+  'service_records',
+  'submissions',
+  'products',
+] as const;
+
+/** Хүснэгтийн алдааг ойлгомжтой болгох. Хүснэгт байхгүй бол null буцаана. */
+function describeError(message: string): Error | null {
+  if (/does not exist|schema cache|Could not find the table/i.test(message)) return null;
+  if (/fetch failed|ENOTFOUND|ECONNREFUSED|network/i.test(message)) {
+    return new Error(
       'Supabase рүү холбогдож чадсангүй.\n' +
-        'Интернэт холболтоо, мөн .env доторх SUPABASE_URL зөв эсэхийг шалгана уу.'
+        'Интернэт холболтоо, мөн .env доторх VITE_SUPABASE_URL зөв эсэхийг шалгана уу.'
     );
   }
-  if (/Invalid API key|JWT|apikey/i.test(error.message)) {
-    throw new Error(
+  if (/Invalid API key|JWT|apikey/i.test(message)) {
+    return new Error(
       'Түлхүүр буруу байна.\n' +
-        'SUPABASE_SECRET_KEY нь sb_secret_... хэлбэртэй, SUPABASE_URL-тэй ижил\n' +
-        'төсөл дээрх байх ёстой (Dashboard -> Project Settings -> API Keys).'
+        'SUPABASE_SECRET_KEY нь sb_secret_... хэлбэртэй, VITE_SUPABASE_URL-тэй\n' +
+        'ижил төсөл дээрх байх ёстой (Dashboard -> Project Settings -> API Keys).'
     );
   }
-  throw new Error(error.message);
+  return new Error(message);
+}
+
+/** Дутуу хүснэгтийн жагсаалт. Хоосон бол бүгд бэлэн. */
+async function missingTables(): Promise<string[]> {
+  const sb = serviceClient();
+  const missing: string[] = [];
+
+  for (const table of REQUIRED_TABLES) {
+    const { error } = await sb.from(table).select('*', { count: 'exact', head: true });
+    if (!error) continue;
+    const real = describeError(error.message);
+    if (real) throw real;
+    missing.push(table);
+  }
+
+  // Хүснэгт байгаа ч багана нь зөрж болно (өөр загвараар үүссэн бол)
+  if (!missing.includes('profiles')) {
+    const { error } = await sb.from('profiles').select('id, email, name, role').limit(1);
+    if (error && /column|does not exist/i.test(error.message)) {
+      throw new Error(
+        'public.profiles хүснэгт байгаа ч багана нь тохирохгүй байна:\n' +
+          `  ${error.message}\n\n` +
+          'Өөр загвараар үүссэн байж магадгүй. SQL Editor дотор\n' +
+          '  drop table public.profiles cascade;\n' +
+          'ажиллуулаад supabase/schema.sql-ийг дахин ажиллуулна уу.\n' +
+          '(Анхаар: тэр хүснэгт дэх өгөгдөл устана.)'
+      );
+    }
+  }
+
+  return missing;
 }
 
 async function main() {
@@ -109,19 +152,26 @@ async function main() {
     console.log('--skip-schema өгсөн тул алгаслаа.');
   } else if (dbUrl) {
     await applySchema(dbUrl);
-  } else if (await schemaExists()) {
-    console.log('Хүснэгтүүд аль хэдийн байна — алгаслаа.');
   } else {
-    console.error(
-      '\nХүснэгтүүд хараахан үүсээгүй байна.\n\n' +
-        'Хоёр сонголт:\n\n' +
-        '  A) Гараар — Supabase Dashboard -> SQL Editor -> New query нээгээд\n' +
-        `     ${path.relative(process.cwd(), SCHEMA_PATH)} файлыг бүхэлд нь хуулж тавиад Run дарна.\n` +
-        '     Дараа нь энэ тушаалаа дахин ажиллуулна.\n\n' +
-        '  B) Автоматаар — Dashboard -> Connect дээрх холболтын мөрийг\n' +
-        '     .env файлд SUPABASE_DB_URL нэрээр бичээд дахин ажиллуулна.\n'
-    );
-    process.exit(1);
+    const missing = await missingTables();
+    if (missing.length === 0) {
+      console.log(`Бүх хүснэгт бэлэн байна (${REQUIRED_TABLES.length}/${REQUIRED_TABLES.length}) — алгаслаа.`);
+    } else {
+      const ready = REQUIRED_TABLES.length - missing.length;
+      console.error(
+        `\nДутуу хүснэгт байна (${ready}/${REQUIRED_TABLES.length} бэлэн).\n` +
+          `Дутуу: ${missing.join(', ')}\n\n` +
+          'supabase/schema.sql-ийг ажиллуулах хэрэгтэй. Хоёр сонголт:\n\n' +
+          '  A) Гараар — Supabase Dashboard -> SQL Editor -> New query нээгээд\n' +
+          `     ${path.relative(process.cwd(), SCHEMA_PATH)} файлыг бүхэлд нь хуулж тавиад\n` +
+          '     Run дарна. Дараа нь энэ тушаалаа дахин ажиллуулна.\n\n' +
+          '  B) Автоматаар — Dashboard дээрх Connect товч дарж холболтын мөрийг\n' +
+          '     хуулаад .env файлд SUPABASE_DB_URL нэрээр бичиж дахин ажиллуулна.\n\n' +
+          'Файлыг terminal дээр нээж хуулах бол:\n' +
+          `  open -e ${path.relative(process.cwd(), SCHEMA_PATH)}\n`
+      );
+      process.exit(1);
+    }
   }
 
   step(2, 'Эхлэлийн өгөгдөл');
