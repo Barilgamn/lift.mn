@@ -40,11 +40,12 @@ export const AdminLogin: React.FC = () => {
         </p>
         <pre className="p-3 rounded-lg bg-paper-3 border border-line-light text-[11px] font-mono overflow-x-auto text-ink-dark">
 {`VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbG...`}
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...`}
         </pre>
         <p className="mt-3 text-[11px] text-ink-dark-subtle">
-          Түлхүүрийг Supabase Dashboard → Project Settings → API хэсгээс авна.
-          Дараа нь <code className="font-mono">npm run dev</code>-ээ дахин асаана.
+          Түлхүүрийг Supabase Dashboard → Project Settings → API Keys →
+          Publishable key хэсгээс авна. Дараа нь{' '}
+          <code className="font-mono">npm run dev</code>-ээ дахин асаана.
         </p>
       </Shell>
     );

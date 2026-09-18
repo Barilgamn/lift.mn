@@ -2,15 +2,17 @@ import 'dotenv/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * service_role түлхүүртэй клиент.
+ * Secret түлхүүртэй клиент.
  *
  * Энэ түлхүүр Row Level Security-г бүхэлд нь тойрдог — өгөгдлийн сангийн
  * бүрэн эрх. ЗӨВХӨН энэ компьютер дээр, терминалаас ажиллуулах скриптэд
  * ашиглана. Хөтөч рүү илгээх код дотор хэзээ ч бичиж болохгүй.
+ *
+ * Шинэ хэлбэр (sb_secret_...) болон хуучин service_role JWT хоёулаа ажиллана.
  */
 export function serviceClient(): SupabaseClient {
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url) {
     console.error('SUPABASE_URL алга. .env файлд бөглөнө үү.');
@@ -18,9 +20,10 @@ export function serviceClient(): SupabaseClient {
   }
   if (!key) {
     console.error(
-      'SUPABASE_SERVICE_ROLE_KEY алга.\n' +
-        'Supabase Dashboard -> Project Settings -> API -> service_role хэсгээс авч\n' +
-        '.env файлд бөглөнө үү. Энэ түлхүүрийг хэнд ч бүү дамжуулаарай.'
+      'SUPABASE_SECRET_KEY алга.\n' +
+        'Supabase Dashboard -> Project Settings -> API Keys -> Secret keys хэсгээс\n' +
+        'sb_secret_... түлхүүрийг хуулж .env файлд бөглөнө үү.\n' +
+        'Энэ түлхүүрийг хэнд ч бүү дамжуулаарай.'
     );
     process.exit(1);
   }

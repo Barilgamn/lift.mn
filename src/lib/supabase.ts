@@ -7,16 +7,21 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * бүр татах болно. Тиймээс `import()`-оор тусад нь ачаалж, зөвхөн
  * хэрэгтэй хуудсанд (дэлгүүр, админ) татагдана.
  *
- * anon key нь нийтэд харагддаг тул нууц биш. Өгөгдлийг хамгаалдаг зүйл
- * нь түлхүүр биш, харин өгөгдлийн сан дээрх Row Level Security бодлого.
- * service_role түлхүүрийг хөтөч рүү ХЭЗЭЭ Ч оруулж болохгүй.
+ * Publishable түлхүүр (sb_publishable_...) нь нийтэд харагддаг тул нууц
+ * биш. Өгөгдлийг хамгаалдаг зүйл нь түлхүүр биш, харин өгөгдлийн сан
+ * дээрх Row Level Security бодлого. Secret түлхүүрийг (sb_secret_...)
+ * хөтөч рүү ХЭЗЭЭ Ч оруулж болохгүй.
  */
 
 const url = import.meta.env.VITE_SUPABASE_URL;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Supabase-ийн шинэ түлхүүр (sb_publishable_...), эсвэл хуучин anon JWT.
+// Хоёулаа ажиллана — хуучин төслүүд эвдрэхгүйн тулд аль алиныг нь дэмжив.
+const publishableKey =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 /** Тохиргоо хийгдсэн эсэх. Энэ шалгалт supabase-js-ийг татахгүй. */
-export const isSupabaseConfigured = Boolean(url && anonKey);
+export const isSupabaseConfigured = Boolean(url && publishableKey);
 
 let clientPromise: Promise<SupabaseClient> | null = null;
 
@@ -26,13 +31,13 @@ export function getSupabase(): Promise<SupabaseClient> {
     return Promise.reject(
       new Error(
         'Supabase тохируулагдаагүй байна. .env файлд VITE_SUPABASE_URL болон ' +
-          'VITE_SUPABASE_ANON_KEY-г бөглөнө үү.'
+          'VITE_SUPABASE_PUBLISHABLE_KEY-г бөглөнө үү.'
       )
     );
   }
   if (!clientPromise) {
     clientPromise = import('@supabase/supabase-js').then(({ createClient }) =>
-      createClient(url!, anonKey!, {
+      createClient(url!, publishableKey!, {
         auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
       })
     );
