@@ -2,25 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { ProductImage } from './ProductImage';
-import { variantAsPart, productPriceLabel, priceLabel } from '../lib/variants';
-import { 
-  ShoppingBag, 
-  Search, 
-  Filter, 
-  ShoppingCart, 
-  Check, 
-  Plus, 
-  Info, 
-  Truck, 
-  ShieldCheck, 
-  FileCheck2, 
-  Send, 
-  CheckCircle2, 
+import { ProductDetail } from './ProductDetail';
+import { productPriceLabel } from '../lib/variants';
+import {
+  ShoppingBag,
+  Search,
+  Plus,
+  Info,
+  Truck,
+  Send,
+  CheckCircle2,
   Sparkles,
-  ArrowRight
 } from 'lucide-react';
 import { useProducts } from '../lib/useProducts';
-import { SparePart, CartItem } from '../types';
+import { SparePart } from '../types';
 
 interface PartsViewProps {
   onAddToCart: (part: SparePart) => void;
@@ -515,137 +510,15 @@ export const PartsView: React.FC<PartsViewProps> = ({
         </div>
       </section>
 
-      {/* Product Detail Modal */}
+      {/* Барааны дэлгэрэнгүй */}
       {detailPart && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-2xl max-h-[88dvh] overflow-y-auto bg-surface-2 border border-line rounded-2xl shadow-2xl p-5 sm:p-6 text-ink">
-            <div className="flex items-center justify-between mb-4 border-b border-line pb-3">
-              <div>
-                <span className="text-[10px] font-mono text-brand-bright font-bold uppercase">{detailPart.brand} OEM</span>
-                <h3 className="text-base font-black">{detailPart.name}</h3>
-              </div>
-              <button 
-                onClick={() => setDetailPart(null)}
-                className="p-1.5 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted hover:text-ink cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            <ProductImage
-              src={detailPart.image}
-              alt={detailPart.name}
-              loading="eager"
-              className="w-full h-52 object-contain bg-surface-1 rounded-xl mb-4 p-2"
-              fallbackClassName="w-full h-52 bg-surface-1 rounded-xl mb-4"
-              iconClassName="w-9 h-9 text-ink-subtle opacity-40"
-            />
-
-            <div className="text-xs text-ink-muted leading-relaxed mb-4">
-              {detailPart.description}
-            </div>
-
-            {/* Specs Table */}
-            <div className="p-3.5 rounded-xl bg-surface-1 border border-line text-xs space-y-1.5 mb-4">
-              <div className="flex justify-between border-b border-line pb-1">
-                <span className="text-ink-subtle">OEM Код:</span>
-                <span className="font-mono font-bold text-brand-bright">{detailPart.oemCode}</span>
-              </div>
-              {Object.entries(detailPart.specs).map(([key, val]) => (
-                <div key={key} className="flex justify-between border-b border-line pb-1">
-                  <span className="text-ink-subtle">{key}:</span>
-                  <span className="font-semibold text-neutral-200">{val}</span>
-                </div>
-              ))}
-              <div className="flex justify-between pt-1">
-                <span className="text-ink-subtle">Хүргэлт:</span>
-                <span className="font-semibold text-success">{detailPart.deliveryDays}</span>
-              </div>
-            </div>
-
-            {detailPart.variants?.length ? (
-              <div>
-                <div className="flex items-baseline justify-between mb-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                    Загвар сонгох
-                  </h4>
-                  <span className="text-[11px] text-ink-subtle">
-                    {detailPart.variants.length} загвар
-                  </span>
-                </div>
-
-                <ul className="space-y-1.5">
-                  {detailPart.variants.map((v) => (
-                    <li
-                      key={v.id}
-                      className="flex items-center gap-3 p-2 rounded-xl bg-surface-1 border border-line"
-                    >
-                      <ProductImage
-                        src={v.image}
-                        alt={v.code}
-                        className="w-12 h-12 shrink-0 object-contain rounded-lg bg-white"
-                        fallbackClassName="w-12 h-12 shrink-0 rounded-lg bg-surface-3"
-                        iconClassName="w-4 h-4 text-ink-subtle opacity-50"
-                      />
-
-                      <div className="min-w-0 flex-1">
-                        <div className="font-mono text-xs font-bold text-brand-bright break-words">
-                          {v.code}
-                        </div>
-                        <div className="text-[11px] text-ink-muted truncate">{v.name}</div>
-                      </div>
-
-                      <div className="text-right shrink-0">
-                        <div className="text-xs font-bold text-accent-ink font-mono whitespace-nowrap">
-                          {priceLabel(v.price)}
-                        </div>
-                        {v.stockCount > 0 && (
-                          <div className="text-[10px] text-success">Бэлэн ({v.stockCount})</div>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          handleAddToCartWithFeedback(variantAsPart(detailPart, v));
-                          setDetailPart(null);
-                        }}
-                        aria-label={`${v.code} сагсанд нэмэх`}
-                        className="shrink-0 w-9 h-9 rounded-lg bg-brand hover:bg-brand-hover text-white flex items-center justify-center cursor-pointer shadow-md"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mt-3 text-[11px] text-ink-subtle leading-relaxed">
-                  Үнэ тохиролцоно гэсэн загварын хувьд сагсанд нэмээд захиалга
-                  илгээвэл манай менежер үнийн санал буцаан илгээнэ.
-                </p>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-[10px] text-ink-subtle">Нэгжийн үнэ:</div>
-                  <div className="text-lg font-black text-accent-ink font-mono">
-                    {priceLabel(detailPart.price)}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    handleAddToCartWithFeedback(detailPart);
-                    setDetailPart(null);
-                  }}
-                  className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider cursor-pointer flex items-center gap-1.5 shadow-md"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Сагсанд нэмэх</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <ProductDetail
+          part={detailPart}
+          allProducts={SPARE_PARTS}
+          onClose={() => setDetailPart(null)}
+          onSelect={setDetailPart}
+          onAddToCart={handleAddToCartWithFeedback}
+        />
       )}
 
     </div>
