@@ -193,6 +193,7 @@ npm run supabase:create-admin  # зөвхөн админ хэрэглэгч
 | `npm run preview` | Угсарсан хувилбарыг шалгах |
 | `npm run supabase:setup` | Supabase-ийн бүх тохиргоог нэг дор хийнэ |
 | `npm run supabase:check` | `.env` дотор аль утга дутууг харуулна |
+| `npm run supabase:status` | Өгөгдлийн санд юу байгааг харуулна |
 | `npm run supabase:seed` | Зөвхөн эхлэлийн жишээ өгөгдөл ачаална |
 | `npm run supabase:create-admin` | Зөвхөн админ хэрэглэгч үүсгэх / эрх олгох |
 | `npm run lint` | TypeScript-ийн шалгалт (вэб ба скриптүүд) |
@@ -399,6 +400,7 @@ scripts/
   supabase-admin-client.ts  secret түлхүүрийн холболт (зөвхөн терминал)
   supabase-setup.ts         Бүх тохиргоог нэг дор (schema + seed + admin)
   supabase-check.ts         .env бөглөгдсөн эсэхийг шалгах
+  supabase-status.ts        Өгөгдлийн сангийн одоогийн байдал
   supabase-seed.ts          Эхлэлийн өгөгдөл ачаалах
   supabase-create-admin.ts  Админ хэрэглэгч үүсгэх
 .env                   Түлхүүрүүд (git-д ордоггүй)

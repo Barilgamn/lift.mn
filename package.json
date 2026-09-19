@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "supabase:setup": "tsx scripts/supabase-setup.ts",
     "supabase:check": "tsx scripts/supabase-check.ts",
+    "supabase:status": "tsx scripts/supabase-status.ts",
     "supabase:seed": "tsx scripts/supabase-seed.ts",
     "supabase:create-admin": "tsx scripts/supabase-create-admin.ts",
     "clean": "rm -rf dist",
