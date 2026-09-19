@@ -60,7 +60,12 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           onClick={() => onSelectSection('parts')}
           role="button"
           tabIndex={0}
-          className="md:order-2 md:border-l md:border-line group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+          /*
+           * Гол үйлчилгээ учраас нөгөө хоёроосоо тод байлгана:
+           * дэлгэц дээр 1.3 дахин өргөн, дэвсгэр нь цайвар (зураг илүү
+           * харагдана), дээд зураас нь өтгөн, товч нь дүүрэн өнгөтэй.
+           */
+          className="md:order-2 md:border-l md:border-line group relative flex-1 md:flex-[1.32] flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.45]"
         >
           {/* Background Image */}
           <div 
@@ -69,16 +74,22 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
               backgroundImage: `url('/images/lift_parts_hero.jpg')`
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/80 via-[#06152F]/62 to-[#020813]/88 group-hover:from-[#040E20]/70 group-hover:via-[#092144]/48 group-hover:to-[#020813]/80 transition-all duration-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/20 via-transparent to-transparent transition-opacity duration-500 pointer-events-none" />
 
           {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-brand-bright group-hover:h-2 transition-all duration-300" />
 
           {/* Card Middle: Icon, Titles & Representative Keywords */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
+          {/*
+            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
+            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
+            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
+            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
+            */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
               <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
@@ -115,7 +126,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
 
           {/* Card Bottom: Button */}
           <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
+            <div className="w-full py-3.5 sm:py-4 px-4 rounded-xl bg-brand group-hover:bg-brand-hover text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-300/50 shadow-xl shadow-sky-900/50">
               <span>Дэлгүүр лүү орох</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
             </div>
@@ -144,9 +155,15 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
 
           {/* Card Middle: Icon, Titles & Representative Keywords */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
+          {/*
+            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
+            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
+            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
+            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
+            */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
               <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
                 <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
               </div>
@@ -213,9 +230,15 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
 
           {/* Card Middle: Icon, Titles & Brand Logos */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
+          {/*
+            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
+            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
+            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
+            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
+            */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
             {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
               <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand bg-black/80 group-hover:bg-black backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-[#0063A5]/30 shrink-0">
                 <DeltaLiftsMark 
                   className="w-full h-full drop-shadow-md group-hover:scale-105 transition-transform duration-300" 
