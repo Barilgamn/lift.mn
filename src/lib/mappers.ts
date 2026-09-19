@@ -60,17 +60,34 @@ export const rowToSubmission = (r: Row): Submission => ({
   status: r.status, details: r.details ?? {},
 });
 
-export const rowToProduct = (r: Row): SparePart => ({
-  id: r.id, name: r.name, oemCode: r.oem_code, category: r.category,
-  categoryLabel: r.category_label, brand: r.brand, price: r.price,
-  inStock: (r.stock_count ?? 0) > 0, stockCount: r.stock_count,
-  deliveryDays: r.delivery_days, image: r.image,
-  specs: r.specs ?? {}, description: r.description,
-});
+export const rowToProduct = (r: Row): SparePart => {
+  const variants = Array.isArray(r.variants) ? (r.variants as SparePart['variants']) : [];
+  // Хувилбартай бараа нь аль нэг хувилбартаа нөөцтэй бол бэлэн гэж тооцогдоно
+  const stock = variants?.length
+    ? variants.reduce((sum, v) => sum + (Number(v.stockCount) || 0), 0)
+    : (Number(r.stock_count) || 0);
+  // Багана дутуу эсвэл null ирвэл дэлгэц унахгүй байх ёстой —
+  // үнэ, нөөцийг тоо болгож баталгаажуулна
+  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const str = (v: unknown) => (typeof v === 'string' ? v : '');
+
+  return {
+    id: r.id, name: str(r.name), oemCode: str(r.oem_code), category: r.category,
+    categoryLabel: str(r.category_label), brand: str(r.brand), price: num(r.price),
+    inStock: stock > 0, stockCount: num(r.stock_count),
+    deliveryDays: str(r.delivery_days), image: str(r.image),
+    specs: r.specs ?? {}, description: str(r.description),
+    variants: (variants ?? []).map((v) => ({
+      ...v, price: num(v.price), stockCount: num(v.stockCount),
+      code: str(v.code), name: str(v.name), brand: str(v.brand), image: str(v.image),
+    })),
+  };
+};
 
 export const productToRow = (p: SparePart): Row => ({
   id: p.id, name: p.name, oem_code: p.oemCode, category: p.category,
   category_label: p.categoryLabel, brand: p.brand, price: p.price,
   stock_count: p.stockCount, delivery_days: p.deliveryDays, image: p.image,
-  specs: p.specs, description: p.description, updated_at: new Date().toISOString(),
+  specs: p.specs, description: p.description, variants: p.variants ?? [],
+  updated_at: new Date().toISOString(),
 });

@@ -1,8 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { ImageOff, Pencil, Plus, Search, Trash2, Upload, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
-import { SparePart } from '../../types';
+import { ProductVariant, SparePart } from '../../types';
 import { Badge, PageHead, Panel } from './adminUi';
+import { attachPhoto, formatBytes } from '../../lib/photoAttach';
+import { productPriceLabel } from '../../lib/variants';
 
 const CATEGORIES: Array<{ value: SparePart['category']; label: string }> = [
   { value: 'motor', label: 'Мотор' },
@@ -22,8 +24,152 @@ const emptyProduct = (): SparePart => ({
   id: `part-${Date.now()}`,
   name: '', oemCode: '', category: 'motor', categoryLabel: 'Мотор',
   brand: '', price: 0, inStock: true, stockCount: 0, deliveryDays: 'Бэлэн',
-  image: '', specs: {}, description: '',
+  image: '', specs: {}, description: '', variants: [],
 });
+
+/**
+ * Бүтээгдэхүүний доторх загваруудыг засах хэсэг.
+ *
+ * Загвар бүрийн код, нэр, брэнд, үнэ, нөөц, зургийг тусад нь тохируулна.
+ * Үнийг 0 орхивол сайт дээр "үнэ тохиролцоно" гэж харагдана.
+ */
+const VariantEditor: React.FC<{
+  variants: ProductVariant[];
+  onChange: (next: ProductVariant[]) => void;
+}> = ({ variants, onChange }) => {
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState('');
+
+  const cell = 'h-9 px-2 rounded-lg bg-paper-2 border border-line-light text-xs text-ink-dark focus:border-brand focus:outline-none';
+
+  const patch = (id: string, part: Partial<ProductVariant>) =>
+    onChange(variants.map((v) => (v.id === id ? { ...v, ...part } : v)));
+
+  const add = () =>
+    onChange([
+      ...variants,
+      { id: `v-${Date.now()}`, code: '', name: '', brand: '', price: 0, stockCount: 0, image: '' },
+    ]);
+
+  const pick = async (id: string, file: File) => {
+    setBusyId(id);
+    setError('');
+    const result = await attachPhoto(file);
+    setBusyId(null);
+    if (result.status === 'failed') { setError(result.message); return; }
+    patch(id, { image: result.dataUrl });
+  };
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <span className="block text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted">
+          Загварууд ({variants.length})
+        </span>
+        <button type="button" onClick={add}
+          className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors">
+          <Plus className="w-3.5 h-3.5" /> Загвар нэмэх
+        </button>
+      </div>
+
+      {variants.length === 0 ? (
+        <p className="text-[11px] text-ink-dark-subtle leading-relaxed">
+          Загваргүй бол энгийн нэг бараа болно — дээрх үнэ, нөөц хэрэглэгдэнэ.
+          Нэг бүтээгдэхүүн дотор олон загвар (жишээ нь брэнд тус бүрийн товч)
+          байвал энд нэмнэ.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {variants.map((v, i) => (
+            <li key={v.id} className="p-2.5 rounded-xl bg-paper-3 border border-line-light">
+              <div className="flex gap-2.5">
+                <label className="shrink-0 cursor-pointer" title="Зураг солих">
+                  <input type="file" accept="image/*" className="sr-only"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) void pick(v.id, f); e.target.value = ''; }} />
+                  <span className="w-14 h-14 rounded-lg bg-white border border-line-light overflow-hidden flex items-center justify-center">
+                    {busyId === v.id ? (
+                      <span className="text-[10px] text-ink-dark-subtle">…</span>
+                    ) : v.image ? (
+                      <img src={v.image} alt="" className="w-full h-full object-contain" />
+                    ) : (
+                      <Upload className="w-4 h-4 text-ink-dark-subtle" />
+                    )}
+                  </span>
+                </label>
+
+                <div className="min-w-0 flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <label className="block col-span-2 sm:col-span-1">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-dark-subtle mb-0.5">
+                      Код
+                    </span>
+                    <input value={v.code} onChange={(e) => patch(v.id, { code: e.target.value })}
+                      placeholder="BR27C/A311" aria-label={`${i + 1}-р загварын код`}
+                      className={`${cell} font-mono font-bold w-full`} />
+                  </label>
+                  <label className="block col-span-2">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-dark-subtle mb-0.5">
+                      Тайлбар
+                    </span>
+                    <input value={v.name} onChange={(e) => patch(v.id, { name: e.target.value })}
+                      placeholder="Otis push button" aria-label={`${i + 1}-р загварын тайлбар`}
+                      className={`${cell} w-full`} />
+                  </label>
+                  <label className="block col-span-2 sm:col-span-1">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-dark-subtle mb-0.5">
+                      Брэнд
+                    </span>
+                    <input value={v.brand} onChange={(e) => patch(v.id, { brand: e.target.value })}
+                      placeholder="OTIS" aria-label={`${i + 1}-р загварын брэнд`}
+                      className={`${cell} w-full`} />
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-dark-subtle mb-0.5">
+                      Үнэ ₮
+                    </span>
+                    <input type="number" min={0} value={v.price}
+                      onChange={(e) => patch(v.id, { price: Number(e.target.value) })}
+                      placeholder="0 = тохиролцоно" aria-label={`${i + 1}-р загварын үнэ`}
+                      className={`${cell} font-mono w-full`} />
+                  </label>
+                  <label className="block">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-ink-dark-subtle mb-0.5">
+                      Нөөц ш
+                    </span>
+                    <input type="number" min={0} value={v.stockCount}
+                      onChange={(e) => patch(v.id, { stockCount: Number(e.target.value) })}
+                      placeholder="0" aria-label={`${i + 1}-р загварын нөөц`}
+                      className={`${cell} font-mono w-full`} />
+                  </label>
+                </div>
+
+                <button type="button" onClick={() => onChange(variants.filter((x) => x.id !== v.id))}
+                  aria-label={`${v.code || i + 1} загварыг устгах`}
+                  className="shrink-0 w-9 h-9 rounded-lg border border-line-light text-ink-dark-muted hover:text-red-700 hover:border-red-300 flex items-center justify-center cursor-pointer transition-colors">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              {v.image?.startsWith('data:') && (
+                <p className="mt-1.5 text-[10px] text-ink-dark-subtle">
+                  Шинэ зураг · {formatBytes(Math.floor(v.image.length * 0.75))}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {error && <p role="alert" className="mt-2 text-[11px] text-red-700">{error}</p>}
+
+      {variants.length > 0 && (
+        <p className="mt-2 text-[11px] text-ink-dark-subtle leading-relaxed">
+          Үнийг 0 орхивол сайт дээр "Үнэ тохиролцоно" гэж харагдана. Нөөц 0 бол
+          "Захиалгаар" гэж тэмдэглэгдэнэ.
+        </p>
+      )}
+    </div>
+  );
+};
 
 const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ initial, onDone }) => {
   const { saveProduct } = useAdminStore();
@@ -52,14 +198,22 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!p.name.trim()) { setError('Бүтээгдэхүүний нэрийг бөглөнө үү.'); return; }
-    if (p.price <= 0) { setError('Үнийг оруулна уу.'); return; }
+    const hasVariants = (p.variants?.length ?? 0) > 0;
+    // Загвартай бараанд үнэ нь загвар бүр дээрээ байдаг тул эцэг үнэ 0 байж болно
+    if (!hasVariants && p.price <= 0) { setError('Үнийг оруулна уу.'); return; }
+    if (hasVariants && p.variants!.some((v) => !v.code.trim())) {
+      setError('Загвар бүрийн кодыг бөглөнө үү.');
+      return;
+    }
     const cat = CATEGORIES.find((c) => c.value === p.category);
     setBusy(true);
     const err = await saveProduct({
       ...p,
       name: p.name.trim(),
       categoryLabel: cat?.label ?? p.categoryLabel,
-      inStock: p.stockCount > 0,
+      inStock: hasVariants
+        ? p.variants!.some((v) => v.stockCount > 0)
+        : p.stockCount > 0,
     });
     setBusy(false);
     if (err) { setError(err); return; }
@@ -114,6 +268,11 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
           onChange={(e) => set('description', e.target.value)}
           placeholder="Тохирох загвар, онцлог, анхаарах зүйл" className={area} />
       </div>
+
+      <VariantEditor
+        variants={p.variants ?? []}
+        onChange={(next) => set('variants', next)}
+      />
 
       {/* Зураг */}
       <div>
@@ -212,7 +371,7 @@ export const AdminProducts: React.FC = () => {
           <Panel key={p.id} className="overflow-hidden flex flex-col">
             <div className="h-36 bg-paper-3 flex items-center justify-center overflow-hidden">
               {p.image ? (
-                <img src={p.image} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img src={p.image} alt="" className="w-full h-full object-contain p-2" loading="lazy" />
               ) : (
                 <ImageOff className="w-7 h-7 text-ink-dark-subtle" />
               )}
@@ -220,14 +379,20 @@ export const AdminProducts: React.FC = () => {
             <div className="p-4 flex-1 flex flex-col">
               <div className="flex items-start justify-between gap-2">
                 <span className="text-[11px] font-mono text-brand">{p.oemCode || '—'}</span>
-                <Badge tone={p.stockCount === 0 ? 'red' : p.stockCount <= 5 ? 'amber' : 'green'}>
-                  {p.stockCount === 0 ? 'Дууссан' : `Үлдэгдэл ${p.stockCount}`}
-                </Badge>
+                {p.variants?.length ? (
+                  <Badge tone="blue">{p.variants.length} загвар</Badge>
+                ) : (
+                  <Badge tone={p.stockCount === 0 ? 'red' : p.stockCount <= 5 ? 'amber' : 'green'}>
+                    {p.stockCount === 0 ? 'Дууссан' : `Үлдэгдэл ${p.stockCount}`}
+                  </Badge>
+                )}
               </div>
               <h3 className="mt-1.5 text-sm font-bold text-ink-dark leading-snug">{p.name}</h3>
               <p className="mt-1 text-[11px] text-ink-dark-muted line-clamp-2">{p.description}</p>
               <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                <span className="text-sm font-black font-mono text-ink-dark">{money(p.price)}</span>
+                <span className="text-sm font-black font-mono text-ink-dark">
+                  {p.variants?.length ? productPriceLabel(p) : money(p.price)}
+                </span>
                 <div className="flex gap-1.5">
                   <button type="button" onClick={() => setEditing(p)} aria-label={`${p.name} засах`}
                     className="p-2 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand cursor-pointer transition-colors">

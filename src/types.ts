@@ -10,6 +10,26 @@ export interface TariffItem {
   popular?: boolean;
 }
 
+/**
+ * Бүтээгдэхүүний доторх хувилбар.
+ *
+ * Жишээ нь "Лифтний товч" гэсэн нэг бүтээгдэхүүн дотор брэнд тус бүрийн
+ * загварууд (BR27C/A311, KDS50/300 ...) хувилбар болж багтана. Үнэ, нөөц,
+ * зургийг хувилбар бүрд нь админ дээрээс тусад нь засна.
+ */
+export interface ProductVariant {
+  id: string;
+  /** Үйлдвэрийн код — жагсаалтад тодоор харагдана */
+  code: string;
+  name: string;
+  brand: string;
+  /** 0 бол "үнэ тохиролцоно" гэж харуулна */
+  price: number;
+  stockCount: number;
+  image: string;
+  note?: string;
+}
+
 export interface SparePart {
   id: string;
   name: string;
@@ -24,6 +44,8 @@ export interface SparePart {
   image: string;
   specs: Record<string, string>;
   description: string;
+  /** Доторх загварууд. Хоосон бол энгийн нэг бараа. */
+  variants?: ProductVariant[];
 }
 
 export interface CartItem {

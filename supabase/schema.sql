@@ -226,8 +226,15 @@ create table if not exists public.products (
   image          text not null default '',
   specs          jsonb not null default '{}'::jsonb,
   description    text not null default '',
+  -- Доторх загварууд. Жишээ нь "Лифтний товч" бүтээгдэхүүн дотор брэнд
+  -- тус бүрийн загвар (BR27C/A311, KDS50/300 ...) хувилбар болж багтана.
+  -- Бүтэц: [{id, code, name, brand, price, stockCount, image, note}]
+  variants       jsonb not null default '[]'::jsonb,
   updated_at     timestamptz not null default now()
 );
+
+-- Хүснэгт өмнө нь үүссэн бол баганыг нэмнэ (дахин ажиллуулахад аюулгүй)
+alter table public.products add column if not exists variants jsonb not null default '[]'::jsonb;
 
 alter table public.products enable row level security;
 

@@ -134,8 +134,19 @@ body {
   }
 }
 
+/*
+ * `both` биш `backwards` гэдгийг анхаарна уу.
+ *
+ * `both` үед анимаци дууссаны дараа ч сүүлчийн кадрын `transform: none`
+ * хэвээр үлдэж, тооцоолсон утга нь `matrix(1,0,0,1,0,0)` болдог. Тэр нь
+ * `none` биш тул энэ элемент дотроо `position: fixed` элементүүдийн
+ * байрлалын суурь болж, модал цонхнууд дэлгэцийн гадна гарч байв.
+ *
+ * `backwards` нь зөвхөн эхлэхээс өмнө үйлчилдэг тул анимаци дуусмагц
+ * transform бүрэн арилна. Харагдах байдал өөрчлөгдөхгүй.
+ */
 .animate-page-enter {
-  animation: page-enter 0.28s ease-out both;
+  animation: page-enter 0.28s ease-out backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
