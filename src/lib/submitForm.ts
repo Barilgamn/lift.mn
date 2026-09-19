@@ -28,6 +28,13 @@ export interface SubmitInput {
   summary: string;
   /** Маягтын бүрэн агуулга. Хоосон утгыг хасна. */
   details?: Record<string, string | number | boolean | undefined | null>;
+  /**
+   * Хавсаргасан зураг — data URL хэлбэрээр (`src/lib/photoAttach.ts`
+   * шахсан байх ёстой). `details` дотор "Зураг 1", "Зураг 2" ... гэсэн
+   * түлхүүрээр орох бөгөөд админы дэлгэц data: угтварыг таньж зураг
+   * болгон харуулна.
+   */
+  photos?: string[];
 }
 
 /**
@@ -58,6 +65,9 @@ function reference(kind: SubmissionKind): string {
   return `${prefix}-${date}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
+/** Нэг хүсэлтэд хавсаргаж болох зургийн тоо (photoAttach.ts-тай ижил) */
+const MAX_PHOTOS = 3;
+
 /** Хоосон утгыг хасаж, бүгдийг мөр болгоно */
 function cleanDetails(details: SubmitInput['details']): Record<string, string> {
   const out: Record<string, string> = {};
@@ -66,6 +76,15 @@ function cleanDetails(details: SubmitInput['details']): Record<string, string> {
     out[key] = String(value).slice(0, 2000);
   }
   return out;
+}
+
+/** Зургуудыг details дотор нэр өгч байрлуулна. Зөвхөн зурган data URL нэвтэрнэ. */
+function withPhotos(details: Record<string, string>, photos?: string[]): Record<string, string> {
+  const valid = (photos ?? []).filter((p) => p.startsWith('data:image/')).slice(0, MAX_PHOTOS);
+  valid.forEach((dataUrl, i) => {
+    details[`Зураг ${i + 1}`] = dataUrl;
+  });
+  return details;
 }
 
 const clamp = (value: string, max: number) => value.trim().slice(0, max);
@@ -99,7 +118,7 @@ export async function submitForm(kind: SubmissionKind, input: SubmitInput): Prom
       contact_name: clamp(input.contactName ?? '', LIMITS.contactName),
       summary: clamp(input.summary ?? '', LIMITS.summary),
       status: 'new',
-      details: cleanDetails(input.details),
+      details: withPhotos(cleanDetails(input.details), input.photos),
     });
 
     if (error) {

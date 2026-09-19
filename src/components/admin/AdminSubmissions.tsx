@@ -33,6 +33,16 @@ export const AdminSubmissions: React.FC = () => {
     });
   }, [submissions, kind, status, query]);
 
+  // Хавсаргасан зургийг (data: угтвартай) текст талбаруудаас салгана —
+  // эс бөгөөс base64 мөр нь дэлгэрэнгүй цонхыг дүүргэнэ.
+  const [textDetails, photoDetails] = useMemo(() => {
+    const entries = Object.entries(open?.details ?? {});
+    return [
+      entries.filter(([, v]) => !String(v).startsWith('data:image/')),
+      entries.filter(([, v]) => String(v).startsWith('data:image/')),
+    ];
+  }, [open]);
+
   return (
     <div>
       <PageHead
@@ -190,13 +200,35 @@ export const AdminSubmissions: React.FC = () => {
               </p>
 
               <dl className="mt-4 space-y-2">
-                {Object.entries(open.details).map(([k, v]) => (
+                {textDetails.map(([k, v]) => (
                   <div key={k} className="grid grid-cols-[minmax(0,9rem)_1fr] gap-3 text-xs">
                     <dt className="text-ink-dark-muted">{k}</dt>
-                    <dd className="text-ink-dark font-medium">{v}</dd>
+                    <dd className="text-ink-dark font-medium whitespace-pre-line">{v}</dd>
                   </div>
                 ))}
               </dl>
+
+              {photoDetails.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted mb-2">
+                    Хавсаргасан зураг ({photoDetails.length})
+                  </div>
+                  <ul className="flex flex-wrap gap-2.5">
+                    {photoDetails.map(([k, src]) => (
+                      <li key={k}>
+                        {/* Шинэ цонхонд нээж бүтэн хэмжээгээр нь хардаг */}
+                        <a href={src} target="_blank" rel="noopener noreferrer" title={`${k} — бүтэн хэмжээгээр нээх`}>
+                          <img
+                            src={src}
+                            alt={k}
+                            className="w-28 h-28 object-cover rounded-xl border border-line-light hover:border-brand transition-colors"
+                          />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <div className="mt-5 pt-4 border-t border-line-light">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted mb-2">

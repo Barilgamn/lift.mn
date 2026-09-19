@@ -191,6 +191,11 @@ create policy "submissions: guest insert"
     and char_length(coalesce(contact_name, '')) <= 120
     and char_length(coalesce(summary, '')) <= 300
     and status = 'new'
+    -- details дотор хавсаргасан зураг (data URL) орно. Гурван зураг тус бүр
+    -- 400 КБ хүртэл шахагдсан байдаг тул 2.5 сая тэмдэгт хангалттай. Энэ
+    -- хязгааргүй бол нэвтрээгүй хэн ч дурын хэмжээний өгөгдөл бичиж,
+    -- өгөгдлийн санг дүүргэж чадна.
+    and length(details::text) <= 2500000
   );
 
 drop policy if exists "submissions: admin read" on public.submissions;

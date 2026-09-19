@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { submitForm } from '../lib/submitForm';
+import { PhotoAttach, Photo } from './PhotoAttach';
 import { 
   X, 
   Trash2, 
@@ -41,6 +42,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [orderNumber, setOrderNumber] = useState('');
   const [orderSending, setOrderSending] = useState(false);
   const [orderError, setOrderError] = useState('');
+  const [orderPhotos, setOrderPhotos] = useState<Photo[]>([]);
 
   if (!isOpen) return null;
 
@@ -71,6 +73,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     const result = await submitForm('order', {
       contactName: clientType === 'company' ? companyName : '',
       phone,
+      photos: orderPhotos.map((p) => p.dataUrl),
       summary: `${cartItems.length} нэр төрөл · ${total.toLocaleString()}₮`,
       details: {
         'Харилцагчийн төрөл': clientType === 'company' ? 'Байгууллага' : 'Хувь хүн',
@@ -92,6 +95,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     }
 
     setOrderNumber(result.id);
+    setOrderPhotos([]);
     setStep('success');
     onClearCart();
   };
@@ -287,6 +291,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   className="w-full px-3 py-2 rounded-lg bg-surface-3 border border-neutral-700 text-white focus:border-accent focus:outline-none"
                 />
               </div>
+
+              <PhotoAttach
+                photos={orderPhotos}
+                onChange={setOrderPhotos}
+                label="Сэлбэгийн зураг"
+                hint="Одоо ашиглаж байгаа сэлбэг, пайз дээрх код эсвэл суурилуулах хэсгийн зураг хавсаргавал зөв загварыг баталгаажуулахад тусална."
+              />
 
               <div>
                 <label className="block font-semibold text-ink-muted mb-1">

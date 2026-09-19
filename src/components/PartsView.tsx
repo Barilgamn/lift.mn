@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { submitForm } from '../lib/submitForm';
+import { PhotoAttach, Photo } from './PhotoAttach';
 import { 
   ShoppingBag, 
   Search, 
@@ -43,6 +44,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
   const [sourcePhone, setSourcePhone] = useState('');
   const [sourceNotes, setSourceNotes] = useState('');
   const [sourceOrg, setSourceOrg] = useState('');
+  const [sourcePhotos, setSourcePhotos] = useState<Photo[]>([]);
   const [sourceSuccess, setSourceSuccess] = useState(false);
   const [sourceSending, setSourceSending] = useState(false);
   const [sourceError, setSourceError] = useState('');
@@ -101,6 +103,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
     const result = await submitForm('sourcing', {
       contactName: sourceOrg,
       phone: sourcePhone,
+      photos: sourcePhotos.map((p) => p.dataUrl),
       summary: `${sourcePartName} — ${sourceBrand}`,
       details: {
         'Брэнд': sourceBrand,
@@ -247,113 +250,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
           ))}
         </div>
 
-        {/* Products Grid */}
-        {productsLoading ? (
-          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
-            <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright animate-pulse" />
-            <p className="text-sm font-semibold text-ink">Сэлбэгийн жагсаалт ачаалж байна…</p>
-          </div>
-        ) : filteredParts.length === 0 ? (
-          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
-            <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright" />
-            <p className="text-sm font-semibold text-ink">Хайлтад тохирох сэлбэг олдсонгүй</p>
-            <p className="text-xs text-ink-subtle mt-1 mb-4">
-              Та доорх "Олдохгүй байгаа сэлбэг захиалах" тусгай маягтаар хүсэлтээ илгээнэ үү.
-            </p>
-            <a 
-              href="#source-section" 
-              className="inline-block px-4 py-2 rounded-xl bg-brand text-white font-bold text-xs uppercase"
-            >
-              Үйлдвэрээс захиалах хүсэлт илгээх
-            </a>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredParts.map((part) => (
-              <div 
-                key={part.id}
-                className="group rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
-              >
-                <div>
-                  {/* Part Image */}
-                  <div className="relative h-48 overflow-hidden bg-surface-1 p-4 flex items-center justify-center">
-                    <img 
-                      src={part.image} 
-                      alt={part.name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
-                    />
-                    <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
-                      {part.brand}
-                    </div>
-
-                    <div className="absolute top-2.5 right-2.5">
-                      {part.inStock ? (
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 text-[10px] font-bold">
-                          Бэлэн ({part.stockCount})
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-warn border border-amber-500/40 text-[10px] font-bold">
-                          Захиалгаар
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Part Info */}
-                  <div className="p-4">
-                    <div className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
-                      {part.oemCode}
-                    </div>
-                    <h3 className="text-xs font-bold text-ink line-clamp-2 mb-2 group-hover:text-warn transition">
-                      {part.name}
-                    </h3>
-                    <div className="text-[11px] text-ink-muted line-clamp-2 mb-3">
-                      {part.description}
-                    </div>
-
-                    <div className="text-[10px] text-ink-subtle mb-3 flex items-center gap-1">
-                      <Truck className="w-3 h-3 text-brand-bright" />
-                      <span>{part.deliveryDays}</span>
-                    </div>
-
-                    <div className="pt-2 border-t border-line flex items-baseline justify-between">
-                      <span className="text-xs text-ink-subtle">Үнэ:</span>
-                      <span className="text-base font-black text-accent-ink font-mono">
-                        {part.price.toLocaleString()} ₮
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="p-4 pt-0 grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setDetailPart(part)}
-                    className="py-2 px-3 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1"
-                  >
-                    <Info className="w-3.5 h-3.5" />
-                    <span>Үзүүлэлт</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleAddToCartWithFeedback(part)}
-                    className="py-2 px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Сагслах</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        </div>
-      </section>
-
-      {/* 3. Олдохгүй байгаа сэлбэг захиалах (Custom Sourcing Form) */}
-      <section id="source-section" className="py-16 md:py-20 border-t border-line bg-surface-2">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Тусгай захиалга — каталогийн дээр, бүтээгдэхүүн олдохгүй үед шууд харагдана */}
+      <div id="source-section" className="mb-10 scroll-mt-24">
+        <div className="max-w-3xl mx-auto">
           
           <div className="p-8 md:p-10 rounded-2xl bg-surface-2 border border-line shadow-2xl">
             <div className="text-center max-w-xl mx-auto mb-8">
@@ -478,6 +377,13 @@ export const PartsView: React.FC<PartsViewProps> = ({
                   />
                 </div>
 
+                <PhotoAttach
+                  photos={sourcePhotos}
+                  onChange={setSourcePhotos}
+                  label="Сэлбэгийн зураг"
+                  hint="Пайз дээрх код, холбогч хэсэг, эвдрэлийн байдал харагдвал үйлдвэрлэгчийг олоход хамгийн их тус болно."
+                />
+
                 {sourceError && (
                   <p role="alert" className="text-[11px] text-danger-soft text-center leading-relaxed">
                     {sourceError}
@@ -498,6 +404,110 @@ export const PartsView: React.FC<PartsViewProps> = ({
             )}
 
           </div>
+
+        </div>
+      </div>
+
+        {/* Products Grid */}
+        {productsLoading ? (
+          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
+            <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright animate-pulse" />
+            <p className="text-sm font-semibold text-ink">Сэлбэгийн жагсаалт ачаалж байна…</p>
+          </div>
+        ) : filteredParts.length === 0 ? (
+          <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
+            <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright" />
+            <p className="text-sm font-semibold text-ink">Хайлтад тохирох сэлбэг олдсонгүй</p>
+            <p className="text-xs text-ink-subtle mt-1 mb-4">
+              Та дээрх "Олдохгүй байгаа сэлбэг захиалах" тусгай маягтаар хүсэлтээ илгээнэ үү.
+            </p>
+            <a 
+              href="#source-section" 
+              className="inline-block px-4 py-2 rounded-xl bg-brand text-white font-bold text-xs uppercase"
+            >
+              Үйлдвэрээс захиалах хүсэлт илгээх
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredParts.map((part) => (
+              <div 
+                key={part.id}
+                className="group rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
+              >
+                <div>
+                  {/* Part Image */}
+                  <div className="relative h-48 overflow-hidden bg-surface-1 p-4 flex items-center justify-center">
+                    <img 
+                      src={part.image} 
+                      alt={part.name}
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
+                    />
+                    <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
+                      {part.brand}
+                    </div>
+
+                    <div className="absolute top-2.5 right-2.5">
+                      {part.inStock ? (
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 text-[10px] font-bold">
+                          Бэлэн ({part.stockCount})
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-warn border border-amber-500/40 text-[10px] font-bold">
+                          Захиалгаар
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Part Info */}
+                  <div className="p-4">
+                    <div className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
+                      {part.oemCode}
+                    </div>
+                    <h3 className="text-xs font-bold text-ink line-clamp-2 mb-2 group-hover:text-warn transition">
+                      {part.name}
+                    </h3>
+                    <div className="text-[11px] text-ink-muted line-clamp-2 mb-3">
+                      {part.description}
+                    </div>
+
+                    <div className="text-[10px] text-ink-subtle mb-3 flex items-center gap-1">
+                      <Truck className="w-3 h-3 text-brand-bright" />
+                      <span>{part.deliveryDays}</span>
+                    </div>
+
+                    <div className="pt-2 border-t border-line flex items-baseline justify-between">
+                      <span className="text-xs text-ink-subtle">Үнэ:</span>
+                      <span className="text-base font-black text-accent-ink font-mono">
+                        {part.price.toLocaleString()} ₮
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="p-4 pt-0 grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setDetailPart(part)}
+                    className="py-2 px-3 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <Info className="w-3.5 h-3.5" />
+                    <span>Үзүүлэлт</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleAddToCartWithFeedback(part)}
+                    className="py-2 px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Сагслах</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         </div>
       </section>
