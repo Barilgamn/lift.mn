@@ -6,13 +6,15 @@ import { ROUTES } from '../routes';
 
 interface BreadcrumbProps {
   section: Exclude<ActiveSection, 'portal'>;
+  /** Дэд хуудасны нэр — жишээ нь барааны нэр. Байвал нэмэлт алхам болж орно. */
+  trail?: string;
 }
 
 /**
  * Navbar-ын доорх нимгэн мөр. Хэрэглэгч аль хуудсанд байгаагаа
  * тодорхой харж, нэг товшилтоор портал руу буцах боломжтой.
  */
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section, trail }) => {
   const current = ROUTES[section];
 
   return (
@@ -34,11 +36,33 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section }) => {
           <li aria-hidden="true" className="text-ink-subtle">
             <ChevronRight className="w-3.5 h-3.5" />
           </li>
-          <li>
-            <span aria-current="page" className="font-bold text-white uppercase tracking-wider">
-              {current.label}
-            </span>
+          <li className="min-w-0">
+            {trail ? (
+              <Link
+                to={current.path}
+                className="font-bold text-ink-muted hover:text-brand-bright uppercase tracking-wider transition-colors"
+              >
+                {current.label}
+              </Link>
+            ) : (
+              <span aria-current="page" className="font-bold text-white uppercase tracking-wider">
+                {current.label}
+              </span>
+            )}
           </li>
+
+          {trail && (
+            <>
+              <li aria-hidden="true" className="text-ink-subtle shrink-0">
+                <ChevronRight className="w-3.5 h-3.5" />
+              </li>
+              <li className="min-w-0">
+                <span aria-current="page" className="block font-bold text-white truncate">
+                  {trail}
+                </span>
+              </li>
+            </>
+          )}
         </ol>
       </div>
     </nav>

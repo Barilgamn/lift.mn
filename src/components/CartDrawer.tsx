@@ -109,6 +109,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm animate-fadeIn">
       <div 
         id="cart-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Сэлбэгийн сагс"
         className="relative w-full max-w-md bg-surface-2 border-l border-line text-white h-full flex flex-col shadow-2xl overflow-hidden"
       >
         {/* Drawer Header */}

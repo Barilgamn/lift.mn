@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { ProductImage } from './ProductImage';
-import { ProductDetail } from './ProductDetail';
 import { productPriceLabel } from '../lib/variants';
 import {
   ShoppingBag,
@@ -14,6 +13,8 @@ import {
   CheckCircle2,
   Sparkles,
 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { productPath } from '../routes';
 import { useProducts } from '../lib/useProducts';
 import { SparePart } from '../types';
 
@@ -27,10 +28,10 @@ export const PartsView: React.FC<PartsViewProps> = ({
   onOpenCart,
 }) => {
   const { products: SPARE_PARTS, loading: productsLoading } = useProducts();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [detailPart, setDetailPart] = useState<SparePart | null>(null);
   
   // Custom Sourcing Form state
   const [sourceBrand, setSourceBrand] = useState('OTIS');
@@ -471,18 +472,18 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
                 {/* Actions */}
                 <div className="p-4 pt-0 grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setDetailPart(part)}
+                  <Link
+                    to={productPath(part.id)}
                     className="py-2 px-3 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1"
                   >
                     <Info className="w-3.5 h-3.5" />
                     <span>Үзүүлэлт</span>
-                  </button>
+                  </Link>
 
                   <button
                     onClick={() =>
                       part.variants?.length
-                        ? setDetailPart(part)
+                        ? navigate(productPath(part.id))
                         : handleAddToCartWithFeedback(part)
                     }
                     className="py-2 px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30"
@@ -510,16 +511,6 @@ export const PartsView: React.FC<PartsViewProps> = ({
         </div>
       </section>
 
-      {/* Барааны дэлгэрэнгүй */}
-      {detailPart && (
-        <ProductDetail
-          part={detailPart}
-          allProducts={SPARE_PARTS}
-          onClose={() => setDetailPart(null)}
-          onSelect={setDetailPart}
-          onAddToCart={handleAddToCartWithFeedback}
-        />
-      )}
 
     </div>
   );

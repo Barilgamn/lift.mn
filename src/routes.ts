@@ -24,11 +24,22 @@ export const ROUTES: Record<ActiveSection, { path: string; title: string; label:
   },
 };
 
-/** URL замаас хэсгийг олох. Тохирохгүй бол порталыг буцаана. */
+/** Барааны дэлгэрэнгүй хуудасны зам */
+export const productPath = (id: string) => `${ROUTES.parts.path}/${encodeURIComponent(id)}`;
+
+/**
+ * URL замаас хэсгийг олох. Тохирохгүй бол порталыг буцаана.
+ *
+ * Дэд зам (жишээ нь /parts/hs-button) нь эцэг хэсэгтээ тооцогдоно —
+ * ингэснээр цэсэн дээр "Сэлбэг хэрэгсэл" идэвхтэй хэвээр харагдана.
+ */
 export function sectionFromPath(pathname: string): ActiveSection {
   const clean = pathname.replace(/\/+$/, '') || '/';
-  const found = (Object.keys(ROUTES) as ActiveSection[]).find(
-    (key) => ROUTES[key].path === clean
+  const keys = Object.keys(ROUTES) as ActiveSection[];
+  const exact = keys.find((key) => ROUTES[key].path === clean);
+  if (exact) return exact;
+  const nested = keys.find(
+    (key) => ROUTES[key].path !== '/' && clean.startsWith(`${ROUTES[key].path}/`)
   );
-  return found ?? 'portal';
+  return nested ?? 'portal';
 }

@@ -27,6 +27,40 @@ const AdminMap = lazy(() => import('./components/admin/AdminMap'));
 const AdminElevators = lazy(() => import('./components/admin/AdminElevators'));
 const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 import { CartDrawer } from './components/CartDrawer';
+import { ProductPage } from './components/ProductPage';
+
+
+/** Дэд хуудсуудын нийтлэг хүрээ: Navbar, байршлын мөр, хөл хэсэг */
+const PageShell: React.FC<{
+  section: Exclude<ActiveSection, 'portal'>;
+  /** Байршлын мөрөнд нэмэх дэд алхам — жишээ нь барааны нэр */
+  trail?: string;
+  onSelectSection: (section: ActiveSection) => void;
+  onOpenEmergency: () => void;
+  onOpenCart: () => void;
+  cartCount: number;
+  children: React.ReactNode;
+}> = ({ section, trail, onSelectSection, onOpenEmergency, onOpenCart, cartCount, children }) => (
+  <div className="flex-1 flex flex-col">
+    <Navbar
+      activeSection={section}
+      onSelectSection={onSelectSection}
+      onOpenEmergency={onOpenEmergency}
+      cartCount={cartCount}
+      onOpenCart={onOpenCart}
+    />
+
+    <Breadcrumb section={section} trail={trail} />
+
+    {/* key нь хуудас солигдох бүрд орох хөдөлгөөнийг дахин ажиллуулна */}
+    <main key={section} className="flex-1 animate-page-enter">
+      {children}
+    </main>
+
+    <Footer onSelectSection={onSelectSection} onOpenEmergency={onOpenEmergency} />
+  </div>
+);
+
 
 export default function App() {
   const navigate = useNavigate();
@@ -97,33 +131,8 @@ export default function App() {
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  /** Дэд хуудсуудын нийтлэг хүрээ: Navbar, байршлын мөр, хөл хэсэг */
-  const SubPage: React.FC<{
-    section: Exclude<ActiveSection, 'portal'>;
-    children: React.ReactNode;
-  }> = ({ section, children }) => (
-    <div className="flex-1 flex flex-col">
-      <Navbar
-        activeSection={section}
-        onSelectSection={handleSelectSection}
-        onOpenEmergency={() => setIsEmergencyOpen(true)}
-        cartCount={totalCartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-      />
-
-      <Breadcrumb section={section} />
-
-      {/* key нь хуудас солигдох бүрд орох хөдөлгөөнийг дахин ажиллуулна */}
-      <main key={section} className="flex-1 animate-page-enter">
-        {children}
-      </main>
-
-      <Footer
-        onSelectSection={handleSelectSection}
-        onOpenEmergency={() => setIsEmergencyOpen(true)}
-      />
-    </div>
-  );
+  /** Байршлын мөрөнд харуулах дэд алхам — барааны хуудас өөрөө бөглөнө */
+  const [trail, setTrail] = useState<string | undefined>(undefined);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-400 selection:text-neutral-950">
@@ -141,30 +150,65 @@ export default function App() {
         <Route
           path={ROUTES['delta-lift'].path}
           element={
-            <SubPage section="delta-lift">
+            <PageShell
+              section="delta-lift"
+              onSelectSection={handleSelectSection}
+              onOpenEmergency={() => setIsEmergencyOpen(true)}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
               <DeltaLiftView />
-            </SubPage>
+            </PageShell>
           }
         />
 
         <Route
           path={ROUTES.parts.path}
           element={
-            <SubPage section="parts">
+            <PageShell
+              section="parts"
+              onSelectSection={handleSelectSection}
+              onOpenEmergency={() => setIsEmergencyOpen(true)}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
               <PartsView
                 onAddToCart={handleAddToCart}
                 onOpenCart={() => setIsCartOpen(true)}
               />
-            </SubPage>
+            </PageShell>
+          }
+        />
+
+        {/* Барааны дэлгэрэнгүй — өөрийн хаягтай бүтэн хуудас */}
+        <Route
+          path={`${ROUTES.parts.path}/:productId`}
+          element={
+            <PageShell
+              section="parts"
+              trail={trail}
+              onSelectSection={handleSelectSection}
+              onOpenEmergency={() => setIsEmergencyOpen(true)}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
+              <ProductPage onAddToCart={handleAddToCart} onTitle={setTrail} />
+            </PageShell>
           }
         />
 
         <Route
           path={ROUTES.service.path}
           element={
-            <SubPage section="service">
+            <PageShell
+              section="service"
+              onSelectSection={handleSelectSection}
+              onOpenEmergency={() => setIsEmergencyOpen(true)}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
               <ServiceView onOpenEmergency={() => setIsEmergencyOpen(true)} />
-            </SubPage>
+            </PageShell>
           }
         />
 
