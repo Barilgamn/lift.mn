@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
+import { ProductImage } from './ProductImage';
 import { variantAsPart, productPriceLabel, priceLabel } from '../lib/variants';
 import { 
   ShoppingBag, 
@@ -439,10 +440,12 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 <div>
                   {/* Part Image */}
                   <div className="relative h-48 overflow-hidden bg-surface-1 p-4 flex items-center justify-center">
-                    <img 
-                      src={part.image} 
+                    <ProductImage
+                      src={part.image}
                       alt={part.name}
                       className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
+                      fallbackClassName="w-full h-full bg-surface-2 rounded-xl"
+                      iconClassName="w-8 h-8 text-ink-subtle opacity-40"
                     />
                     <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
                       {part.brand}
@@ -536,10 +539,13 @@ export const PartsView: React.FC<PartsViewProps> = ({
               </button>
             </div>
 
-            <img 
-              src={detailPart.image} 
+            <ProductImage
+              src={detailPart.image}
               alt={detailPart.name}
+              loading="eager"
               className="w-full h-52 object-contain bg-surface-1 rounded-xl mb-4 p-2"
+              fallbackClassName="w-full h-52 bg-surface-1 rounded-xl mb-4"
+              iconClassName="w-9 h-9 text-ink-subtle opacity-40"
             />
 
             <div className="text-xs text-ink-muted leading-relaxed mb-4">
@@ -581,16 +587,13 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       key={v.id}
                       className="flex items-center gap-3 p-2 rounded-xl bg-surface-1 border border-line"
                     >
-                      {v.image ? (
-                        <img
-                          src={v.image}
-                          alt={v.code}
-                          loading="lazy"
-                          className="w-12 h-12 shrink-0 object-contain rounded-lg bg-white"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 shrink-0 rounded-lg bg-surface-3" />
-                      )}
+                      <ProductImage
+                        src={v.image}
+                        alt={v.code}
+                        className="w-12 h-12 shrink-0 object-contain rounded-lg bg-white"
+                        fallbackClassName="w-12 h-12 shrink-0 rounded-lg bg-surface-3"
+                        iconClassName="w-4 h-4 text-ink-subtle opacity-50"
+                      />
 
                       <div className="min-w-0 flex-1">
                         <div className="font-mono text-xs font-bold text-brand-bright break-words">

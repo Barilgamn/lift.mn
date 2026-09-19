@@ -1,10 +1,11 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ImageOff, Pencil, Plus, Search, Trash2, Upload, X } from 'lucide-react';
+import { Pencil, Plus, Search, Trash2, Upload, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { ProductVariant, SparePart } from '../../types';
 import { Badge, PageHead, Panel } from './adminUi';
 import { attachPhoto, formatBytes } from '../../lib/photoAttach';
 import { productPriceLabel } from '../../lib/variants';
+import { ProductImage } from '../ProductImage';
 
 const CATEGORIES: Array<{ value: SparePart['category']; label: string }> = [
   { value: 'motor', label: 'Мотор' },
@@ -90,7 +91,13 @@ const VariantEditor: React.FC<{
                     {busyId === v.id ? (
                       <span className="text-[10px] text-ink-dark-subtle">…</span>
                     ) : v.image ? (
-                      <img src={v.image} alt="" className="w-full h-full object-contain" />
+                      <ProductImage
+                        src={v.image}
+                        alt={v.code || 'Загвар'}
+                        className="w-full h-full object-contain"
+                        fallbackClassName="w-full h-full bg-paper-3"
+                        iconClassName="w-4 h-4 text-ink-dark-subtle"
+                      />
                     ) : (
                       <Upload className="w-4 h-4 text-ink-dark-subtle" />
                     )}
@@ -279,11 +286,14 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
         <span className={label}>Зураг</span>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="w-full sm:w-40 h-28 rounded-lg bg-paper-3 border border-line-light overflow-hidden flex items-center justify-center shrink-0">
-            {p.image ? (
-              <img src={p.image} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <ImageOff className="w-6 h-6 text-ink-dark-subtle" />
-            )}
+            <ProductImage
+              src={p.image}
+              alt={p.name || 'Бүтээгдэхүүн'}
+              loading="eager"
+              className="w-full h-full object-contain p-2"
+              fallbackClassName="w-full h-full bg-paper-3"
+              iconClassName="w-6 h-6 text-ink-dark-subtle"
+            />
           </div>
           <div className="flex-1 space-y-2">
             <input value={p.image.startsWith('data:') ? '' : p.image}
@@ -370,11 +380,13 @@ export const AdminProducts: React.FC = () => {
         {rows.map((p) => (
           <Panel key={p.id} className="overflow-hidden flex flex-col">
             <div className="h-36 bg-paper-3 flex items-center justify-center overflow-hidden">
-              {p.image ? (
-                <img src={p.image} alt="" className="w-full h-full object-contain p-2" loading="lazy" />
-              ) : (
-                <ImageOff className="w-7 h-7 text-ink-dark-subtle" />
-              )}
+              <ProductImage
+                src={p.image}
+                alt={p.name}
+                className="w-full h-full object-contain p-2"
+                fallbackClassName="w-full h-full bg-paper-3"
+                iconClassName="w-7 h-7 text-ink-dark-subtle"
+              />
             </div>
             <div className="p-4 flex-1 flex flex-col">
               <div className="flex items-start justify-between gap-2">
