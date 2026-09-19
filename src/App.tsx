@@ -154,7 +154,6 @@ export default function App() {
               <PartsView
                 onAddToCart={handleAddToCart}
                 onOpenCart={() => setIsCartOpen(true)}
-                cartCount={totalCartCount}
               />
             </SubPage>
           }

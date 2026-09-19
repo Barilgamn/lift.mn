@@ -138,6 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onOpenCart}
             className="relative p-2.5 rounded-lg bg-paper-3 hover:bg-paper border border-line-light text-brand transition hover:border-brand cursor-pointer"
             title="Сэлбэгийн сагс харах"
+            aria-label={cartCount > 0 ? `Сэлбэгийн сагс харах (${cartCount} бараа)` : 'Сэлбэгийн сагс харах'}
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (

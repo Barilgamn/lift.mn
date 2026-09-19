@@ -25,13 +25,11 @@ import { SparePart, CartItem } from '../types';
 interface PartsViewProps {
   onAddToCart: (part: SparePart) => void;
   onOpenCart: () => void;
-  cartCount: number;
 }
 
 export const PartsView: React.FC<PartsViewProps> = ({ 
   onAddToCart, 
-  onOpenCart, 
-  cartCount 
+  onOpenCart,
 }) => {
   const { products: SPARE_PARTS, loading: productsLoading } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -60,7 +58,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
     { key: 'sensor', label: 'Мэдрэгч & Фотоэлемент' },
     { key: 'button', label: 'Товчлуур & Дэлгэц (COP/LOP)' },
     { key: 'motor', label: 'Хөдөлгүүр & Мотор' },
-    { key: 'brake', label: 'Тоормос & Аюулгүй байдал' }
+    { key: 'brake', label: 'Тоормос & Аюулгүй байдал' },
+    { key: 'oil', label: 'Бусад эд анги' }
   ];
 
   const brands = [
@@ -123,9 +122,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
   // Тусгай захиалгын маягтаас өмнө яг ХОЁР МӨР бараа харуулна.
   // Баганын тоо нь доорх сүлжээний ангиллаас хамаарна:
-  //   grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+  //   grid-cols-1 sm:grid-cols-2 xl:grid-cols-3
   // Тэр ангиллыг өөрчилвөл энд ч гэсэн тааруулна.
-  const columnsAt = (width: number) => (width >= 1024 ? 4 : width >= 640 ? 2 : 1);
+  const columnsAt = (width: number) => (width >= 1280 ? 3 : width >= 640 ? 2 : 1);
   const [columns, setColumns] = useState(() =>
     typeof window === 'undefined' ? 4 : columnsAt(window.innerWidth)
   );
@@ -316,73 +315,53 @@ export const PartsView: React.FC<PartsViewProps> = ({
         </div>
       )}
 
-      {/* 1. Header Banner */}
-      <section className="relative py-14 border-b border-line overflow-hidden bg-gradient-to-b from-surface-2 to-surface-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/15 border border-brand/40 text-brand-bright text-xs font-bold uppercase tracking-wider mb-4">
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>Лифтний Оригинал Сэлбэгийн Дэлгүүр</span>
-              </div>
-              
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-3">
-                Лифт, Эскалаторын Сэлбэг Хэрэгсэл
-              </h1>
-              
-              <p className="text-sm md:text-base text-ink-muted leading-relaxed">
-                OTIS, Mitsubishi, Hyundai, Monarch, Fermator зэрэг дэлхийн брэндүүдийн албан ёсны оригинал сэлбэгийн шууд худалдаа, найдвартай нийлүүлэлт.
-              </p>
-            </div>
-
-            {/* Cart Trigger Card */}
-            <div className="p-5 rounded-2xl bg-surface-2 border border-line flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-brand/20 border border-brand/40 flex items-center justify-center text-brand-bright">
-                  <ShoppingCart className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="text-xs text-ink-muted">Таны сагс:</div>
-                  <div className="text-lg font-black text-ink">{cartCount} бараа</div>
-                </div>
-              </div>
-              <button
-                id="parts-open-cart-btn"
-                onClick={onOpenCart}
-                className="px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md shadow-brand/30"
-              >
-                <span>Сагс нээх</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Quick value props */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-line text-xs text-ink-muted">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-success shrink-0" />
-              <span>100% Оригинал OEM эд анги</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>УБ хотод өдөрт нь хүргэнэ</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FileCheck2 className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>НӨАТ-ын баримт & Нэхэмжлэх</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>6-24 сарын албан баталгаа</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 2. Catalog & Search & Filters */}
-      <section className="theme-light bg-surface-1 py-10 border-b border-line">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+      <section className="theme-light bg-surface-1 py-8 border-b border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:grid lg:grid-cols-[232px_1fr] lg:gap-8">
+
+        {/* Ангилал — lg дээр зүүн талд босоо, түүнээс бага дэлгэцэд хөндлөн */}
+        <aside className="mb-6 lg:mb-0 lg:sticky lg:top-24 lg:self-start">
+          <h2 className="hidden lg:block text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-3">
+            Ангилал
+          </h2>
+          <nav
+            aria-label="Сэлбэгийн ангилал"
+            className="flex lg:flex-col items-center lg:items-stretch gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-none"
+          >
+            {categories.map((cat) => {
+              const active = selectedCategory === cat.key;
+              const count =
+                cat.key === 'all'
+                  ? SPARE_PARTS.length
+                  : SPARE_PARTS.filter((p) => p.category === cat.key).length;
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setSelectedCategory(cat.key)}
+                  aria-current={active ? 'true' : undefined}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap lg:whitespace-normal lg:text-left transition cursor-pointer lg:flex lg:items-center lg:justify-between lg:gap-2 ${
+                    active
+                      ? 'bg-brand text-white font-bold shadow-md shadow-brand/30'
+                      : 'bg-surface-2 text-ink-muted hover:text-ink border border-line'
+                  }`}
+                >
+                  <span>{cat.label}</span>
+                  <span
+                    className={`hidden lg:inline text-[10px] font-mono tabular-nums ${
+                      active ? 'text-white/70' : 'text-ink-subtle'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* Баруун багана */}
+        <div className="min-w-0">
+
         {/* Search & Brand Filter Bar */}
         <div className="p-4 rounded-2xl bg-surface-2 border border-line mb-6 flex flex-col md:flex-row gap-3 items-center justify-between">
           {/* Search Input */}
@@ -413,23 +392,6 @@ export const PartsView: React.FC<PartsViewProps> = ({
           </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setSelectedCategory(cat.key)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
-                selectedCategory === cat.key
-                  ? 'bg-brand text-white font-bold shadow-md shadow-brand/30'
-                  : 'bg-surface-2 text-ink-muted hover:text-white border border-line'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
         {/* Products Grid */}
         {productsLoading ? (
           <div className="text-center py-16 p-8 rounded-2xl bg-surface-2 border border-line text-ink-muted">
@@ -451,7 +413,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {filteredParts.map((part, index) => (
               <React.Fragment key={part.id}>
               <div 
@@ -547,6 +509,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
         {!productsLoading && filteredParts.length <= FEATURED_COUNT && (
           <div className="grid grid-cols-1 mt-6">{sourcingSection}</div>
         )}
+
+        </div>
 
         </div>
       </section>
