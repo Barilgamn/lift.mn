@@ -416,20 +416,28 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 className="group rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
               >
                 <div>
-                  {/* Part Image */}
-                  <div className="relative h-48 overflow-hidden bg-surface-1 p-4 flex items-center justify-center">
-                    <ProductImage
-                      src={part.image}
-                      alt={part.name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
-                      fallbackClassName="w-full h-full bg-surface-2 rounded-xl"
-                      iconClassName="w-8 h-8 text-ink-subtle opacity-40"
-                    />
-                    <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
+                  {/* Зураг — дэлгэрэнгүй хуудас руу хөтөлнө */}
+                  <div className="relative h-48 overflow-hidden bg-surface-1">
+                    <Link
+                      to={productPath(part.id)}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="absolute inset-0 p-4 flex items-center justify-center"
+                    >
+                      <ProductImage
+                        src={part.image}
+                        alt={part.name}
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
+                        fallbackClassName="w-full h-full bg-surface-2 rounded-xl"
+                        iconClassName="w-8 h-8 text-ink-subtle opacity-40"
+                      />
+                    </Link>
+
+                    <div className="pointer-events-none absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
                       {part.brand}
                     </div>
 
-                    <div className="absolute top-2.5 right-2.5">
+                    <div className="pointer-events-none absolute top-2.5 right-2.5">
                       {part.inStock ? (
                         <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 text-[10px] font-bold">
                           Бэлэн ({part.stockCount})
@@ -447,8 +455,13 @@ export const PartsView: React.FC<PartsViewProps> = ({
                     <div className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
                       {part.oemCode}
                     </div>
-                    <h3 className="text-xs font-bold text-ink line-clamp-2 mb-2 group-hover:text-warn transition">
-                      {part.name}
+                    <h3 className="mb-2">
+                      <Link
+                        to={productPath(part.id)}
+                        className="text-xs font-bold text-ink line-clamp-2 hover:text-brand-bright group-hover:text-warn transition-colors"
+                      >
+                        {part.name}
+                      </Link>
                     </h3>
                     <div className="text-[11px] text-ink-muted line-clamp-2 mb-3">
                       {part.description}
