@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { ProductImage } from './ProductImage';
@@ -121,139 +121,27 @@ export const PartsView: React.FC<PartsViewProps> = ({
     else setSourceError(result.message);
   };
 
-  return (
-    <div id="parts-view" className="w-full bg-surface-1 text-ink min-h-screen">
-      
-      {/* Toast alert */}
-      {addedToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-neutral-950" />
-          <span>{addedToast}</span>
-          <button 
-            onClick={onOpenCart} 
-            className="underline ml-2 hover:opacity-80 cursor-pointer"
-          >
-            Сагс үзэх →
-          </button>
-        </div>
-      )}
+  // Тусгай захиалгын маягтаас өмнө яг ХОЁР МӨР бараа харуулна.
+  // Баганын тоо нь доорх сүлжээний ангиллаас хамаарна:
+  //   grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+  // Тэр ангиллыг өөрчилвөл энд ч гэсэн тааруулна.
+  const columnsAt = (width: number) => (width >= 1024 ? 4 : width >= 640 ? 2 : 1);
+  const [columns, setColumns] = useState(() =>
+    typeof window === 'undefined' ? 4 : columnsAt(window.innerWidth)
+  );
 
-      {/* 1. Header Banner */}
-      <section className="relative py-14 border-b border-line overflow-hidden bg-gradient-to-b from-surface-2 to-surface-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/15 border border-brand/40 text-brand-bright text-xs font-bold uppercase tracking-wider mb-4">
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>Лифтний Оригинал Сэлбэгийн Дэлгүүр</span>
-              </div>
-              
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-3">
-                Лифт, Эскалаторын Сэлбэг Хэрэгсэл
-              </h1>
-              
-              <p className="text-sm md:text-base text-ink-muted leading-relaxed">
-                OTIS, Mitsubishi, Hyundai, Monarch, Fermator зэрэг дэлхийн брэндүүдийн албан ёсны оригинал сэлбэгийн шууд худалдаа, найдвартай нийлүүлэлт.
-              </p>
-            </div>
+  useEffect(() => {
+    const onResize = () => setColumns(columnsAt(window.innerWidth));
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
-            {/* Cart Trigger Card */}
-            <div className="p-5 rounded-2xl bg-surface-2 border border-line flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-brand/20 border border-brand/40 flex items-center justify-center text-brand-bright">
-                  <ShoppingCart className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="text-xs text-ink-muted">Таны сагс:</div>
-                  <div className="text-lg font-black text-ink">{cartCount} бараа</div>
-                </div>
-              </div>
-              <button
-                id="parts-open-cart-btn"
-                onClick={onOpenCart}
-                className="px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md shadow-brand/30"
-              >
-                <span>Сагс нээх</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+  const FEATURED_COUNT = columns * 2;
 
-          {/* Quick value props */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-line text-xs text-ink-muted">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-success shrink-0" />
-              <span>100% Оригинал OEM эд анги</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>УБ хотод өдөрт нь хүргэнэ</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FileCheck2 className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>НӨАТ-ын баримт & Нэхэмжлэх</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-brand-bright shrink-0" />
-              <span>6-24 сарын албан баталгаа</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Catalog & Search & Filters */}
-      <section className="theme-light bg-surface-1 py-10 border-b border-line">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Search & Brand Filter Bar */}
-        <div className="p-4 rounded-2xl bg-surface-2 border border-line mb-6 flex flex-col md:flex-row gap-3 items-center justify-between">
-          {/* Search Input */}
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-ink-subtle" />
-            <input 
-              type="text"
-              placeholder="Сэлбэгийн нэр эсвэл кодоор хайх (Жишээ: NICE, AT120, 10mm)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-ink text-xs placeholder:text-ink-subtle focus:border-brand-bright focus:outline-none"
-            />
-          </div>
-
-          {/* Brand select */}
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <span className="text-xs text-ink-muted whitespace-nowrap">Брэнд:</span>
-            <select
-              value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-surface-3 border border-line text-ink text-xs focus:border-brand-bright focus:outline-none cursor-pointer"
-            >
-              <option value="all">Бүх брэнд</option>
-              {brands.filter(b => b !== 'all').map(b => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setSelectedCategory(cat.key)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
-                selectedCategory === cat.key
-                  ? 'bg-brand text-white font-bold shadow-md shadow-brand/30'
-                  : 'bg-surface-2 text-ink-muted hover:text-white border border-line'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-      {/* Тусгай захиалга — каталогийн дээр, бүтээгдэхүүн олдохгүй үед шууд харагдана */}
-      <div id="source-section" className="mb-10 scroll-mt-24">
+  /** Тусгай захиалгын хэсэг — сүлжээний дунд бүтэн өргөнөөр орно */
+  const sourcingSection = (
+    <div id="source-section" className="col-span-full scroll-mt-24 my-2">
         <div className="max-w-3xl mx-auto">
           
           <div className="p-8 md:p-10 rounded-2xl bg-surface-2 border border-line shadow-2xl">
@@ -408,7 +296,139 @@ export const PartsView: React.FC<PartsViewProps> = ({
           </div>
 
         </div>
-      </div>
+    </div>
+  );
+
+  return (
+    <div id="parts-view" className="w-full bg-surface-1 text-ink min-h-screen">
+      
+      {/* Toast alert */}
+      {addedToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
+          <CheckCircle2 className="w-4 h-4 text-neutral-950" />
+          <span>{addedToast}</span>
+          <button 
+            onClick={onOpenCart} 
+            className="underline ml-2 hover:opacity-80 cursor-pointer"
+          >
+            Сагс үзэх →
+          </button>
+        </div>
+      )}
+
+      {/* 1. Header Banner */}
+      <section className="relative py-14 border-b border-line overflow-hidden bg-gradient-to-b from-surface-2 to-surface-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/15 border border-brand/40 text-brand-bright text-xs font-bold uppercase tracking-wider mb-4">
+                <ShoppingBag className="w-3.5 h-3.5" />
+                <span>Лифтний Оригинал Сэлбэгийн Дэлгүүр</span>
+              </div>
+              
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-3">
+                Лифт, Эскалаторын Сэлбэг Хэрэгсэл
+              </h1>
+              
+              <p className="text-sm md:text-base text-ink-muted leading-relaxed">
+                OTIS, Mitsubishi, Hyundai, Monarch, Fermator зэрэг дэлхийн брэндүүдийн албан ёсны оригинал сэлбэгийн шууд худалдаа, найдвартай нийлүүлэлт.
+              </p>
+            </div>
+
+            {/* Cart Trigger Card */}
+            <div className="p-5 rounded-2xl bg-surface-2 border border-line flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-brand/20 border border-brand/40 flex items-center justify-center text-brand-bright">
+                  <ShoppingCart className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-xs text-ink-muted">Таны сагс:</div>
+                  <div className="text-lg font-black text-ink">{cartCount} бараа</div>
+                </div>
+              </div>
+              <button
+                id="parts-open-cart-btn"
+                onClick={onOpenCart}
+                className="px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md shadow-brand/30"
+              >
+                <span>Сагс нээх</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Quick value props */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-line text-xs text-ink-muted">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-success shrink-0" />
+              <span>100% Оригинал OEM эд анги</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Truck className="w-4 h-4 text-brand-bright shrink-0" />
+              <span>УБ хотод өдөрт нь хүргэнэ</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FileCheck2 className="w-4 h-4 text-brand-bright shrink-0" />
+              <span>НӨАТ-ын баримт & Нэхэмжлэх</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-brand-bright shrink-0" />
+              <span>6-24 сарын албан баталгаа</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Catalog & Search & Filters */}
+      <section className="theme-light bg-surface-1 py-10 border-b border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Search & Brand Filter Bar */}
+        <div className="p-4 rounded-2xl bg-surface-2 border border-line mb-6 flex flex-col md:flex-row gap-3 items-center justify-between">
+          {/* Search Input */}
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-ink-subtle" />
+            <input 
+              type="text"
+              placeholder="Сэлбэгийн нэр эсвэл кодоор хайх (Жишээ: NICE, AT120, 10mm)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-ink text-xs placeholder:text-ink-subtle focus:border-brand-bright focus:outline-none"
+            />
+          </div>
+
+          {/* Brand select */}
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <span className="text-xs text-ink-muted whitespace-nowrap">Брэнд:</span>
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-surface-3 border border-line text-ink text-xs focus:border-brand-bright focus:outline-none cursor-pointer"
+            >
+              <option value="all">Бүх брэнд</option>
+              {brands.filter(b => b !== 'all').map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Category Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
+          {categories.map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => setSelectedCategory(cat.key)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                selectedCategory === cat.key
+                  ? 'bg-brand text-white font-bold shadow-md shadow-brand/30'
+                  : 'bg-surface-2 text-ink-muted hover:text-white border border-line'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
 
         {/* Products Grid */}
         {productsLoading ? (
@@ -421,7 +441,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
             <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30 text-brand-bright" />
             <p className="text-sm font-semibold text-ink">Хайлтад тохирох сэлбэг олдсонгүй</p>
             <p className="text-xs text-ink-subtle mt-1 mb-4">
-              Та дээрх "Олдохгүй байгаа сэлбэг захиалах" тусгай маягтаар хүсэлтээ илгээнэ үү.
+              Та доорх "Олдохгүй байгаа сэлбэг захиалах" тусгай маягтаар хүсэлтээ илгээнэ үү.
             </p>
             <a 
               href="#source-section" 
@@ -432,9 +452,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredParts.map((part) => (
+            {filteredParts.map((part, index) => (
+              <React.Fragment key={part.id}>
               <div 
-                key={part.id}
                 className="group rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
               >
                 <div>
@@ -515,8 +535,17 @@ export const PartsView: React.FC<PartsViewProps> = ({
                   </button>
                 </div>
               </div>
+
+              {/* Хоёр мөр барааны дараа тусгай захиалга, дараа нь үлдсэн нь цувна */}
+              {index === FEATURED_COUNT - 1 && sourcingSection}
+              </React.Fragment>
             ))}
           </div>
+        )}
+
+        {/* Бараа хоёр мөрөөс цөөн бол маягтыг жагсаалтын дараа тавина */}
+        {!productsLoading && filteredParts.length <= FEATURED_COUNT && (
+          <div className="grid grid-cols-1 mt-6">{sourcingSection}</div>
         )}
 
         </div>

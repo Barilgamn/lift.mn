@@ -1,6 +1,5 @@
 import { serviceClient } from './supabase-admin-client.js';
 import { SEED_ELEVATORS, SEED_SERVICE_RECORDS, SEED_SUBMISSIONS } from '../src/data/adminData.js';
-import { SPARE_PARTS } from '../src/data/mockData.js';
 import { CATALOG_PRODUCTS } from '../src/data/catalogData.js';
 import { elevatorToRow, productToRow, recordToRow } from '../src/lib/mappers.js';
 
@@ -63,12 +62,11 @@ async function main() {
   }
 
   if (await isEmpty('products')) {
-    const all = [...CATALOG_PRODUCTS, ...SPARE_PARTS];
     // Зураг нь /public дотор файл байдаг тул мөр хөнгөн — багцлах шаардлагагүй
-    const { error } = await sb.from('products').insert(all.map(productToRow));
+    const { error } = await sb.from('products').insert(CATALOG_PRODUCTS.map(productToRow));
     if (error) throw new Error(`products: ${error.message}`);
     const variants = CATALOG_PRODUCTS.reduce((n, p) => n + (p.variants?.length ?? 0), 0);
-    console.log(`Бүтээгдэхүүн ${all.length} ачааллаа (каталогийн ${variants} загвар)`);
+    console.log(`Бүтээгдэхүүн ${CATALOG_PRODUCTS.length} ачааллаа (${variants} загвар)`);
   } else {
     console.log(
       'Бүтээгдэхүүн аль хэдийн байна — алгаслаа.\n' +

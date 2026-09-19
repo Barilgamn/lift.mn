@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { SparePart } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import { rowToProduct } from './mappers';
-import { SPARE_PARTS } from '../data/mockData';
+import { CATALOG_PRODUCTS } from '../data/catalogData';
 
 /**
  * Дэлгүүрийн бүтээгдэхүүн.
@@ -13,10 +13,14 @@ import { SPARE_PARTS } from '../data/mockData';
  * эргэж гарч ирэхгүй. Эс бөгөөс админ хоосон, үйлчлүүлэгч дүүрэн гэсэн
  * зөрүү үүснэ.
  *
- * Жишээ өгөгдөл рүү зөвхөн хоёр тохиолдолд шилжинэ:
+ * Кодод суусан каталог руу зөвхөн хоёр тохиолдолд шилжинэ:
  *   - Supabase огт тохируулаагүй (.env бөглөгдөөгүй)
  *   - Уншилт алдаа өглөө (сүлжээ, эрх) — дэлгүүр хоосон харагдвал
  *     хүн юу ч болсныг мэдэхгүй тул байгаа каталогоо харуулна
+ *
+ * Унах үеийн каталог нь бодит бүтээгдэхүүн (src/data/catalogData.ts).
+ * Үнэ нь 0 буюу "тохиролцоно" гэж харагдана — админы тавьсан үнэ зөвхөн
+ * өгөгдлийн санд байдаг тул сүлжээгүй үед худал үнэ харуулахгүй.
  *
  * Сүлжээ тасарсан үед supabase-js 10 гаруй секунд дахин оролддог. Тэр
  * хугацаанд дэлгүүр хоосон зогсохоос сэргийлж хүсэлтийг таслана.
@@ -27,7 +31,7 @@ const TIMEOUT_MS = 6000;
 export function useProducts(): { products: SparePart[]; loading: boolean } {
   // Supabase-тэй үед ачаалал дуустал хоосон — жишээ бараа анивчихгүй
   const [products, setProducts] = useState<SparePart[]>(
-    isSupabaseConfigured ? [] : SPARE_PARTS
+    isSupabaseConfigured ? [] : CATALOG_PRODUCTS
   );
   const [loading, setLoading] = useState(isSupabaseConfigured);
 
@@ -43,7 +47,7 @@ export function useProducts(): { products: SparePart[]; loading: boolean } {
         if (!alive) return;
         if (error) {
           console.error('Бүтээгдэхүүн уншиж чадсангүй:', error.message);
-          setProducts(SPARE_PARTS);
+          setProducts(CATALOG_PRODUCTS);
         } else {
           // data нь хоосон массив байж БОЛНО — тэр нь бодит хариу
           setProducts((data ?? []).map(rowToProduct));
@@ -53,7 +57,7 @@ export function useProducts(): { products: SparePart[]; loading: boolean } {
       .catch((e) => {
         if (!alive) return;
         console.error('Бүтээгдэхүүн уншиж чадсангүй:', e);
-        setProducts(SPARE_PARTS);
+        setProducts(CATALOG_PRODUCTS);
         setLoading(false);
       });
 
