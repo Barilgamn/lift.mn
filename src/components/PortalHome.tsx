@@ -39,18 +39,164 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         </div>
       </header>
 
-      {/* Main Content Area: 3 Full-Screen Columns */}
+      {/* Үндсэн хэсэг — гурван бүтэн дэлгэцийн багана */}
       <main 
         id="portal-tri-split"
-        className="relative z-10 flex-1 w-full flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-line"
+        /*
+         * Дараалал: гар утсанд Сэлбэг → Засвар → Delta (DOM дараалал),
+         * дэлгэц дээр Засвар → Сэлбэг → Delta (md:order-*).
+         * Гар утасны дарааллыг DOM-д тавьсан учир нь Tab товчны дараалал
+         * DOM-ыг дагадаг — зочны дийлэнх нь утаснаас ордог.
+         *
+         * divide-* ангилал энд тохирохгүй: тэр нь DOM дарааллаар шугам
+         * зурдаг тул order-оор байр сольсны дараа буруу талд гарна.
+         * Оронд нь хэсэг бүрд харагдах байрлалынх нь дагуу хүрээ өгөв.
+         */
+        className="relative z-10 flex-1 w-full flex flex-col md:flex-row"
       >
-        {/* COLUMN 1: DELTA LIFT */}
+        {/* Сэлбэг — утсанд 1-рт, дэлгэц дээр 2-рт */}
+        <section
+          id="portal-column-parts"
+          onClick={() => onSelectSection('parts')}
+          role="button"
+          tabIndex={0}
+          className="md:order-2 md:border-l md:border-line group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+        >
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{
+              backgroundImage: `url('/images/lift_parts_hero.jpg')`
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+          {/* Top highlight bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
+
+          {/* Card Middle: Icon, Titles & Representative Keywords */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
+            {/* Header: Icon and Title in ONE row */}
+            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
+              </div>
+
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
+                СЭЛБЭГ ХЭРЭГСЭЛ
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
+              ОРИГИНАЛ ЭД АНГИ · ОНЛАЙН ЗАХИАЛГА
+            </p>
+
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
+              Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга
+            </p>
+
+            {/* Representative Keywords Row */}
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Онлайн дэлгүүр
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Бэлэн нөөц
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Шуурхай хүргэлт
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Баталгаат сэлбэг
+              </span>
+            </div>
+          </div>
+
+          {/* Card Bottom: Button */}
+          <div className="relative z-10 w-full pt-4">
+            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
+              <span>Дэлгүүр лүү орох</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
+            </div>
+          </div>
+        </section>
+
+        {/* Засвар — утсанд 2-рт, дэлгэц дээр 1-рт */}
+        <section
+          id="portal-column-service"
+          onClick={() => onSelectSection('service')}
+          role="button"
+          tabIndex={0}
+          className="md:order-1 border-t border-line md:border-t-0 group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+        >
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{
+              backgroundImage: `url('/images/service_hero.jpg')`
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+          {/* Top highlight bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
+
+          {/* Card Middle: Icon, Titles & Representative Keywords */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
+            {/* Header: Icon and Title in ONE row */}
+            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+                <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
+              </div>
+
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
+                ЗАСВАР ҮЙЛЧИЛГЭЭ
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
+              ОНОШИЛГОО · ХУВААРЬТ ҮЗЛЭГ · ТАРИФ
+            </p>
+
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
+              Засвар үйлчилгээний онлайн дуудлага өгөх, цаг товлох, СӨХ-ийн гэрээт багц, тариф үнийн жагсаалт болон 24/7 диспетчерийн алба
+            </p>
+
+            {/* Representative Keywords Row */}
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                24/7 Шуурхай алба
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                СӨХ гэрээт үйлчилгээ
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Хуваарьт үзлэг оношилгоо
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Инженерийн баг
+              </span>
+            </div>
+          </div>
+
+          {/* Card Bottom: Button */}
+          <div className="relative z-10 w-full pt-4">
+            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
+              <span>Үйлчилгээ рүү орох</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
+            </div>
+          </div>
+        </section>
+
+        {/* DELTA LIFT — хоёуланд нь 3-рт */}
         <section
           id="portal-column-delta"
           onClick={() => onSelectSection('delta-lift')}
           role="button"
           tabIndex={0}
-          className="group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+          className="md:order-3 border-t border-line md:border-t-0 md:border-l md:border-line group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
         >
           {/* Background Image with Dark Navy Gradient */}
           <div 
@@ -115,142 +261,6 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <div className="relative z-10 w-full pt-4">
             <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
               <span>Вэб сайт руу орох</span>
-              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
-            </div>
-          </div>
-        </section>
-
-        {/* COLUMN 2: СЭЛБЭГ ХЭРЭГСЭЛ (ГОЛД НЬ ОРУУЛАВ) */}
-        <section
-          id="portal-column-parts"
-          onClick={() => onSelectSection('parts')}
-          role="button"
-          tabIndex={0}
-          className="group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
-        >
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{
-              backgroundImage: `url('/images/lift_parts_hero.jpg')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-          {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
-
-          {/* Card Middle: Icon, Titles & Representative Keywords */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
-            {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
-              </div>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-                СЭЛБЭГ ХЭРЭГСЭЛ
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
-              ОРИГИНАЛ ЭД АНГИ · ОНЛАЙН ЗАХИАЛГА
-            </p>
-
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга
-            </p>
-
-            {/* Representative Keywords Row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Онлайн дэлгүүр
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Бэлэн нөөц
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Шуурхай хүргэлт
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Баталгаат сэлбэг
-              </span>
-            </div>
-          </div>
-
-          {/* Card Bottom: Button */}
-          <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
-              <span>Дэлгүүр лүү орох</span>
-              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
-            </div>
-          </div>
-        </section>
-
-        {/* COLUMN 3: ЗАСВАР ҮЙЛЧИЛГЭЭ */}
-        <section
-          id="portal-column-service"
-          onClick={() => onSelectSection('service')}
-          role="button"
-          tabIndex={0}
-          className="group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
-        >
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{
-              backgroundImage: `url('/images/service_hero.jpg')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-          {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
-
-          {/* Card Middle: Icon, Titles & Representative Keywords */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 flex flex-col items-center text-center">
-            {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-start justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
-              </div>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-                ЗАСВАР ҮЙЛЧИЛГЭЭ
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
-              ОНОШИЛГОО · ХУВААРЬТ ҮЗЛЭГ · ТАРИФ
-            </p>
-
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Засвар үйлчилгээний онлайн дуудлага өгөх, цаг товлох, СӨХ-ийн гэрээт багц, тариф үнийн жагсаалт болон 24/7 диспетчерийн алба
-            </p>
-
-            {/* Representative Keywords Row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                24/7 Шуурхай алба
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                СӨХ гэрээт үйлчилгээ
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Хуваарьт үзлэг оношилгоо
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Инженерийн баг
-              </span>
-            </div>
-          </div>
-
-          {/* Card Bottom: Button */}
-          <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
-              <span>Үйлчилгээ рүү орох</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
             </div>
           </div>
