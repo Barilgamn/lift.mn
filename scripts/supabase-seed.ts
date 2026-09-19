@@ -8,12 +8,26 @@ import { elevatorToRow, productToRow, recordToRow } from '../src/lib/mappers.js'
  * Эхлэлийн жишээ өгөгдөл ачаалах.
  *
  *   npm run supabase:seed
+ *   npm run supabase:seed -- --replace-products
  *
  * Хүснэгт хоосон байвал л ачаална — байгаа өгөгдлийг дарж бичихгүй.
+ *
+ * --replace-products нь бүтээгдэхүүний хүснэгтийг цэвэрлээд дахин ачаална.
+ * Каталог шинэчлэгдсэн үед хэрэглэнэ. Зөвхөн products хүснэгтэд хамаарна —
+ * лифт, засварын түүх, маягтын хүсэлт хөндөгдөхгүй.
  */
+
+const REPLACE_PRODUCTS = process.argv.includes('--replace-products');
 
 async function main() {
   const sb = serviceClient();
+
+  if (REPLACE_PRODUCTS) {
+    // `neq('id', '')` нь "бүх мөр" гэсэн үг — PostgREST шүүлтгүй delete-ийг зөвшөөрдөггүй
+    const { error } = await sb.from('products').delete().neq('id', '');
+    if (error) throw new Error(`products цэвэрлэхэд: ${error.message}`);
+    console.log('Бүтээгдэхүүний хүснэгтийг цэвэрлэлээ.');
+  }
 
   const isEmpty = async (table: string) => {
     const { count, error } = await sb.from(table).select('*', { count: 'exact', head: true });
@@ -56,7 +70,10 @@ async function main() {
     const variants = CATALOG_PRODUCTS.reduce((n, p) => n + (p.variants?.length ?? 0), 0);
     console.log(`Бүтээгдэхүүн ${all.length} ачааллаа (каталогийн ${variants} загвар)`);
   } else {
-    console.log('Бүтээгдэхүүн аль хэдийн байна — алгаслаа');
+    console.log(
+      'Бүтээгдэхүүн аль хэдийн байна — алгаслаа.\n' +
+        '  Каталогоор солих бол:  npm run supabase:seed -- --replace-products'
+    );
   }
 
   console.log('Дууслаа.');
