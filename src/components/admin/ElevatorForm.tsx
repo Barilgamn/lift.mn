@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { MapPin, X } from 'lucide-react';
+import React, { lazy, Suspense, useState } from 'react';
+import { ArrowLeft, ArrowRight, MapPin, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { Elevator, ElevatorStatus } from '../../types';
 import { ELEVATOR_STATUS } from './adminUi';
+
+/** Leaflet хүнд тул зөвхөн байршил сонгох алхамд ачаална */
+const LocationPicker = lazy(() => import('./LocationPicker'));
 
 /**
  * Шинэ лифт гараар нэмэх маягт.
@@ -53,8 +56,17 @@ export const ElevatorForm: React.FC<ElevatorFormProps> = ({
   const [building, setBuilding] = useState('');
   const [district, setDistrict] = useState(DISTRICTS[0]);
   const [address, setAddress] = useState('');
-  const [lat, setLat] = useState(initialLat ?? 47.9187);
-  const [lng, setLng] = useState(initialLng ?? 106.9176);
+  // Газрын зурагнаас дуудсан бол байршил аль хэдийн сонгогдсон —
+  // шууд дэлгэрэнгүй бөглөх алхам руу орно.
+  const fromMap = initialLat !== undefined && initialLng !== undefined;
+  const [step, setStep] = useState<'location' | 'details'>(fromMap ? 'details' : 'location');
+  const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
+    fromMap ? { lat: initialLat, lng: initialLng } : null
+  );
+  const lat = picked?.lat ?? 0;
+  const lng = picked?.lng ?? 0;
+  const setLat = (v: number) => setPicked((prev) => ({ lat: v, lng: prev?.lng ?? 0 }));
+  const setLng = (v: number) => setPicked((prev) => ({ lat: prev?.lat ?? 0, lng: v }));
   const [brand, setBrand] = useState(BRANDS[0]);
   const [model, setModel] = useState('');
   const [floors, setFloors] = useState(9);
@@ -108,18 +120,83 @@ export const ElevatorForm: React.FC<ElevatorFormProps> = ({
         onClick={(ev) => ev.stopPropagation()}
         className="theme-light w-full sm:max-w-2xl max-h-[88dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-paper border border-line-light"
       >
-        <div className="sticky top-0 bg-paper border-b border-line-light px-5 py-3.5 flex items-start justify-between gap-3">
-          <div>
+        <div className="sticky top-0 z-10 bg-paper border-b border-line-light px-5 py-3.5 flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="text-base font-black text-ink-dark">Шинэ лифт нэмэх</h2>
             <p className="mt-0.5 text-[11px] text-ink-dark-muted">
-              Засварт шинээр орсон тоноглолыг бүртгэнэ. Дугаарыг систем өөрөө олгоно.
+              {step === 'location'
+                ? '1-р алхам · Газрын зураг дээр дарж байршлыг тэмдэглэнэ үү.'
+                : '2-р алхам · Тоноглолын мэдээллийг бөглөнө үү. Дугаарыг систем өөрөө олгоно.'}
             </p>
+            <div className="mt-2 flex items-center gap-1.5" aria-hidden>
+              <span className="h-1 w-8 rounded-full bg-brand" />
+              <span className={`h-1 w-8 rounded-full ${step === 'details' ? 'bg-brand' : 'bg-line-light'}`} />
+            </div>
           </div>
           <button type="button" onClick={onClose} aria-label="Хаах"
-            className="p-1.5 rounded-lg hover:bg-paper-3 text-ink-dark-muted cursor-pointer">
+            className="p-1.5 rounded-lg hover:bg-paper-3 text-ink-dark-muted cursor-pointer shrink-0">
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* 1-р алхам — байршил сонгох */}
+        {step === 'location' && (
+          <div className="px-5 py-4 space-y-3.5">
+            <Suspense
+              fallback={
+                <div className="h-[42dvh] min-h-64 rounded-xl bg-paper-2 border border-line-light flex items-center justify-center text-xs text-ink-dark-muted">
+                  Газрын зураг ачаалж байна…
+                </div>
+              }
+            >
+              <LocationPicker value={picked} onChange={(la, ln) => setPicked({ lat: la, lng: ln })} />
+            </Suspense>
+
+            <div className="p-3.5 rounded-xl bg-paper-2 border border-line-light">
+              <div className="flex items-center gap-2 mb-2.5">
+                <MapPin className="w-4 h-4 text-brand" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted">
+                  Сонгосон байршил
+                </span>
+              </div>
+              {picked ? (
+                <div className="grid grid-cols-2 gap-3.5">
+                  <div>
+                    <label className={label} htmlFor="el-lat">Өргөрөг (lat)</label>
+                    <input id="el-lat" type="number" step="0.000001" value={lat}
+                      onChange={(e) => setLat(Number(e.target.value))} className={field} />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="el-lng">Уртраг (lng)</label>
+                    <input id="el-lng" type="number" step="0.000001" value={lng}
+                      onChange={(e) => setLng(Number(e.target.value))} className={field} />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-ink-dark-muted">
+                  Зураг дээр дарж цэг тэмдэглэнэ. Бүдэг саарал цэгүүд нь бүртгэлтэй лифтүүд —
+                  хажууд нь байрлуулахад тус болно.
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button
+                id="el-next-btn" type="button" disabled={!picked}
+                onClick={() => setStep('details')}
+                className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold cursor-pointer transition-colors"
+              >
+                Үргэлжлүүлэх <ArrowRight className="w-4 h-4" />
+              </button>
+              <button type="button" onClick={onClose}
+                className="h-10 px-4 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors">
+                Болих
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'details' && (
 
         <form onSubmit={submit} className="px-5 py-4 space-y-3.5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -149,31 +226,25 @@ export const ElevatorForm: React.FC<ElevatorFormProps> = ({
             </div>
           </div>
 
-          {/* Байршил */}
-          <div className="p-3.5 rounded-xl bg-paper-2 border border-line-light">
-            <div className="flex items-center gap-2 mb-2.5">
-              <MapPin className="w-4 h-4 text-brand" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted">
-                Газрын зураг дээрх байршил
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3.5">
-              <div>
-                <label className={label} htmlFor="el-lat">Өргөрөг (lat)</label>
-                <input id="el-lat" type="number" step="0.000001" value={lat}
-                  onChange={(e) => setLat(Number(e.target.value))} className={field} />
-              </div>
-              <div>
-                <label className={label} htmlFor="el-lng">Уртраг (lng)</label>
-                <input id="el-lng" type="number" step="0.000001" value={lng}
-                  onChange={(e) => setLng(Number(e.target.value))} className={field} />
+          {/* Сонгосон байршил — өөрчлөхийг хүсвэл эхний алхам руу буцна */}
+          <div className="p-3.5 rounded-xl bg-paper-2 border border-line-light flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <MapPin className="w-4 h-4 text-brand shrink-0" />
+              <div className="min-w-0">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted">
+                  Сонгосон байршил
+                </div>
+                <div id="el-coords" className="mt-0.5 text-xs font-mono text-ink-dark">
+                  {lat.toFixed(6)}, {lng.toFixed(6)}
+                </div>
               </div>
             </div>
-            <p className="mt-2 text-[11px] text-ink-dark-subtle">
-              {initialLat !== undefined
-                ? 'Газрын зураг дээр дарсан цэгээс автоматаар бөглөгдлөө.'
-                : 'Газрын зураг хуудаснаас нэмбэл байршлыг дарж сонгоно.'}
-            </p>
+            <button
+              id="el-back-btn" type="button" onClick={() => setStep('location')}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-line-light bg-paper text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> Байршил солих
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -269,6 +340,7 @@ export const ElevatorForm: React.FC<ElevatorFormProps> = ({
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

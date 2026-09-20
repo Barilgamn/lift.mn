@@ -140,7 +140,10 @@ export const AdminMap: React.FC = () => {
             />
             {placing && (
               <PickLocation
-                onPick={(lat, lng) => { setPicked({ lat, lng }); setPlacing(false); }}
+                onPick={(lat, lng) => {
+                  setPicked({ lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6)) });
+                  setPlacing(false);
+                }}
               />
             )}
             {shown.map((e) => (
