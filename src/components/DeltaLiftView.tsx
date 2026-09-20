@@ -88,6 +88,11 @@ export const DeltaLiftView: React.FC = () => {
   const [quoteSuccess, setQuoteSuccess] = useState<boolean>(false);
   const [quoteSending, setQuoteSending] = useState<boolean>(false);
 
+  // Цахилгаан шат нь дэд төрлүүдтэй тул тусад нь онцолно. Авто зогсоолын
+  // системийг доор зурагтай картаар үзүүлдэг тул жагсаалтаас хасна.
+  const featuredProduct = PRODUCTS.find((p) => p.id === 'elevator');
+  const otherProducts = PRODUCTS.filter((p) => p.id !== 'elevator' && p.id !== 'parking');
+
   // Ажлын алхмуудыг холбосон шугам болон картуудыг нэг дор эхлүүлнэ
   const [stepsRef, stepsIn] = useInView<HTMLOListElement>();
 
@@ -397,36 +402,57 @@ export const DeltaLiftView: React.FC = () => {
             Бидний нийлүүлдэг төхөөрөмж
           </h2>
 
-          <div className="mt-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-            {PRODUCTS.map((p, i) => {
-              const Icon = PRODUCT_ICONS[p.id] ?? Building2;
-              return (
-                <Reveal
-                  key={p.id}
-                  delay={i * 80}
-                  className="group p-5 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center group-hover:bg-brand/30 group-hover:scale-110 transition-[background-color,scale] duration-300">
-                      <Icon className="w-4 h-4 text-brand-bright" />
-                    </div>
-                    <h3 className="text-[15px] font-bold text-ink leading-snug">{p.title}</h3>
-                  </div>
-
-                  {p.variants && (
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {p.variants.map((v) => (
+          {/* Цахилгаан шат нь дэд төрлүүдтэй тул бүтэн мөр эзэлнэ. Авто зогсоол
+              доороо зурагтай онцлох карттай учир жагсаалтад давхардуулахгүй. */}
+          {featuredProduct && (
+            <Reveal className="group mt-9 relative overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-surface-3 via-surface-3 to-brand/15 p-6 sm:p-8 hover:border-brand transition-colors duration-300">
+              <div
+                aria-hidden
+                className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-brand/15 blur-3xl pointer-events-none"
+              />
+              <div className="relative flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-7">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-brand/20 border border-brand/40 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <MoveVertical className="w-6 h-6 text-brand-bright" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xl sm:text-2xl font-black text-ink tracking-tight">
+                    {featuredProduct.title}
+                  </h3>
+                  {featuredProduct.variants && (
+                    <div className="mt-3.5 flex flex-wrap gap-2">
+                      {featuredProduct.variants.map((v) => (
                         <span
                           key={v}
-                          className="inline-flex items-center h-6 px-2 rounded bg-brand/15 border border-brand/30 text-[11px] text-ink-muted"
+                          className="inline-flex items-center h-8 px-3 rounded-lg bg-brand/15 border border-brand/30 text-xs font-semibold text-ink"
                         >
                           {v}
                         </span>
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            </Reveal>
+          )}
 
-                  {p.note && <p className="mt-3 text-xs text-brand-bright">{p.note}</p>}
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {otherProducts.map((p, i) => {
+              const Icon = PRODUCT_ICONS[p.id] ?? Building2;
+              return (
+                <Reveal
+                  key={p.id}
+                  delay={i * 90}
+                  className="group flex h-full flex-col p-6 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-brand/20 border border-brand/40 flex items-center justify-center group-hover:bg-brand/30 group-hover:scale-110 transition-[background-color,scale] duration-300">
+                    <Icon className="w-5 h-5 text-brand-bright" />
+                  </div>
+                  {/* Гарчгийг доод ирмэг рүү нь түлхэнэ — өөр өөр урттай нэрстэй
+                      картууд ижил өндөртэй үед доод тал нь хоосон харагдахгүй */}
+                  <div className="mt-auto pt-5 sm:pt-8">
+                    <h3 className="text-base font-bold text-ink leading-snug">{p.title}</h3>
+                    {p.note && <p className="mt-2 text-xs text-brand-bright">{p.note}</p>}
+                  </div>
                 </Reveal>
               );
             })}
