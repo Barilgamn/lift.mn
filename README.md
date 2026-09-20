@@ -173,7 +173,7 @@ SUPABASE_DB_URL=postgresql://postgres.xxxx:НУУЦҮГ@...pooler.supabase.com:5
 <summary>Алхам тус бүрийг тусад нь ажиллуулах</summary>
 
 ```bash
-npm run supabase:seed          # зөвхөн эхлэлийн өгөгдөл
+npm run supabase:seed          # зөвхөн каталог (бүтээгдэхүүн)
 npm run supabase:create-admin  # зөвхөн админ хэрэглэгч
 ```
 
@@ -194,10 +194,39 @@ npm run supabase:create-admin  # зөвхөн админ хэрэглэгч
 | `npm run supabase:setup` | Supabase-ийн бүх тохиргоог нэг дор хийнэ |
 | `npm run supabase:check` | `.env` дотор аль утга дутууг харуулна |
 | `npm run supabase:status` | Өгөгдлийн санд юу байгааг харуулна |
-| `npm run supabase:seed` | Зөвхөн эхлэлийн жишээ өгөгдөл ачаална |
+| `npm run supabase:seed` | Каталогийг (бүтээгдэхүүн) ачаална |
 | `npm run supabase:seed -- --replace-products` | Бүтээгдэхүүнийг цэвэрлээд каталогоор дахин ачаална |
+| `npm run supabase:seed -- --demo` | Жишээ лифт, бүртгэлийг ч нэмж ачаална |
+| `npm run supabase:clear` | Юу устахыг харуулна (устгахгүй) |
+| `npm run supabase:clear -- --yes` | Лифт, засварын түүх, маягтын хүсэлтийг устгана |
 | `npm run supabase:create-admin` | Зөвхөн админ хэрэглэгч үүсгэх / эрх олгох |
 | `npm run lint` | TypeScript-ийн шалгалт (вэб ба скриптүүд) |
+
+## Жишээ өгөгдлийг цэвэрлэх
+
+Өөрийн бодит лифт, засварын бүртгэлээ оруулахын өмнө жишээ өгөгдлийг арилгана:
+
+```bash
+npm run supabase:clear          # эхлээд юу устахыг харна — юу ч устгахгүй
+npm run supabase:clear -- --yes # үнэхээр устгана
+```
+
+Устдаг: `elevators` (лифтүүд), `service_records` (засварын түүх),
+`submissions` (сайтаас ирсэн хүсэлт, захиалга).
+
+**Хэвээр үлддэг:**
+
+- `products` — сэлбэгийн каталог. Солих бол
+  `npm run supabase:seed -- --replace-products`.
+- `profiles` — нэвтрэх эрхтэй админ хэрэглэгчид. Үүнийг устгавал
+  админ хуудас руу орох боломжгүй болно.
+
+Цэвэрлэсний дараа `npm run supabase:seed` ажиллуулсан ч жишээ лифт эргэж
+ордоггүй — тэдгээр нь зөвхөн `--demo` тугтай үед ачаалагдана. Шинэ лифтээ
+админ хэсгийн **Лифтүүд** эсвэл **Газрын зураг** хуудасны "Лифт нэмэх"
+товчоор оруулна.
+
+Устгасан өгөгдлийг буцаах боломжгүй.
 
 ## Түгээмэл алдаа
 

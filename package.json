@@ -12,6 +12,7 @@
     "supabase:check": "tsx scripts/supabase-check.ts",
     "supabase:status": "tsx scripts/supabase-status.ts",
     "supabase:seed": "tsx scripts/supabase-seed.ts",
+    "supabase:clear": "tsx scripts/supabase-clear.ts",
     "supabase:create-admin": "tsx scripts/supabase-create-admin.ts",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit && tsc --noEmit -p tsconfig.scripts.json"

@@ -4,19 +4,21 @@ import { CATALOG_PRODUCTS } from '../src/data/catalogData.js';
 import { elevatorToRow, productToRow, recordToRow } from '../src/lib/mappers.js';
 
 /**
- * Эхлэлийн жишээ өгөгдөл ачаалах.
+ * Эхлэлийн өгөгдөл ачаалах.
  *
- *   npm run supabase:seed
- *   npm run supabase:seed -- --replace-products
+ *   npm run supabase:seed                      — зөвхөн каталог (бүтээгдэхүүн)
+ *   npm run supabase:seed -- --replace-products  — каталогийг цэвэрлээд дахин
+ *   npm run supabase:seed -- --demo              — жишээ лифт, бүртгэл ч ачаална
  *
  * Хүснэгт хоосон байвал л ачаална — байгаа өгөгдлийг дарж бичихгүй.
  *
- * --replace-products нь бүтээгдэхүүний хүснэгтийг цэвэрлээд дахин ачаална.
- * Каталог шинэчлэгдсэн үед хэрэглэнэ. Зөвхөн products хүснэгтэд хамаарна —
- * лифт, засварын түүх, маягтын хүсэлт хөндөгдөхгүй.
+ * Лифт, засварын түүх, маягтын хүсэлтийн ЖИШЭЭ өгөгдөл нь зөвхөн `--demo`
+ * тугтай үед ачаалагдана. Ингэснээр `npm run supabase:clear`-ээр цэвэрлэсэн
+ * бааз рүү жишээ өгөгдөл санамсаргүй эргэж ордоггүй.
  */
 
 const REPLACE_PRODUCTS = process.argv.includes('--replace-products');
+const WITH_DEMO = process.argv.includes('--demo');
 
 async function main() {
   const sb = serviceClient();
@@ -34,7 +36,12 @@ async function main() {
     return (count ?? 0) === 0;
   };
 
-  if (await isEmpty('elevators')) {
+  if (!WITH_DEMO) {
+    console.log(
+      'Жишээ лифт, бүртгэлийг алгаслаа (--demo тугтай үед ачаална).\n' +
+        '  Өөрийн лифтээ админ хэсгийн "Лифт нэмэх" товчоор оруулна.'
+    );
+  } else if (await isEmpty('elevators')) {
     const { error } = await sb.from('elevators').insert(SEED_ELEVATORS.map(elevatorToRow));
     if (error) throw new Error(`elevators: ${error.message}`);
     console.log(`Лифт ${SEED_ELEVATORS.length} ачааллаа`);
@@ -48,7 +55,7 @@ async function main() {
     console.log('Лифт аль хэдийн байна — алгаслаа');
   }
 
-  if (await isEmpty('submissions')) {
+  if (WITH_DEMO && (await isEmpty('submissions'))) {
     const rows = SEED_SUBMISSIONS.map((s) => ({
       id: s.id, kind: s.kind, contact_name: s.contactName, phone: s.phone,
       summary: s.summary, status: s.status, details: s.details,
@@ -57,7 +64,7 @@ async function main() {
     const { error } = await sb.from('submissions').insert(rows);
     if (error) throw new Error(`submissions: ${error.message}`);
     console.log(`Бүртгэл ${rows.length} ачааллаа`);
-  } else {
+  } else if (WITH_DEMO) {
     console.log('Бүртгэл аль хэдийн байна — алгаслаа');
   }
 
