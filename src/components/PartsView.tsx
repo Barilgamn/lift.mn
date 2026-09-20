@@ -3,6 +3,7 @@ import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { ProductImage } from './ProductImage';
 import { productPriceLabel } from '../lib/variants';
+import { flyToCart } from '../lib/flyToCart';
 import {
   ShoppingBag,
   Search,
@@ -80,7 +81,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
     return matchesCategory && matchesBrand && matchesSearch;
   });
 
-  const handleAddToCartWithFeedback = (part: SparePart) => {
+  const handleAddToCartWithFeedback = (part: SparePart, source?: Element | null) => {
+    flyToCart(source ?? null, part.image);
     onAddToCart(part);
     setAddedToast(`"${part.name}" сагсанд нэмэгдлээ!`);
     setTimeout(() => {
@@ -494,10 +496,13 @@ export const PartsView: React.FC<PartsViewProps> = ({
                   </Link>
 
                   <button
-                    onClick={() =>
+                    onClick={(e) =>
                       part.variants?.length
                         ? navigate(productPath(part.id))
-                        : handleAddToCartWithFeedback(part)
+                        : handleAddToCartWithFeedback(
+                            part,
+                            e.currentTarget.closest('.group')?.querySelector('img')
+                          )
                     }
                     className="py-2 px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30"
                   >

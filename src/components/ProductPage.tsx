@@ -7,6 +7,7 @@ import { ProductImage } from './ProductImage';
 import { ImageZoom, ZoomableImage } from './ImageZoom';
 import { priceLabel, productPriceLabel, variantAsPart } from '../lib/variants';
 import { ROUTES, productPath } from '../routes';
+import { flyToCart } from '../lib/flyToCart';
 
 /** Санал болгох бараа: эхлээд ижил ангиллаас, дутвал бусдаас нөхнө */
 function recommend(current: SparePart, all: SparePart[], count = 4): SparePart[] {
@@ -56,7 +57,8 @@ export const ProductPage: React.FC<{
     return () => onTitle?.(undefined);
   }, [part?.name, onTitle]);
 
-  const add = (target: SparePart, label: string) => {
+  const add = (target: SparePart, label: string, source?: Element | null) => {
+    flyToCart(source ?? null, target.image);
     onAddToCart(target);
     setAdded(label);
     window.setTimeout(() => setAdded(null), 3000);
@@ -159,7 +161,9 @@ export const ProductPage: React.FC<{
             {!variants.length && (
               <button
                 type="button"
-                onClick={() => add(part, part.name)}
+                onClick={(e) =>
+                  add(part, part.name, e.currentTarget.closest('.grid')?.querySelector('img'))
+                }
                 className="mt-5 w-full sm:w-auto px-7 py-3.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider cursor-pointer inline-flex items-center justify-center gap-2 shadow-lg shadow-brand/30 transition-colors"
               >
                 <Plus className="w-4 h-4" /> Сагсанд нэмэх
@@ -217,7 +221,13 @@ export const ProductPage: React.FC<{
 
                   <button
                     type="button"
-                    onClick={() => add(variantAsPart(part, v), `${part.name} — ${v.code}`)}
+                    onClick={(e) =>
+                      add(
+                        variantAsPart(part, v),
+                        `${part.name} — ${v.code}`,
+                        e.currentTarget.closest('li')?.querySelector('img')
+                      )
+                    }
                     aria-label={`${v.code} сагсанд нэмэх`}
                     className="shrink-0 w-11 h-11 rounded-lg bg-brand hover:bg-brand-hover text-white flex items-center justify-center cursor-pointer shadow-md transition-colors"
                   >

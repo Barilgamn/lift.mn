@@ -36,16 +36,14 @@ const PageShell: React.FC<{
   /** Байршлын мөрөнд нэмэх дэд алхам — жишээ нь барааны нэр */
   trail?: string;
   onSelectSection: (section: ActiveSection) => void;
-  onOpenEmergency: () => void;
   onOpenCart: () => void;
   cartCount: number;
   children: React.ReactNode;
-}> = ({ section, trail, onSelectSection, onOpenEmergency, onOpenCart, cartCount, children }) => (
+}> = ({ section, trail, onSelectSection, onOpenCart, cartCount, children }) => (
   <div className="flex-1 flex flex-col">
     <Navbar
       activeSection={section}
       onSelectSection={onSelectSection}
-      onOpenEmergency={onOpenEmergency}
       cartCount={cartCount}
       onOpenCart={onOpenCart}
     />
@@ -57,7 +55,7 @@ const PageShell: React.FC<{
       {children}
     </main>
 
-    <Footer onSelectSection={onSelectSection} onOpenEmergency={onOpenEmergency} />
+    <Footer onSelectSection={onSelectSection} />
   </div>
 );
 
@@ -142,7 +140,6 @@ export default function App() {
           element={
             <PortalHome
               onSelectSection={handleSelectSection}
-              onOpenEmergency={() => setIsEmergencyOpen(true)}
             />
           }
         />
@@ -153,7 +150,6 @@ export default function App() {
             <PageShell
               section="delta-lift"
               onSelectSection={handleSelectSection}
-              onOpenEmergency={() => setIsEmergencyOpen(true)}
               onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             >
@@ -168,7 +164,6 @@ export default function App() {
             <PageShell
               section="parts"
               onSelectSection={handleSelectSection}
-              onOpenEmergency={() => setIsEmergencyOpen(true)}
               onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             >
@@ -188,7 +183,6 @@ export default function App() {
               section="parts"
               trail={trail}
               onSelectSection={handleSelectSection}
-              onOpenEmergency={() => setIsEmergencyOpen(true)}
               onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             >
@@ -203,7 +197,6 @@ export default function App() {
             <PageShell
               section="service"
               onSelectSection={handleSelectSection}
-              onOpenEmergency={() => setIsEmergencyOpen(true)}
               onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             >

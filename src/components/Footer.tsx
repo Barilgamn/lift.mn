@@ -13,7 +13,6 @@ import { DeltaLiftsLogo } from './DeltaLiftsLogo';
 
 interface FooterProps {
   onSelectSection: (section: ActiveSection) => void;
-  onOpenEmergency: () => void;
 }
 
 /** Хөл хэсгийн холбоосуудад нэг загвар */
@@ -34,7 +33,7 @@ const ColumnTitle: React.FC<{ accent?: 'brand' | 'danger'; children: React.React
   </h3>
 );
 
-export const Footer: React.FC<FooterProps> = ({ onSelectSection, onOpenEmergency }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
   return (
     <footer className="bg-paper border-t border-line-light text-ink-dark-muted pt-14 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,21 +116,24 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection, onOpenEmergency
           <div>
             <ColumnTitle accent="danger">Шуурхай холбоо</ColumnTitle>
             <div className="space-y-3 text-xs">
-              <button
-                type="button"
-                onClick={onOpenEmergency}
-                className="w-full text-left p-3 rounded-xl bg-red-50 border border-red-200 hover:border-danger transition-colors cursor-pointer"
+              {/*
+                * Улаан товчийг хасаж, энгийн дуудлагын холбоос болгов.
+                * Дугаар нь хэвээрээ — утаснаас шууд залгаж болно.
+                */}
+              <a
+                href="tel:+97677232222"
+                className="block p-3 rounded-xl bg-paper-3 border border-line-light hover:border-brand transition-colors"
               >
-                <div className="text-[11px] font-bold text-red-700 uppercase tracking-wide">
+                <div className="text-[11px] font-bold text-ink-dark-muted uppercase tracking-wide">
                   24/7 Лифт гацсан дуудлага
                 </div>
                 <div className="text-lg font-black text-ink-dark font-mono mt-0.5">
                   (+976) 7723-2222
                 </div>
-                <div className="text-[10px] text-red-700 mt-0.5">
+                <div className="text-[10px] text-ink-dark-subtle mt-0.5">
                   Яаралтай тусламжийн инженерийн шуурхай бригад
                 </div>
-              </button>
+              </a>
 
               <div className="flex items-center gap-2">
                 <PhoneCall className="w-4 h-4 text-brand shrink-0" />

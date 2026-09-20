@@ -1,12 +1,12 @@
-import React from 'react';
-import { Building2, Wrench, ShoppingBag, AlertTriangle, ShoppingCart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { DeltaLiftsLogo } from './DeltaLiftsLogo';
+import { CART_BUMP_EVENT } from '../lib/flyToCart';
 
 interface NavbarProps {
   activeSection: ActiveSection;
   onSelectSection: (section: ActiveSection) => void;
-  onOpenEmergency: () => void;
   cartCount: number;
   onOpenCart: () => void;
 }
@@ -14,10 +14,24 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   activeSection,
   onSelectSection,
-  onOpenEmergency,
   cartCount,
   onOpenCart,
 }) => {
+  // Бараа нисч ирэхэд сагсны тоо болон товч нэг удаа цохилно
+  const [bump, setBump] = useState(false);
+
+  useEffect(() => {
+    const onBump = () => {
+      setBump(false);
+      // Нэг кадр хүлээж дахин асаана — эс бөгөөс дараалсан нэмэлт дээр
+      // хөдөлгөөн дахин эхлэхгүй
+      requestAnimationFrame(() => setBump(true));
+      window.setTimeout(() => setBump(false), 700);
+    };
+    window.addEventListener(CART_BUMP_EVENT, onBump);
+    return () => window.removeEventListener(CART_BUMP_EVENT, onBump);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 w-full bg-paper/95 backdrop-blur-md border-b border-line-light text-ink-dark shadow-sm">
       {/* Top emergency announcement bar */}
@@ -117,32 +131,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         </nav>
 
-        {/* Right Actions: Emergency button & Cart drawer button */}
+        {/* Баруун талын үйлдэл: сагс */}
         <div className="flex items-center gap-2 sm:gap-3">
           
-          {/* Emergency Alert Button */}
-          <button
-            id="nav-emergency-btn"
-            onClick={onOpenEmergency}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-danger hover:bg-red-700 text-white border border-transparent text-xs font-bold transition active:scale-95 cursor-pointer shadow-sm"
-            title="Лифтэнд хүн гацсан үед дарах"
-          >
-            <AlertTriangle className="w-4 h-4 animate-pulse" />
-            <span className="hidden xl:inline">Гацсан дуудлага</span>
-            <span className="hidden sm:inline xl:hidden">24/7</span>
-          </button>
-
           {/* Cart button */}
           <button
             id="nav-cart-btn"
             onClick={onOpenCart}
-            className="relative p-2.5 rounded-lg bg-paper-3 hover:bg-paper border border-line-light text-brand transition hover:border-brand cursor-pointer"
+            className={`relative p-2.5 rounded-lg bg-paper-3 hover:bg-paper border text-brand transition hover:border-brand cursor-pointer ${
+              bump ? 'border-brand animate-cart-ring' : 'border-line-light'
+            }`}
             title="Сэлбэгийн сагс харах"
             aria-label={cartCount > 0 ? `Сэлбэгийн сагс харах (${cartCount} бараа)` : 'Сэлбэгийн сагс харах'}
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-danger text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+              <span
+                className={`absolute -top-1.5 -right-1.5 bg-danger text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-md ${
+                  bump ? 'animate-cart-bump' : ''
+                }`}
+              >
                 {cartCount}
               </span>
             )}

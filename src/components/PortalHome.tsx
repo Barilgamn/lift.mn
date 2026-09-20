@@ -3,7 +3,6 @@ import {
   Wrench, 
   ShoppingBag, 
   ArrowRight, 
-  AlertTriangle,
   PhoneCall,
   Mail,
   MapPin
@@ -13,12 +12,10 @@ import { DeltaLiftsLogo, DeltaLiftsMark } from './DeltaLiftsLogo';
 
 interface PortalHomeProps {
   onSelectSection: (section: ActiveSection) => void;
-  onOpenEmergency: () => void;
 }
 
 export const PortalHome: React.FC<PortalHomeProps> = ({ 
   onSelectSection, 
-  onOpenEmergency 
 }) => {
   return (
     <div 
@@ -299,21 +296,8 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           <span>© 2026 <strong className="text-ink-dark">DELTA LIFTS</strong> · <strong className="text-brand">LIFT.MN</strong>. Бүх эрх хуулиар хамгаалагдсан.</span>
         </div>
 
-        {/* Emergency Call Button & Contacts in Footer */}
+        {/* Хөл хэсгийн холбоо барих мэдээлэл */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-          <button 
-            id="footer-emergency-call-btn"
-            onClick={onOpenEmergency}
-            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-danger hover:bg-red-700 text-white text-xs font-bold tracking-wide transition-colors shadow-sm border border-transparent active:scale-95 cursor-pointer"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-            <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
-            <span className="font-mono font-bold">24/7 Дуудлага: (+976) 7723-2222</span>
-          </button>
-
           <a 
             href="tel:+97677232222"
             className="flex items-center gap-1.5 hover:text-brand transition-colors"

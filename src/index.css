@@ -123,6 +123,28 @@ body {
 }
 
 /* Хуудас солигдох үеийн орох хөдөлгөөн */
+/* Сагсанд бараа нэмэгдэхэд тоо нь үсэрч, анхаарал татна */
+@keyframes cart-bump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.45); }
+  70%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.animate-cart-bump {
+  animation: cart-bump 0.5s cubic-bezier(.36,.07,.19,.97);
+}
+
+/* Сагсны товч өөрөө ч нэг удаа цохилно */
+@keyframes cart-ring {
+  0%   { box-shadow: 0 0 0 0 rgb(0 99 165 / 0.55); }
+  100% { box-shadow: 0 0 0 14px rgb(0 99 165 / 0); }
+}
+
+.animate-cart-ring {
+  animation: cart-ring 0.6s ease-out;
+}
+
 @keyframes page-enter {
   from {
     opacity: 0;
@@ -150,7 +172,19 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-page-enter {
+  .animate-page-enter,
+  .animate-cart-bump,
+  .animate-cart-ring {
     animation: none;
   }
+}
+
+/* Хэвтээ гүйлгэх дэд цэс — гүйлгэгч мөрийг нуух (Firefox, WebKit) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
