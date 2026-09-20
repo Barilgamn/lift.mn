@@ -252,7 +252,7 @@ export const DeltaLiftView: React.FC = () => {
         style={{ top: navOffset }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1 py-2.5">
+          <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1 py-3">
             {SECTION_NAV.map((item) => {
               const isActive = activeSection === item.id;
               return (
@@ -260,9 +260,9 @@ export const DeltaLiftView: React.FC = () => {
                   key={item.id}
                   href={`#${item.id}`}
                   aria-current={isActive ? 'true' : undefined}
-                  className={`shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold whitespace-nowrap border transition-colors ${
+                  className={`shrink-0 inline-flex items-center h-11 px-5 rounded-xl text-sm font-bold whitespace-nowrap border transition-colors ${
                     isActive
-                      ? 'bg-brand text-white border-brand'
+                      ? 'bg-brand text-white border-brand shadow-lg shadow-brand/25'
                       : 'bg-surface-2 text-ink-muted border-line hover:text-ink hover:border-line-strong'
                   }`}
                 >
