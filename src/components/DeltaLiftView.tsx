@@ -38,9 +38,10 @@ import {
   HOW_WE_WORK,
   KEY_FACTS,
   KLEEMANN,
+  OPERATING_PANELS,
   PHOTOS,
   PRODUCTS,
-  PROJECTS,
+  PROJECT_GROUPS,
   SERVICE_SCOPE,
 } from '../data/deltaData';
 import { DeltaLiftsLogo } from './DeltaLiftsLogo';
@@ -105,7 +106,7 @@ export const DeltaLiftView: React.FC = () => {
       {/* 1. Толгой хэсэг */}
       <section className="relative overflow-hidden border-b border-line bg-surface-1">
         <img
-          src={PHOTOS.shaftWork}
+          src={PHOTOS.techShaft}
           alt=""
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover opacity-25"
@@ -118,7 +119,10 @@ export const DeltaLiftView: React.FC = () => {
             <div>
               <SectionLabel icon={Award}>Албан ёсны онцгой эрхт дистрибьютер</SectionLabel>
 
-              <h1 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ink leading-[1.1]">
+              <p className="mt-5 text-sm font-bold text-accent-ink tracking-wide">
+                {COMPANY.tagline}
+              </p>
+              <h1 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ink leading-[1.1]">
                 {COMPANY.legalName}
               </h1>
               <p className="mt-3 text-lg sm:text-xl font-bold text-brand-bright">
@@ -153,12 +157,19 @@ export const DeltaLiftView: React.FC = () => {
             </div>
 
             {/* Брэндийн лого карт */}
-            <div className="relative rounded-2xl bg-white p-8 sm:p-10 shadow-2xl shadow-black/40">
-              <DeltaLiftsLogo size="custom" iconClassName="w-full h-auto" />
-              <div className="mt-6 pt-5 border-t border-slate-200 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
-                <span className="text-ink-subtle">Худалдааны тэмдэг</span>
-                <span className="text-brand">Албан ёсны лого</span>
+            <div className="space-y-4">
+              <div className="relative rounded-2xl bg-white p-8 sm:p-10 shadow-2xl shadow-black/40">
+                <DeltaLiftsLogo size="custom" iconClassName="w-full h-auto" />
+                <div className="mt-6 pt-5 border-t border-slate-200 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
+                  <span className="text-ink-subtle">Худалдааны тэмдэг</span>
+                  <span className="text-brand">Албан ёсны лого</span>
+                </div>
               </div>
+              <img
+                src={PHOTOS.kleemannLockup}
+                alt={`KLEEMANN ${KLEEMANN.years} YEARS — ${KLEEMANN.slogan}`}
+                className="w-full rounded-2xl border border-white/10"
+              />
             </div>
 
           </div>
@@ -210,13 +221,53 @@ export const DeltaLiftView: React.FC = () => {
               />
               <img
                 src={PHOTOS.glassLift}
-                alt="Шилэн бүхээгтэй цахилгаан шат"
+                alt="Тунгалаг бүхээгтэй дугуй панорама лифт"
                 className="w-full h-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
             </div>
 
           </div>
+
+          {/* KLEEMANN-ы дэлхийн сүлжээ */}
+          <figure className="mt-10 rounded-2xl overflow-hidden border border-line bg-[#0B5EA8]">
+            <img
+              src={PHOTOS.worldMap}
+              alt="KLEEMANN 100 гаруй улсад салбар компани, борлуулалтын сүлжээтэй"
+              className="w-full"
+              loading="lazy"
+            />
+            <figcaption className="px-5 py-3.5 text-[11px] sm:text-xs text-white/80 border-t border-white/10">
+              KLEEMANN-ы бүтээгдэхүүн Ази, Европ, Австрали, АНУ зэрэг 100 гаруй улсад хүрдэг.
+            </figcaption>
+          </figure>
+
+          {/* Шинэ удирдлагын хавтан */}
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-[0.55fr_1fr] gap-6 items-center p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line">
+            <img
+              src={PHOTOS.panel}
+              alt="KLEEMANN-ы шинэ удирдлагын хавтан, бараан шилэн бүхээг"
+              className="w-full max-h-72 object-cover rounded-xl border border-line"
+              loading="lazy"
+            />
+            <div>
+              <h3 className="text-lg sm:text-xl font-black text-ink tracking-tight">
+                {OPERATING_PANELS.title}
+              </h3>
+              <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-accent-ink">
+                {OPERATING_PANELS.subtitle}
+              </p>
+              <ul className="mt-4 space-y-2">
+                {OPERATING_PANELS.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-ink-muted">
+                    <Sparkles className="w-3.5 h-3.5 mt-1 text-brand-bright shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -261,6 +312,29 @@ export const DeltaLiftView: React.FC = () => {
               );
             })}
           </div>
+
+          {/* Бүрэн автомат авто зогсоолын систем */}
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-[1fr_0.9fr] gap-6 items-center rounded-2xl bg-surface-3 border border-line overflow-hidden">
+            <div className="p-6 sm:p-8 order-2 sm:order-1">
+              <div className="inline-flex items-center gap-2 px-3 h-7 rounded-full bg-accent/15 border border-accent/40 text-accent-ink text-[11px] font-bold uppercase tracking-wider">
+                <Car className="w-3.5 h-3.5" />
+                <span>Онцлох шийдэл</span>
+              </div>
+              <h3 className="mt-4 text-lg sm:text-xl font-black text-ink tracking-tight leading-snug">
+                Бүрэн автомат авто машины давхар зогсоолын систем
+              </h3>
+              <p className="mt-3 text-sm text-ink-muted leading-relaxed">
+                Талбайн хэмжээгээ хоёр дахин үр ашигтай ашиглах KLEEMANN-ы автомат зогсоолын
+                систем. Орон сууц, оффис, худалдааны төвийн зогсоолын хүрэлцээг нэмэгдүүлнэ.
+              </p>
+            </div>
+            <img
+              src={PHOTOS.parking}
+              alt="Бүрэн автомат авто машины давхар зогсоолын систем"
+              className="w-full h-full object-contain bg-white p-4 order-1 sm:order-2"
+              loading="lazy"
+            />
+          </div>
         </div>
       </section>
 
@@ -271,20 +345,20 @@ export const DeltaLiftView: React.FC = () => {
 
             <div className="order-2 lg:order-1 grid grid-cols-2 gap-4">
               <img
-                src={PHOTOS.teamTablet}
-                alt="Инженерүүд удирдлагын самбар дээр оношилгоо хийж байна"
+                src={PHOTOS.techDoor}
+                alt="KLEEMANN-ы инженер хаалганы угсралт дээр ажиллаж байна"
                 className="col-span-2 w-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
               <img
-                src={PHOTOS.techPanel}
-                alt="Техникч засвар үйлчилгээ хийж байна"
+                src={PHOTOS.techControl}
+                alt="Удирдлагын самбар дээрх техникчид"
                 className="w-full h-44 object-cover rounded-xl border border-line"
                 loading="lazy"
               />
               <img
-                src={PHOTOS.techRail}
-                alt="Лифтний хөтөчийн шугамын угсралт"
+                src={PHOTOS.techShaft}
+                alt="Лифтний худаг дотор ажиллаж буй техникч"
                 className="w-full h-44 object-cover rounded-xl border border-line"
                 loading="lazy"
               />
@@ -319,7 +393,7 @@ export const DeltaLiftView: React.FC = () => {
             <div>
               <img
                 src={PHOTOS.consult}
-                alt="Захиалагчтай төслийн зөвлөгөө өгч буй байдал"
+                alt="Зураг төслийн шийдэл дээр ажиллаж буй инженерүүд"
                 className="w-full object-cover rounded-xl border border-line"
                 loading="lazy"
               />
@@ -360,36 +434,25 @@ export const DeltaLiftView: React.FC = () => {
       {/* 7. Засвар үйлчилгээний хамрах хүрээ */}
       <section id="service-scope" className="py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.7fr] gap-10 lg:gap-14 items-center">
-
-            <div>
-              <SectionLabel icon={ShieldCheck}>Засвар үйлчилгээ</SectionLabel>
-              <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
-                Хамрах хүрээ
-              </h2>
-              <p className="mt-5 text-sm text-ink-muted leading-relaxed">
-                Мэргэшсэн инженер, техникийн баг цахилгаан шат, урсдаг шатны техникийн бүрэн бүтэн
-                байдал, хэвийн үйл ажиллагааг хангах дараах үйлчилгээг үзүүлэн ажилладаг.
-              </p>
-
-              <ul className="mt-6 space-y-2.5">
-                {SERVICE_SCOPE.map((s) => (
-                  <li key={s} className="flex items-start gap-3 text-sm text-ink">
-                    <CheckCircle className="w-4 h-4 mt-0.5 text-brand-bright shrink-0" />
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <img
-              src={PHOTOS.techField}
-              alt="Талбай дээрх техникийн ажил"
-              className="w-full object-cover rounded-xl border border-line"
-              loading="lazy"
-            />
-
+          <div className="max-w-3xl">
+            <SectionLabel icon={ShieldCheck}>Засвар үйлчилгээ</SectionLabel>
+            <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
+              Хамрах хүрээ
+            </h2>
+            <p className="mt-5 text-sm text-ink-muted leading-relaxed">
+              Мэргэшсэн инженер, техникийн баг цахилгаан шат, урсдаг шатны техникийн бүрэн бүтэн
+              байдал, хэвийн үйл ажиллагааг хангах дараах үйлчилгээг үзүүлэн ажилладаг.
+            </p>
           </div>
+
+          <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {SERVICE_SCOPE.map((s) => (
+              <li key={s} className="flex items-start gap-3 p-5 rounded-xl bg-surface-3 border border-line">
+                <CheckCircle className="w-4 h-4 mt-0.5 text-brand-bright shrink-0" />
+                <span className="text-sm text-ink leading-relaxed">{s}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -401,16 +464,24 @@ export const DeltaLiftView: React.FC = () => {
             Хамтран ажилласан онцлох төслүүд
           </h2>
 
-          <div className="mt-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {PROJECTS.map((p) => (
-              <div
-                key={p.id}
-                className="p-5 rounded-xl bg-surface-3 border border-line hover:border-brand transition-colors flex flex-col justify-center min-h-24"
-              >
-                <div className="text-sm font-bold text-ink leading-snug">{p.name}</div>
-                {p.label && (
-                  <div className="mt-1 text-[11px] text-brand-bright uppercase tracking-wider">{p.label}</div>
-                )}
+          <div className="mt-9 space-y-8">
+            {PROJECT_GROUPS.map((g) => (
+              <div key={g.id}>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <MapPin className="w-4 h-4 text-brand-bright shrink-0" />
+                  <h3 className="text-sm font-black uppercase tracking-wider text-ink">{g.title}</h3>
+                  <span className="text-[11px] text-ink-subtle tabular-nums">({g.items.length})</span>
+                </div>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {g.items.map((name) => (
+                    <li
+                      key={name}
+                      className="p-4 sm:p-5 rounded-xl bg-surface-3 border border-line hover:border-brand transition-colors flex items-center min-h-20"
+                    >
+                      <span className="text-sm font-bold text-ink leading-snug">{name}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
