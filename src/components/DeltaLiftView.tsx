@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 
 /** Сонголтын утгыг админд ойлгомжтой нэр болгоно */
@@ -45,6 +45,9 @@ import {
   SERVICE_SCOPE,
 } from '../data/deltaData';
 import { DeltaLiftsLogo } from './DeltaLiftsLogo';
+import { Reveal } from './Reveal';
+import { CountUp } from './CountUp';
+import { useInView } from '../lib/useReveal';
 
 const PRODUCT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   elevator: MoveVertical,
@@ -55,6 +58,15 @@ const PRODUCT_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 };
 
 const STEP_ICONS = [PenTool, ClipboardCheck, Ruler, Wrench];
+
+/** Гүйлгэхэд дээр наалддаг хэсгийн цэс */
+const SECTION_NAV = [
+  { id: 'kleemann', label: 'KLEEMANN' },
+  { id: 'products', label: 'Бүтээгдэхүүн' },
+  { id: 'engineering', label: 'Инженер' },
+  { id: 'projects', label: 'Төслүүд' },
+  { id: 'quote-section', label: 'Үнийн санал' },
+] as const;
 
 /** Хэсгийн дээд талын жижиг гарчиг */
 const SectionLabel: React.FC<{ icon: React.ComponentType<{ className?: string }>; children: React.ReactNode }> = ({
@@ -75,6 +87,42 @@ export const DeltaLiftView: React.FC = () => {
   const [quoteError, setQuoteError] = useState<string>('');
   const [quoteSuccess, setQuoteSuccess] = useState<boolean>(false);
   const [quoteSending, setQuoteSending] = useState<boolean>(false);
+
+  // Ажлын алхмуудыг холбосон шугам болон картуудыг нэг дор эхлүүлнэ
+  const [stepsRef, stepsIn] = useInView<HTMLOListElement>();
+
+  // Нийтийн цэс нь sticky бөгөөд өндөр нь дэлгэцээс хамаарна. Хэсгийн цэс
+  // түүний доор яг наалдахын тулд өндрийг нь хэмжиж авна.
+  const [navOffset, setNavOffset] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const header = document.querySelector('header');
+      setNavOffset(header instanceof HTMLElement ? header.offsetHeight : 0);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  // Аль хэсэг дээр байгааг цэсэнд тодруулна
+  const [activeSection, setActiveSection] = useState<string>('');
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActiveSection(visible.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    for (const s of SECTION_NAV) {
+      const el = document.getElementById(s.id);
+      if (el) io.observe(el);
+    }
+    return () => io.disconnect();
+  }, []);
 
   const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,18 +153,42 @@ export const DeltaLiftView: React.FC = () => {
 
       {/* 1. Толгой хэсэг */}
       <section className="relative overflow-hidden border-b border-line bg-surface-1">
-        <img
-          src={PHOTOS.techShaft}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-25"
-        />
+        {/* Дэвсгэр зураг маш удаанаар томорно */}
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={PHOTOS.techShaft}
+            alt=""
+            aria-hidden="true"
+            className="dl-ken-burns w-full h-full object-cover opacity-25"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#051329]/85 via-[#051329]/92 to-[#051329]" />
+
+        {/* Хөвж буй өнгөт толбууд */}
+        <div
+          aria-hidden
+          className="dl-drift absolute -top-28 -left-24 w-[30rem] h-[30rem] rounded-full bg-brand/25 blur-3xl pointer-events-none"
+        />
+        <div
+          aria-hidden
+          className="dl-drift-slow absolute -bottom-40 right-[-8rem] w-[26rem] h-[26rem] rounded-full bg-accent/10 blur-3xl pointer-events-none"
+        />
+        {/* Нарийн тор */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-[0.07]"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, #7DD3FC 1px, transparent 1px), linear-gradient(to bottom, #7DD3FC 1px, transparent 1px)',
+            backgroundSize: '64px 64px',
+            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%)',
+          }}
+        />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-center">
 
-            <div>
+            <Reveal>
               <SectionLabel icon={Award}>Албан ёсны онцгой эрхт дистрибьютер</SectionLabel>
 
               <p className="mt-5 text-sm font-bold text-accent-ink tracking-wide">
@@ -154,48 +226,76 @@ export const DeltaLiftView: React.FC = () => {
                   Үнийн санал авах
                 </a>
               </div>
-            </div>
+            </Reveal>
 
             {/* Брэндийн лого карт */}
-            <div className="space-y-4">
-              <div className="relative rounded-2xl bg-white p-8 sm:p-10 shadow-2xl shadow-black/40">
+            <Reveal delay={120} className="space-y-4">
+              <div className="dl-sheen relative overflow-hidden rounded-2xl bg-white p-8 sm:p-12 shadow-2xl shadow-black/40">
                 <DeltaLiftsLogo size="custom" iconClassName="w-full h-auto" />
-                <div className="mt-6 pt-5 border-t border-slate-200 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
-                  <span className="text-ink-subtle">Худалдааны тэмдэг</span>
-                  <span className="text-brand">Албан ёсны лого</span>
-                </div>
               </div>
               <img
                 src={PHOTOS.kleemannLockup}
                 alt={`KLEEMANN ${KLEEMANN.years} YEARS — ${KLEEMANN.slogan}`}
                 className="w-full rounded-2xl border border-white/10"
               />
-            </div>
+            </Reveal>
 
           </div>
         </div>
       </section>
 
+      {/* Хэсгийн цэс — гүйлгэхэд нийтийн цэсний доор наалдана */}
+      <nav
+        id="delta-section-nav"
+        aria-label="Танилцуулгын хэсгүүд"
+        className="sticky z-30 bg-surface-1/95 backdrop-blur-md border-b border-line"
+        style={{ top: navOffset }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1 py-2.5">
+            {SECTION_NAV.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  aria-current={isActive ? 'true' : undefined}
+                  className={`shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold whitespace-nowrap border transition-colors ${
+                    isActive
+                      ? 'bg-brand text-white border-brand'
+                      : 'bg-surface-2 text-ink-muted border-line hover:text-ink hover:border-line-strong'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
       {/* 2. Гол үзүүлэлтүүд */}
       <section className="theme-light border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <dl className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-line">
-            {KEY_FACTS.map((f) => (
-              <div key={f.label} className="py-7 px-4 sm:px-6 text-center">
-                <dt className="text-3xl sm:text-4xl font-black text-accent-ink tabular-nums">{f.value}</dt>
+            {KEY_FACTS.map((f, i) => (
+              <Reveal key={f.label} delay={i * 90} className="py-7 px-4 sm:px-6 text-center">
+                <dt className="text-3xl sm:text-4xl font-black text-accent-ink tabular-nums">
+                  <CountUp value={f.value} />
+                </dt>
                 <dd className="mt-1.5 text-[11px] sm:text-xs text-ink-muted leading-snug">{f.label}</dd>
-              </div>
+              </Reveal>
             ))}
           </dl>
         </div>
       </section>
 
       {/* 3. KLEEMANN брэнд */}
-      <section id="kleemann" className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
+      <section id="kleemann" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-10 lg:gap-14 items-start">
 
-            <div>
+            <Reveal>
               <SectionLabel icon={Globe}>Үйлдвэрлэгч</SectionLabel>
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
                 KLEEMANN
@@ -210,46 +310,64 @@ export const DeltaLiftView: React.FC = () => {
               <div className="mt-6 p-5 rounded-xl bg-brand/10 border-l-2 border-accent">
                 <p className="text-sm text-ink leading-relaxed">{KLEEMANN.innovation}</p>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="grid grid-cols-2 gap-4">
-              <img
-                src={PHOTOS.cabin}
-                alt="KLEEMANN лифтний бүхээгний дотоод засал"
-                className="w-full h-full object-cover rounded-xl border border-line"
-                loading="lazy"
-              />
-              <img
-                src={PHOTOS.glassLift}
-                alt="Тунгалаг бүхээгтэй дугуй панорама лифт"
-                className="w-full h-full object-cover rounded-xl border border-line"
-                loading="lazy"
-              />
-            </div>
+            <Reveal delay={120} className="grid grid-cols-2 gap-4">
+              <figure className="dl-sheen relative overflow-hidden rounded-xl border border-line">
+                <img
+                  src={PHOTOS.cabin}
+                  alt="KLEEMANN лифтний бүхээгний дотоод засал"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                />
+              </figure>
+              <figure className="dl-sheen relative overflow-hidden rounded-xl border border-line">
+                <img
+                  src={PHOTOS.glassLift}
+                  alt="Тунгалаг бүхээгтэй дугуй панорама лифт"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                />
+              </figure>
+            </Reveal>
 
           </div>
 
           {/* KLEEMANN-ы дэлхийн сүлжээ */}
-          <figure className="mt-10 rounded-2xl overflow-hidden border border-line bg-[#0B5EA8]">
-            <img
-              src={PHOTOS.worldMap}
-              alt="KLEEMANN 100 гаруй улсад салбар компани, борлуулалтын сүлжээтэй"
-              className="w-full"
-              loading="lazy"
-            />
+          <Reveal as="figure" className="mt-10 rounded-2xl overflow-hidden border border-line bg-[#0B5EA8]">
+            <div className="relative">
+              <img
+                src={PHOTOS.worldMap}
+                alt="KLEEMANN 100 гаруй улсад салбар компани, борлуулалтын сүлжээтэй"
+                className="w-full"
+                loading="lazy"
+              />
+              {/* Монгол дээрх цэгийг тодруулж цохиулна — газрын зураг дээр
+                  Улаанбаатарын цэг аль хэдийн байгаа тул зөвхөн цагирагыг нэмнэ */}
+              <span
+                aria-hidden
+                className="absolute w-3.5 h-3.5 -ml-[7px] -mt-[7px] pointer-events-none"
+                style={{ left: '82.2%', top: '42.3%' }}
+              >
+                <span className="dl-ping absolute inset-0 rounded-full bg-accent" />
+              </span>
+            </div>
             <figcaption className="px-5 py-3.5 text-[11px] sm:text-xs text-white/80 border-t border-white/10">
               KLEEMANN-ы бүтээгдэхүүн Ази, Европ, Австрали, АНУ зэрэг 100 гаруй улсад хүрдэг.
+              <span className="text-accent font-semibold"> Монгол дахь албан ёсны онцгой эрхт дистрибьютер нь DELTA LIFTS.</span>
             </figcaption>
-          </figure>
+          </Reveal>
 
           {/* Шинэ удирдлагын хавтан */}
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-[0.55fr_1fr] gap-6 items-center p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line">
-            <img
-              src={PHOTOS.panel}
-              alt="KLEEMANN-ы шинэ удирдлагын хавтан, бараан шилэн бүхээг"
-              className="w-full max-h-72 object-cover rounded-xl border border-line"
-              loading="lazy"
-            />
+          <Reveal className="mt-10 grid grid-cols-1 sm:grid-cols-[0.55fr_1fr] gap-6 items-center p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line">
+            <div className="dl-sheen relative overflow-hidden rounded-xl border border-line">
+              <img
+                src={PHOTOS.panel}
+                alt="KLEEMANN-ы шинэ удирдлагын хавтан, бараан шилэн бүхээг"
+                className="w-full max-h-72 object-cover"
+                loading="lazy"
+              />
+            </div>
             <div>
               <h3 className="text-lg sm:text-xl font-black text-ink tracking-tight">
                 {OPERATING_PANELS.title}
@@ -266,13 +384,13 @@ export const DeltaLiftView: React.FC = () => {
                 ))}
               </ul>
             </div>
-          </div>
+          </Reveal>
 
         </div>
       </section>
 
       {/* 4. Бүтээгдэхүүн */}
-      <section id="products" className="py-16 md:py-20 border-b border-line bg-surface-2">
+      <section id="products" style={{ scrollMarginTop: navOffset + 64 }} className="py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={Building2}>Бүтээгдэхүүн</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
@@ -280,15 +398,16 @@ export const DeltaLiftView: React.FC = () => {
           </h2>
 
           <div className="mt-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-            {PRODUCTS.map((p) => {
+            {PRODUCTS.map((p, i) => {
               const Icon = PRODUCT_ICONS[p.id] ?? Building2;
               return (
-                <div
+                <Reveal
                   key={p.id}
-                  className="p-5 rounded-xl bg-surface-3 border border-line hover:border-brand transition-colors"
+                  delay={i * 80}
+                  className="group p-5 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
+                    <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center group-hover:bg-brand/30 group-hover:scale-110 transition-[background-color,scale] duration-300">
                       <Icon className="w-4 h-4 text-brand-bright" />
                     </div>
                     <h3 className="text-[15px] font-bold text-ink leading-snug">{p.title}</h3>
@@ -308,13 +427,13 @@ export const DeltaLiftView: React.FC = () => {
                   )}
 
                   {p.note && <p className="mt-3 text-xs text-brand-bright">{p.note}</p>}
-                </div>
+                </Reveal>
               );
             })}
           </div>
 
           {/* Бүрэн автомат авто зогсоолын систем */}
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-[1fr_0.9fr] gap-6 items-center rounded-2xl bg-surface-3 border border-line overflow-hidden">
+          <Reveal className="dl-sheen relative mt-6 grid grid-cols-1 sm:grid-cols-[1fr_0.9fr] gap-6 items-center rounded-2xl bg-surface-3 border border-line overflow-hidden">
             <div className="p-6 sm:p-8 order-2 sm:order-1">
               <div className="inline-flex items-center gap-2 px-3 h-7 rounded-full bg-accent/15 border border-accent/40 text-accent-ink text-[11px] font-bold uppercase tracking-wider">
                 <Car className="w-3.5 h-3.5" />
@@ -334,16 +453,16 @@ export const DeltaLiftView: React.FC = () => {
               className="w-full h-full object-contain bg-white p-4 order-1 sm:order-2"
               loading="lazy"
             />
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* 5. Инженер, техникийн алба */}
-      <section id="engineering" className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
+      <section id="engineering" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
 
-            <div className="order-2 lg:order-1 grid grid-cols-2 gap-4">
+            <Reveal className="order-2 lg:order-1 grid grid-cols-2 gap-4">
               <img
                 src={PHOTOS.techDoor}
                 alt="KLEEMANN-ы инженер хаалганы угсралт дээр ажиллаж байна"
@@ -362,9 +481,9 @@ export const DeltaLiftView: React.FC = () => {
                 className="w-full h-44 object-cover rounded-xl border border-line"
                 loading="lazy"
               />
-            </div>
+            </Reveal>
 
-            <div className="order-1 lg:order-2">
+            <Reveal delay={120} className="order-1 lg:order-2">
               <SectionLabel icon={Wrench}>Хүний нөөц</SectionLabel>
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
                 {ENGINEERING.title}
@@ -374,44 +493,55 @@ export const DeltaLiftView: React.FC = () => {
               <div className="mt-7 grid grid-cols-2 gap-4">
                 {ENGINEERING.highlights.map((h) => (
                   <div key={h.label} className="p-5 rounded-xl bg-surface-3 border border-line">
-                    <div className="text-3xl font-black text-accent-ink tabular-nums">{h.value}</div>
+                    <div className="text-3xl font-black text-accent-ink tabular-nums">
+                      <CountUp value={h.value} />
+                    </div>
                     <div className="mt-1 text-[11px] text-ink-muted leading-snug">{h.label}</div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
 
           </div>
         </div>
       </section>
 
       {/* 6. Бид хэрхэн ажилладаг */}
-      <section id="how-we-work" className="theme-light py-16 md:py-20 border-b border-line bg-surface-2">
+      <section id="how-we-work" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-center">
 
-            <div>
+            <Reveal className="dl-sheen relative overflow-hidden rounded-xl border border-line">
               <img
                 src={PHOTOS.consult}
                 alt="Зураг төслийн шийдэл дээр ажиллаж буй инженерүүд"
-                className="w-full object-cover rounded-xl border border-line"
+                className="w-full object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
               />
-            </div>
+            </Reveal>
 
-            <div>
+            <Reveal delay={120}>
               <SectionLabel icon={ClipboardCheck}>Ажиллах журам</SectionLabel>
               <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
                 {HOW_WE_WORK.title}
               </h2>
               <p className="mt-5 text-sm text-ink-muted leading-relaxed">{HOW_WE_WORK.body}</p>
 
-              <ol className="mt-7 space-y-3">
+              <ol ref={stepsRef} className="relative mt-7 space-y-3 pl-1">
+                {/* Алхмуудыг холбосон шугам — харагдахад дээрээс доош татагдана */}
+                <span
+                  aria-hidden
+                  className={`dl-track ${stepsIn ? 'is-in' : ''} absolute left-[38px] top-6 bottom-6 w-px bg-gradient-to-b from-brand via-brand/50 to-transparent`}
+                />
                 {HOW_WE_WORK.steps.map((s, i) => {
                   const Icon = STEP_ICONS[i] ?? ClipboardCheck;
                   return (
-                    <li key={s.title} className="flex gap-4 p-4 rounded-xl bg-surface-3 border border-line">
-                      <div className="w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
+                    <li
+                      key={s.title}
+                      className={`reveal ${stepsIn ? 'is-in' : ''} relative flex gap-4 p-4 rounded-xl bg-surface-3 border border-line hover:border-brand transition-colors`}
+                      style={{ transitionDelay: `${i * 110}ms` }}
+                    >
+                      <div className="relative z-10 w-9 h-9 shrink-0 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
                         <Icon className="w-4 h-4 text-brand-bright" />
                       </div>
                       <div>
@@ -425,16 +555,16 @@ export const DeltaLiftView: React.FC = () => {
                   );
                 })}
               </ol>
-            </div>
+            </Reveal>
 
           </div>
         </div>
       </section>
 
       {/* 7. Засвар үйлчилгээний хамрах хүрээ */}
-      <section id="service-scope" className="py-16 md:py-20 border-b border-line bg-surface-1">
+      <section id="service-scope" style={{ scrollMarginTop: navOffset + 64 }} className="py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
+          <Reveal className="max-w-3xl">
             <SectionLabel icon={ShieldCheck}>Засвар үйлчилгээ</SectionLabel>
             <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
               Хамрах хүрээ
@@ -443,21 +573,26 @@ export const DeltaLiftView: React.FC = () => {
               Мэргэшсэн инженер, техникийн баг цахилгаан шат, урсдаг шатны техникийн бүрэн бүтэн
               байдал, хэвийн үйл ажиллагааг хангах дараах үйлчилгээг үзүүлэн ажилладаг.
             </p>
-          </div>
+          </Reveal>
 
           <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {SERVICE_SCOPE.map((s) => (
-              <li key={s} className="flex items-start gap-3 p-5 rounded-xl bg-surface-3 border border-line">
+            {SERVICE_SCOPE.map((s, i) => (
+              <Reveal
+                key={s}
+                as="li"
+                delay={i * 80}
+                className="flex items-start gap-3 p-5 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-0.5 transition-[border-color,translate] duration-300"
+              >
                 <CheckCircle className="w-4 h-4 mt-0.5 text-brand-bright shrink-0" />
                 <span className="text-sm text-ink leading-relaxed">{s}</span>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>
       </section>
 
       {/* 8. Хамтран ажилласан төслүүд */}
-      <section id="projects" className="py-16 md:py-20 border-b border-line bg-surface-2">
+      <section id="projects" style={{ scrollMarginTop: navOffset + 64 }} className="py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={Building2}>Туршлага</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
@@ -473,13 +608,16 @@ export const DeltaLiftView: React.FC = () => {
                   <span className="text-[11px] text-ink-subtle tabular-nums">({g.items.length})</span>
                 </div>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  {g.items.map((name) => (
-                    <li
+                  {g.items.map((name, i) => (
+                    <Reveal
                       key={name}
-                      className="p-4 sm:p-5 rounded-xl bg-surface-3 border border-line hover:border-brand transition-colors flex items-center min-h-20"
+                      as="li"
+                      delay={(i % 3) * 90}
+                      className="group p-4 sm:p-5 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300 flex items-center gap-3 min-h-20"
                     >
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-bright/50 group-hover:bg-accent group-hover:scale-150 transition-[background-color,scale] duration-300 shrink-0" />
                       <span className="text-sm font-bold text-ink leading-snug">{name}</span>
-                    </li>
+                    </Reveal>
                   ))}
                 </ul>
               </div>
@@ -489,9 +627,9 @@ export const DeltaLiftView: React.FC = () => {
       </section>
 
       {/* 9. Үнийн санал */}
-      <section id="quote-section" className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
+      <section id="quote-section" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-7 sm:p-9 rounded-2xl bg-surface-3 border border-accent/40">
+          <Reveal className="relative p-7 sm:p-9 rounded-2xl bg-surface-3 border border-accent/40 shadow-2xl shadow-accent/5">
 
             <div className="text-center max-w-lg mx-auto mb-8">
               <SectionLabel icon={Sparkles}>Шуурхай үнийн санал</SectionLabel>
@@ -605,12 +743,12 @@ export const DeltaLiftView: React.FC = () => {
                 </button>
               </form>
             )}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* 10. Холбоо барих */}
-      <section id="contact" className="theme-light py-16 md:py-20 bg-surface-2">
+      <section id="contact" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionLabel icon={MapPin}>Холбоо барих</SectionLabel>
           <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight">
@@ -618,13 +756,13 @@ export const DeltaLiftView: React.FC = () => {
           </h2>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-6 rounded-xl bg-surface-3 border border-line">
+            <Reveal className="p-6 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300">
               <MapPin className="w-5 h-5 text-brand-bright" />
               <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">Хаяг</h3>
               <p className="mt-1.5 text-sm text-ink leading-relaxed">{COMPANY.address}</p>
-            </div>
+            </Reveal>
 
-            <div className="p-6 rounded-xl bg-surface-3 border border-line">
+            <Reveal delay={90} className="p-6 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300">
               <PhoneCall className="w-5 h-5 text-brand-bright" />
               <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">Утас</h3>
               <a
@@ -633,9 +771,9 @@ export const DeltaLiftView: React.FC = () => {
               >
                 {COMPANY.phone}
               </a>
-            </div>
+            </Reveal>
 
-            <div className="p-6 rounded-xl bg-surface-3 border border-line">
+            <Reveal delay={180} className="p-6 rounded-xl bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300">
               <Mail className="w-5 h-5 text-brand-bright" />
               <h3 className="mt-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted">И-мэйл, вэб</h3>
               <a
@@ -650,7 +788,7 @@ export const DeltaLiftView: React.FC = () => {
               >
                 {COMPANY.web}
               </a>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
