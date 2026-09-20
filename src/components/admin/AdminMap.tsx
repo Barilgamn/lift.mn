@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
+import { CircleMarker, MapContainer, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 import { Link } from 'react-router-dom';
+import { MapPin, Plus, X } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { useAdminStore } from '../../store/adminStore';
 import { ElevatorStatus } from '../../types';
 import { UB_CENTER } from '../../data/adminData';
 import { Badge, ELEVATOR_STATUS, PageHead, Panel } from './adminUi';
+import { ElevatorForm } from './ElevatorForm';
 
 /**
  * Үйлчилгээнд буй лифтүүдийн байршил.
@@ -24,9 +26,26 @@ const MARKER_COLOR: Record<ElevatorStatus, string> = {
 
 const STATUS_LIST = Object.keys(ELEVATOR_STATUS) as ElevatorStatus[];
 
+/**
+ * Газрын зураг дээрх даралтыг сонсоно.
+ *
+ * Leaflet-ийн үйл явдалд хүрэхийн тулд MapContainer дотор байх ёстой тул
+ * юу ч зурдаггүй туслах бүрэлдэхүүн болгов.
+ */
+const PickLocation: React.FC<{ onPick: (lat: number, lng: number) => void }> = ({ onPick }) => {
+  useMapEvents({
+    click: (e) => onPick(e.latlng.lat, e.latlng.lng),
+  });
+  return null;
+};
+
 export const AdminMap: React.FC = () => {
   const { elevators } = useAdminStore();
   const [visible, setVisible] = useState<Set<ElevatorStatus>>(new Set(STATUS_LIST));
+  /** Байршил сонгох горимд — зураг дээр дарахыг хүлээж байна */
+  const [placing, setPlacing] = useState(false);
+  /** Сонгосон цэг. Утгатай болмогц маягт нээгдэнэ. */
+  const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null);
 
   const shown = useMemo(() => elevators.filter((e) => visible.has(e.status)), [elevators, visible]);
 
@@ -49,7 +68,37 @@ export const AdminMap: React.FC = () => {
       <PageHead
         title="Газрын зураг"
         lead="Үйлчилгээнд буй бүх лифт, эскалаторын байршил. Тэмдэглэгээн дээр дарж дэлгэрэнгүйг харна."
+        right={
+          <button
+            id="map-add-elevator-btn"
+            type="button"
+            onClick={() => setPlacing((v) => !v)}
+            aria-pressed={placing}
+            className={`inline-flex items-center gap-1.5 h-10 px-4 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+              placing
+                ? 'bg-paper border border-brand text-brand'
+                : 'bg-brand hover:bg-brand-hover text-white'
+            }`}
+          >
+            {placing ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {placing ? 'Байршил сонгохоо болих' : 'Лифт нэмэх'}
+          </button>
+        }
       />
+
+      {placing && (
+        <div
+          id="map-place-hint"
+          className="mb-4 flex items-start gap-2.5 p-3.5 rounded-xl bg-sky-50 border border-sky-200"
+        >
+          <MapPin className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+          <p className="text-xs text-ink-dark">
+            <strong className="font-bold">Газрын зураг дээр дарж байршлыг тэмдэглэнэ үү.</strong>{' '}
+            Дарсан цэгийн координат маягтад автоматаар бөглөгдөнө. Байршил нь тодорхойгүй бол
+            "Лифтүүд" хуудаснаас нэмээд дараа нь координатыг засаж болно.
+          </p>
+        </div>
+      )}
 
       {/* Төлөвөөр шүүх */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -77,7 +126,7 @@ export const AdminMap: React.FC = () => {
       </div>
 
       <Panel className="overflow-hidden">
-        <div className="h-[60dvh] min-h-80 w-full">
+        <div className={`h-[60dvh] min-h-80 w-full ${placing ? '[&_.leaflet-container]:cursor-crosshair' : ''}`}>
           <MapContainer
             center={UB_CENTER}
             zoom={12}
@@ -89,6 +138,11 @@ export const AdminMap: React.FC = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            {placing && (
+              <PickLocation
+                onPick={(lat, lng) => { setPicked({ lat, lng }); setPlacing(false); }}
+              />
+            )}
             {shown.map((e) => (
               <CircleMarker
                 key={e.id}
@@ -127,6 +181,14 @@ export const AdminMap: React.FC = () => {
           </MapContainer>
         </div>
       </Panel>
+
+      {picked && (
+        <ElevatorForm
+          initialLat={picked.lat}
+          initialLng={picked.lng}
+          onClose={() => setPicked(null)}
+        />
+      )}
 
       <p className="mt-3 text-[11px] text-ink-dark-subtle">
         Газрын зургийн дэвсгэрийг OpenStreetMap-аас татна — интернэт холболт шаардана.

@@ -41,9 +41,23 @@ interface AdminStore {
 
   setSubmissionStatus: (id: string, status: SubmissionStatus) => Promise<string | null>;
   addServiceRecord: (record: Omit<ServiceRecord, 'id'> & { id?: string }) => Promise<string | null>;
+  addElevator: (elevator: Omit<Elevator, 'id'> & { id?: string }) => Promise<string | null>;
   updateElevator: (id: string, patch: Partial<Elevator>) => Promise<string | null>;
   saveProduct: (product: SparePart) => Promise<string | null>;
   deleteProduct: (id: string) => Promise<string | null>;
+}
+
+/**
+ * Шинэ лифтний дугаар. Одоо байгаа `lift-001` хэлбэрийн дугааруудын
+ * хамгийн томыг нь олоод нэгээр нэмнэ. Өөр хэлбэрийн id байвал тоохгүй.
+ */
+function nextElevatorId(existing: Elevator[]): string {
+  let max = 0;
+  for (const e of existing) {
+    const m = /^lift-(\d+)$/.exec(e.id);
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return `lift-${String(max + 1).padStart(3, '0')}`;
 }
 
 const Ctx = createContext<AdminStore | null>(null);
@@ -170,6 +184,22 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return null;
   }, []);
 
+  const addElevator = useCallback(async (elevator: Omit<Elevator, 'id'> & { id?: string }) => {
+    const sb = await getSupabase();
+    // id нь өгөгдлийн санд text primary key — хөтчөөс өгнө. Одоо байгаа
+    // `lift-NNN` дугааруудын араас үргэлжлүүлж, давхцвал санд алдаа өгнө.
+    const id = elevator.id?.trim() || nextElevatorId(elevators);
+    const { data, error } = await sb
+      .from('elevators')
+      .insert(elevatorToRow({ ...elevator, id }))
+      .select()
+      .single();
+    if (error) return friendlyError(error);
+    const saved = rowToElevator(data);
+    setElevators((prev) => [...prev, saved].sort((a, b) => a.building.localeCompare(b.building, 'mn')));
+    return null;
+  }, [elevators]);
+
   const updateElevator = useCallback(async (id: string, patch: Partial<Elevator>) => {
     const sb = await getSupabase();
     const { error } = await sb.from('elevators').update(elevatorToRow(patch)).eq('id', id);
@@ -203,9 +233,9 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     status, user, notConfigured: !isSupabaseConfigured, loadError,
     login, logout,
     elevators, serviceRecords, submissions, products,
-    setSubmissionStatus, addServiceRecord, updateElevator, saveProduct, deleteProduct,
+    setSubmissionStatus, addServiceRecord, addElevator, updateElevator, saveProduct, deleteProduct,
   }), [status, user, loadError, login, logout, elevators, serviceRecords, submissions, products,
-       setSubmissionStatus, addServiceRecord, updateElevator, saveProduct, deleteProduct]);
+       setSubmissionStatus, addServiceRecord, addElevator, updateElevator, saveProduct, deleteProduct]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };

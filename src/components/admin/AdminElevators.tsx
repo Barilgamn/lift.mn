@@ -4,6 +4,7 @@ import { ChevronRight, Plus, Search, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { Elevator, ElevatorStatus, ServiceKind, ServiceRecord } from '../../types';
 import { Badge, ELEVATOR_STATUS, OUTCOME, PageHead, Panel, SERVICE_KIND } from './adminUi';
+import { ElevatorForm } from './ElevatorForm';
 
 const STATUS_LIST = Object.keys(ELEVATOR_STATUS) as ElevatorStatus[];
 const KIND_LIST = Object.keys(SERVICE_KIND) as ServiceKind[];
@@ -120,6 +121,8 @@ export const AdminElevators: React.FC = () => {
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ElevatorStatus | 'all'>('all');
   const [adding, setAdding] = useState(false);
+  /** Шинэ лифт нэмэх маягт нээлттэй эсэх */
+  const [addingElevator, setAddingElevator] = useState(false);
 
   const selectedId = params.get('id');
   const selected = elevators.find((e) => e.id === selectedId) ?? null;
@@ -145,6 +148,16 @@ export const AdminElevators: React.FC = () => {
       <PageHead
         title="Лифтүүд"
         lead="Үйлчилгээнд буй тоноглол, төлөв, засварын түүх. Мөр дээр дарж дэлгэрэнгүйг харна."
+        right={
+          <button
+            id="add-elevator-btn"
+            type="button"
+            onClick={() => setAddingElevator(true)}
+            className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover text-white text-xs font-bold cursor-pointer transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Лифт нэмэх
+          </button>
+        }
       />
 
       <Panel className="p-4 mb-5">
@@ -197,6 +210,10 @@ export const AdminElevators: React.FC = () => {
           )}
         </ul>
       </Panel>
+
+      {addingElevator && (
+        <ElevatorForm onClose={() => setAddingElevator(false)} />
+      )}
 
       {/* Дэлгэрэнгүй */}
       {selected && (
