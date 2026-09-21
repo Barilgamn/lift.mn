@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Layers, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Layers, X } from 'lucide-react';
 import { CABIN_THEMES, CabinModel, CabinTheme, OPTION_GROUPS, OptionItem } from '../data/cabinData';
 import { ImageZoom } from './ImageZoom';
 import { Reveal } from './Reveal';
@@ -16,14 +16,52 @@ import { Reveal } from './Reveal';
 /** Дээд талын ангиллын цэс — гурван дизайн загвар + бусад бүлгүүд */
 type TabId = string;
 
-const CabinDetail: React.FC<{ theme: CabinTheme; model: CabinModel; onClose: () => void }> = ({
-  theme,
-  model,
-  onClose,
-}) => {
+/** Esc товч дарахад цонхыг хаана — модал цонхны хүлээгдэж буй зан төлөв */
+function useEscape(onClose: () => void) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+}
+
+/**
+ * Дэлгэрэнгүй цонхны доод талын "үнийн санал авах" товч.
+ *
+ * Дарахад цонхоо ЗААВАЛ хаана — эс бөгөөс маягт руу гүйлгэсэн ч дэлгэц
+ * дүүрэн бүрхүүл дээр үлдэж, хэрэглэгч юу ч дарж чадахгүй болно.
+ */
+const QuoteButton: React.FC<{
+  label: string;
+  onRequestQuote: (label: string) => void;
+  onClose: () => void;
+}> = ({ label, onRequestQuote, onClose }) => (
+  <button
+    type="button"
+    onClick={() => {
+      onRequestQuote(label);
+      onClose();
+    }}
+    className="mt-5 w-full inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-accent hover:bg-accent-hover text-neutral-950 text-xs font-bold uppercase tracking-wider cursor-pointer transition-colors active:scale-[0.99]"
+  >
+    <span>Энэ загвараар үнийн санал авах</span>
+    <ArrowRight className="w-4 h-4" />
+  </button>
+);
+
+const CabinDetail: React.FC<{
+  theme: CabinTheme;
+  model: CabinModel;
+  onClose: () => void;
+  onRequestQuote: (label: string) => void;
+}> = ({ theme, model, onClose, onRequestQuote }) => {
   const [index, setIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
   const variant = model.variants[index] ?? model.variants[0];
+  // Зураг томруулсан үед Esc нь эхлээд томруулсан цонхыг хаана
+  useEscape(() => { if (!zoom) onClose(); });
 
   return (
     <div
@@ -106,6 +144,12 @@ const CabinDetail: React.FC<{ theme: CabinTheme; model: CabinModel; onClose: () 
               Өнгө, материалыг каталогийн жагсаалтаас чөлөөтэй сонгож,
               өөрийн барилгын засалд тохируулан захиалах боломжтой.
             </p>
+
+            <QuoteButton
+              label={`${theme.title} ${model.code} · ${index + 1}-р хувилбар`}
+              onRequestQuote={onRequestQuote}
+              onClose={onClose}
+            />
           </div>
         </div>
 
@@ -121,7 +165,78 @@ const CabinDetail: React.FC<{ theme: CabinTheme; model: CabinModel; onClose: () 
   );
 };
 
-export const CabinOptions: React.FC = () => {
+/** Панорама, хаалга, ачааны лифтний карт дарахад нээгдэх цонх */
+const OptionDetail: React.FC<{
+  groupTitle: string;
+  item: OptionItem;
+  onClose: () => void;
+  onRequestQuote: (label: string) => void;
+}> = ({ groupTitle, item, onClose, onRequestQuote }) => {
+  const [zoom, setZoom] = useState(false);
+  useEscape(() => { if (!zoom) onClose(); });
+  return (
+    <div
+      className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-6"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={item.title}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full sm:max-w-2xl max-h-[90dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-surface-2 border border-line"
+      >
+        <div className="sticky top-0 z-10 bg-surface-2 border-b border-line px-5 py-3.5 flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-widest text-brand-bright">
+              {groupTitle}
+            </div>
+            <h3 className="text-lg font-black text-ink tracking-tight">{item.title}</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Хаах"
+            className="p-1.5 rounded-lg hover:bg-surface-3 text-ink-muted cursor-pointer shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-5 grid grid-cols-1 sm:grid-cols-[1fr_1fr] gap-5">
+          <button
+            type="button"
+            onClick={() => setZoom(true)}
+            aria-label={`${item.title} зургийг томруулж харах`}
+            className="block w-full rounded-xl overflow-hidden border border-line cursor-zoom-in"
+          >
+            <img src={item.image} alt={item.title} className="w-full aspect-3/4 object-cover" />
+          </button>
+
+          <div>
+            <p className="text-sm text-ink leading-relaxed">{item.note}</p>
+            <p className="mt-3 text-[11px] text-ink-subtle leading-relaxed">
+              Хэмжээ, өнгө, өнгөлгөөний материалыг барилгын зураг төсөлд тохируулан
+              захиалгаар үйлдвэрлэнэ.
+            </p>
+            <QuoteButton
+              label={`${groupTitle} · ${item.title}`}
+              onRequestQuote={onRequestQuote}
+              onClose={onClose}
+            />
+          </div>
+        </div>
+
+        {zoom && <ImageZoom src={item.image} alt={item.title} onClose={() => setZoom(false)} />}
+      </div>
+    </div>
+  );
+};
+
+export const CabinOptions: React.FC<{ onRequestQuote: (label: string) => void }> = ({
+  onRequestQuote,
+}) => {
   const tabs = useMemo(
     () => [
       ...CABIN_THEMES.map((t) => ({ id: t.id, label: t.title })),
@@ -131,7 +246,7 @@ export const CabinOptions: React.FC = () => {
   );
   const [tab, setTab] = useState<TabId>(tabs[0].id);
   const [open, setOpen] = useState<{ theme: CabinTheme; model: CabinModel } | null>(null);
-  const [zoomItem, setZoomItem] = useState<OptionItem | null>(null);
+  const [openItem, setOpenItem] = useState<{ group: string; item: OptionItem } | null>(null);
 
   const theme = CABIN_THEMES.find((t) => t.id === tab) ?? null;
   const group = OPTION_GROUPS.find((g) => g.id === tab) ?? null;
@@ -229,7 +344,7 @@ export const CabinOptions: React.FC = () => {
             <Reveal key={it.id} as="li" delay={(i % 5) * 70}>
               <button
                 type="button"
-                onClick={() => setZoomItem(it)}
+                onClick={() => setOpenItem({ group: group.title, item: it })}
                 className="group w-full h-full text-left rounded-xl overflow-hidden bg-surface-3 border border-line hover:border-brand hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 transition-[border-color,box-shadow,translate] duration-300 cursor-zoom-in flex flex-col"
               >
                 <img
@@ -249,13 +364,19 @@ export const CabinOptions: React.FC = () => {
       )}
 
       {open && (
-        <CabinDetail theme={open.theme} model={open.model} onClose={() => setOpen(null)} />
+        <CabinDetail
+          theme={open.theme}
+          model={open.model}
+          onClose={() => setOpen(null)}
+          onRequestQuote={onRequestQuote}
+        />
       )}
-      {zoomItem && (
-        <ImageZoom
-          src={zoomItem.image}
-          alt={`${zoomItem.title} — ${zoomItem.note}`}
-          onClose={() => setZoomItem(null)}
+      {openItem && (
+        <OptionDetail
+          groupTitle={openItem.group}
+          item={openItem.item}
+          onClose={() => setOpenItem(null)}
+          onRequestQuote={onRequestQuote}
         />
       )}
     </div>

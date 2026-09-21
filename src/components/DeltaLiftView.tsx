@@ -31,6 +31,7 @@ import {
   Sparkles,
   TrendingUp,
   Wrench,
+  XCircle,
 } from 'lucide-react';
 import {
   COMPANY,
@@ -90,6 +91,18 @@ export const DeltaLiftView: React.FC = () => {
   const [quoteError, setQuoteError] = useState<string>('');
   const [quoteSuccess, setQuoteSuccess] = useState<boolean>(false);
   const [quoteSending, setQuoteSending] = useState<boolean>(false);
+  /** "Сонголтууд" хэсгээс сонгосон бүхээг, хаалганы загвар */
+  const [quoteCabin, setQuoteCabin] = useState<string>('');
+
+  /**
+   * Каталогийн загвар сонгоход үнийн саналын маягт руу аваачна.
+   * Сонгосон загварын нэр маягтад урьдчилан бөглөгдөж, хүсэлттэй хамт очно.
+   */
+  const pickCabin = (label: string) => {
+    setQuoteCabin(label);
+    setQuoteSuccess(false);
+    document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   // Цахилгаан шат нь дэд төрлүүдтэй тул тусад нь онцолно. Авто зогсоолын
   // системийг доор зурагтай картаар үзүүлдэг тул жагсаалтаас хасна.
@@ -143,11 +156,17 @@ export const DeltaLiftView: React.FC = () => {
 
     const result = await submitForm('quote', {
       phone: quotePhone,
-      summary: `${QUOTE_TYPE_LABELS[quoteType] ?? quoteType} · ${quoteFloors} давхар · ${quoteCapacity}`,
+      summary: [
+        QUOTE_TYPE_LABELS[quoteType] ?? quoteType,
+        `${quoteFloors} давхар`,
+        quoteCapacity,
+        quoteCabin,
+      ].filter(Boolean).join(' · '),
       details: {
         'Төрөл': QUOTE_TYPE_LABELS[quoteType] ?? quoteType,
         'Давхрын тоо': quoteFloors,
         'Даац': quoteCapacity,
+        ...(quoteCabin ? { 'Сонгосон загвар': quoteCabin } : {}),
       },
     });
 
@@ -498,7 +517,7 @@ export const DeltaLiftView: React.FC = () => {
         className="py-16 md:py-20 border-b border-line bg-surface-1"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <CabinOptions />
+          <CabinOptions onRequestQuote={pickCabin} />
         </div>
       </section>
 
@@ -696,6 +715,28 @@ export const DeltaLiftView: React.FC = () => {
               </p>
             </div>
 
+            {quoteCabin && !quoteSuccess && (
+              <div
+                id="quote-cabin"
+                className="mb-5 flex items-start justify-between gap-3 p-4 rounded-xl bg-brand/10 border border-brand/40"
+              >
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-brand-bright">
+                    Сонгосон загвар
+                  </div>
+                  <div className="mt-0.5 text-sm font-bold text-ink leading-snug">{quoteCabin}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setQuoteCabin('')}
+                  aria-label="Сонгосон загварыг арилгах"
+                  className="p-1.5 rounded-lg hover:bg-surface-2 text-ink-muted cursor-pointer shrink-0"
+                >
+                  <XCircle className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {quoteSuccess ? (
               <div className="text-center py-6">
                 <CheckCircle className="w-14 h-14 text-success mx-auto mb-3" />
@@ -704,6 +745,12 @@ export const DeltaLiftView: React.FC = () => {
                   Манай төслийн инженер таны{' '}
                   <strong className="text-accent-ink">{quotePhone}</strong> дугаар луу удахгүй
                   холбогдоно.
+                  {quoteCabin && (
+                    <>
+                      {' '}Сонгосон загвар:{' '}
+                      <strong className="text-accent-ink">{quoteCabin}</strong>.
+                    </>
+                  )}
                 </p>
                 <button
                   onClick={() => setQuoteSuccess(false)}
