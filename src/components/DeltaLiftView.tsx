@@ -48,6 +48,7 @@ import { DeltaLiftsLogo } from './DeltaLiftsLogo';
 import { Reveal } from './Reveal';
 import { CountUp } from './CountUp';
 import { ImageSlider } from './ImageSlider';
+import { CabinOptions } from './CabinOptions';
 import { useInView } from '../lib/useReveal';
 
 const PRODUCT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -64,6 +65,7 @@ const STEP_ICONS = [PenTool, ClipboardCheck, Ruler, Wrench];
 const SECTION_NAV = [
   { id: 'kleemann', label: 'KLEEMANN' },
   { id: 'products', label: 'Бүтээгдэхүүн' },
+  { id: 'options', label: 'Сонголтууд' },
   { id: 'engineering', label: 'Инженер' },
   { id: 'projects', label: 'Төслүүд' },
   { id: 'quote-section', label: 'Үнийн санал' },
@@ -489,7 +491,18 @@ export const DeltaLiftView: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Инженер, техникийн алба */}
+      {/* 5. KLEEMANN-ы каталогийн сонголтууд */}
+      <section
+        id="options"
+        style={{ scrollMarginTop: navOffset + 64 }}
+        className="py-16 md:py-20 border-b border-line bg-surface-1"
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CabinOptions />
+        </div>
+      </section>
+
+      {/* 6. Инженер, техникийн алба */}
       <section id="engineering" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-stretch">
