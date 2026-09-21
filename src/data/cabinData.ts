@@ -27,6 +27,10 @@ export interface CabinTheme {
   id: string;
   title: string;
   note: string;
+  /** Дэлгэрэнгүй цонхны жагсаалтын гарчиг. Хоосон бол "материал". */
+  specLabel?: string;
+  /** Зургийг тайрахгүй, бүтнээр нь харуулах (бүтээгдэхүүний рендэр) */
+  contain?: boolean;
   models: CabinModel[];
 }
 
@@ -641,6 +645,118 @@ export const CABIN_THEMES: CabinTheme[] = [
       },
     ],
   },
+  {
+    id: 'escalators',
+    title: 'Урсдаг шат, зам',
+    note: 'KEC, KEH урсдаг шат ба KTC, KTH, KTW урсдаг зам. Хүчин чадлын * утга нь EN115-1:2017 стандартын H хавсралтаар тооцсон онолын дүн.',
+    specLabel: 'Техникийн үзүүлэлт',
+    contain: true,
+    models: [
+      {
+        code: 'KEC Commercial',
+        variants: [
+          {
+            id: 'kec',
+            image: '/images/cabins/esc-unit.webp',
+            spec: [
+              { label: 'Ажлын цаг / өдөрт', value: '16 - 20' },
+              { label: 'Хүчин чадал (цагт)', value: 'Up to 6000 passengers' },
+              { label: 'Налуу өнцөг', value: '30° / 35°' },
+              { label: 'Шатны өргөн (мм)', value: '600 / 800 / 1000' },
+              { label: 'Хашлагын дизайн', value: 'Vertical 10mm safety tempered glass or inclined satin 2mm. Height 1000mm' },
+              { label: 'Ажиллах хурд (м/с)', value: '0,5' },
+              { label: 'Өндрийн зөрүү (м)', value: '2 - 7,5' },
+              { label: 'Мотор', value: 'One speed or VVVF' },
+              { label: 'Суурилуулалт', value: 'Indoor / Outdoor / Marine' },
+            ],
+          },
+        ],
+      },
+      {
+        code: 'KEH Heavy Duty',
+        variants: [
+          {
+            id: 'keh',
+            image: '/images/cabins/esc-unit.webp',
+            spec: [
+              { label: 'Ажлын цаг / өдөрт', value: '20 - 24' },
+              { label: 'Хүчин чадал (цагт)', value: 'Up to 7300 passengers' },
+              { label: 'Налуу өнцөг', value: '30° / 35°' },
+              { label: 'Шатны өргөн (мм)', value: '600 / 800 / 1000' },
+              { label: 'Хашлагын дизайн', value: 'Vertical 10mm safety tempered glass or inclined satin 2mm. Height 1000mm' },
+              { label: 'Ажиллах хурд (м/с)', value: '0,5 - 0,65' },
+              { label: 'Өндрийн зөрүү (м)', value: '2 - 35' },
+              { label: 'Мотор', value: 'One speed or VVVF' },
+              { label: 'Суурилуулалт', value: 'Indoor / Outdoor / Marine' },
+            ],
+          },
+        ],
+      },
+      {
+        code: 'KTC Commercial',
+        variants: [
+          {
+            id: 'ktc',
+            image: '/images/cabins/walk-unit.webp',
+            spec: [
+              { label: 'Ажлын цаг / өдөрт', value: '16 - 20' },
+              { label: 'Хүчин чадал (цагт)', value: 'Up to 6000 passengers' },
+              { label: 'Налуу өнцөг', value: '10° / 11° / 12°' },
+              { label: 'Тавцангийн өргөн (мм)', value: '800 / 1000' },
+              { label: 'Хашлагын дизайн', value: 'Vertical 10mm safety tempered glass or inclined satin 2mm. Height 1000mm' },
+              { label: 'Ажиллах хурд (м/с)', value: '0,5' },
+              { label: 'Өндрийн зөрүү (м)', value: '2 - 8' },
+              { label: 'Суурилуулах дээд урт (м)', value: '120' },
+              { label: 'Мотор', value: 'One speed or VVVF' },
+              { label: 'Суурилуулалт', value: 'Indoor / Outdoor (covered)' },
+            ],
+          },
+        ],
+      },
+      {
+        code: 'KTH Commercial',
+        variants: [
+          {
+            id: 'kth',
+            image: '/images/cabins/walk-unit.webp',
+            spec: [
+              { label: 'Ажлын цаг / өдөрт', value: '16 - 20' },
+              { label: 'Хүчин чадал (цагт)', value: 'Up to 6000 passengers' },
+              { label: 'Налуу өнцөг', value: '10° / 11° / 12°' },
+              { label: 'Тавцангийн өргөн (мм)', value: '800 / 1000' },
+              { label: 'Хашлагын дизайн', value: 'Vertical 10mm safety tempered glass or inclined satin 2mm. Height 1000mm' },
+              { label: 'Ажиллах хурд (м/с)', value: '0,5' },
+              { label: 'Өндрийн зөрүү (м)', value: '2 - 8' },
+              { label: 'Суурилуулах дээд урт (м)', value: '120' },
+              { label: 'Мотор', value: 'One speed or VVVF' },
+              { label: 'Суурилуулалт', value: 'Indoor / Outdoor (covered)' },
+            ],
+          },
+        ],
+      },
+      {
+        code: 'KTW Heavy Duty',
+        variants: [
+          {
+            id: 'ktw',
+            image: '/images/cabins/walk-unit.webp',
+            spec: [
+              { label: 'Ажлын цаг / өдөрт', value: '20 - 24' },
+              { label: 'Хүчин чадал (цагт)', value: 'Up to 6000 passengers' },
+              { label: 'Налуу өнцөг', value: '0° / 6° эсвэл 10° / 11° / 12°' },
+              { label: 'Тавцангийн өргөн (мм)', value: '1000 / 1200 / 1400' },
+              { label: 'Хашлагын дизайн', value: 'Vertical 10mm safety tempered glass or inclined satin 2mm. Height 1000mm' },
+              { label: 'Ажиллах хурд (м/с)', value: '0,5' },
+              { label: 'Өндрийн зөрүү (м)', value: '0 - 8' },
+              { label: 'Суурилуулах дээд урт (м)', value: '120' },
+              { label: 'Мотор', value: 'One speed or VVVF' },
+              { label: 'Суурилуулалт', value: 'Indoor / Outdoor (covered)' },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 /** Панорама бүхээг, хаалга, ачааны лифтний сонголтууд */
@@ -861,6 +977,67 @@ export const OPTION_GROUPS: OptionGroup[] = [
         title: 'Atlas Gigas Traction MRL',
         note: 'Том даацын татах системтэй',
         image: '/images/cabins/atlas-gigas-traction-mrl.webp',
+      },
+    ],
+  },
+  {
+    id: 'escalator-design',
+    title: 'Урсдаг шатны дизайн',
+    note: 'Гэрэлтүүлэг, өнгөлгөө, өнгөний сонголтууд — барилгын дотоод засалтай нийцүүлнэ',
+    items: [
+      {
+        id: 'esc-led-skirt',
+        title: 'LED Skirt Lighting',
+        note: 'Хормойн LED гэрэлтүүлэг',
+        image: '/images/cabins/esc-led-skirt.webp',
+      },
+      {
+        id: 'esc-led-balustrade',
+        title: 'Balustrade Lighting (LED Ring)',
+        note: 'Хашлагын LED цагираг гэрэлтүүлэг',
+        image: '/images/cabins/esc-led-balustrade.webp',
+      },
+      {
+        id: 'esc-led-comb',
+        title: 'LED Comb Lighting',
+        note: 'Самны LED гэрэлтүүлэг',
+        image: '/images/cabins/esc-led-comb.webp',
+      },
+      {
+        id: 'esc-traffic-lights',
+        title: 'Traffic Lights',
+        note: 'Чиглэл заагч гэрэл',
+        image: '/images/cabins/esc-traffic-lights.webp',
+      },
+      {
+        id: 'esc-cladding-steel',
+        title: 'Stainless Steel Claddings',
+        note: 'Зэвэрдэггүй ган өнгөлгөө',
+        image: '/images/cabins/esc-cladding-steel.webp',
+      },
+      {
+        id: 'esc-cladding-painted',
+        title: 'Painted Claddings',
+        note: 'Будсан өнгөлгөө',
+        image: '/images/cabins/esc-cladding-painted.webp',
+      },
+      {
+        id: 'esc-cladding-glass',
+        title: 'Glass Claddings',
+        note: 'Шилэн өнгөлгөө',
+        image: '/images/cabins/esc-cladding-glass.webp',
+      },
+      {
+        id: 'esc-step-colours',
+        title: 'Step / Pallet Colours',
+        note: 'Шат, тавцангийн өнгө — хар, мөнгөлөг',
+        image: '/images/cabins/esc-step-colours.webp',
+      },
+      {
+        id: 'esc-handrail-colours',
+        title: 'Handrail Colours',
+        note: 'Бариулын өнгө — 7 сонголт',
+        image: '/images/cabins/esc-handrail-colours.webp',
       },
     ],
   },

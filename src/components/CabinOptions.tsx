@@ -103,8 +103,10 @@ const CabinDetail: React.FC<{
             >
               <img
                 src={variant.image}
-                alt={`KLEEMANN ${model.code} бүхээг — ${index + 1}-р хувилбар`}
-                className="w-full aspect-3/4 object-cover"
+                alt={`KLEEMANN ${model.code} — ${index + 1}-р хувилбар`}
+                className={`w-full aspect-3/4 ${
+                  theme.contain ? 'object-contain bg-white p-3' : 'object-cover'
+                }`}
               />
             </button>
 
@@ -130,7 +132,9 @@ const CabinDetail: React.FC<{
 
           <div>
             <div className="text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-3">
-              {index + 1}-р хувилбарын материал
+              {model.variants.length > 1
+                ? `${index + 1}-р хувилбарын материал`
+                : (theme.specLabel ?? 'Материал')}
             </div>
             <dl className="divide-y divide-line">
               {variant.spec.map((row) => (
@@ -141,12 +145,17 @@ const CabinDetail: React.FC<{
               ))}
             </dl>
             <p className="mt-4 text-[11px] text-ink-subtle leading-relaxed">
-              Өнгө, материалыг каталогийн жагсаалтаас чөлөөтэй сонгож,
-              өөрийн барилгын засалд тохируулан захиалах боломжтой.
+              {theme.contain
+                ? 'Гэрэлтүүлэг, өнгөлгөө, өнгөний сонголтыг "Урсдаг шатны дизайн" хэсгээс үзнэ үү.'
+                : 'Өнгө, материалыг каталогийн жагсаалтаас чөлөөтэй сонгож, өөрийн барилгын засалд тохируулан захиалах боломжтой.'}
             </p>
 
             <QuoteButton
-              label={`${theme.title} ${model.code} · ${index + 1}-р хувилбар`}
+              label={
+                model.variants.length > 1
+                  ? `${theme.title} ${model.code} · ${index + 1}-р хувилбар`
+                  : `${theme.title} ${model.code}`
+              }
               onRequestQuote={onRequestQuote}
               onClose={onClose}
             />
@@ -273,8 +282,9 @@ export const CabinOptions: React.FC<{ onRequestQuote: (label: string) => void }>
             Бүхээг, хаалганы сонголтууд
           </h2>
           <p className="mt-3 text-sm text-ink-muted leading-relaxed max-w-2xl">
-            KLEEMANN-ы каталогаас {totalVariants} бүхээгийн хувилбар, панорама бүхээг, хаалга,
-            ачааны лифтний {totalOptions} шийдэл. Карт дээр дарж материалын дэлгэрэнгүйг харна.
+            KLEEMANN-ы каталогаас {totalVariants} бүхээг, урсдаг шатны хувилбар, панорама
+            бүхээг, хаалга, дизайн, ачааны лифтний {totalOptions} шийдэл. Карт дээр дарж
+            дэлгэрэнгүйг харна.
             Барилгадаа тохирохыг нь сонгоод үнийн санал авах хүсэлтдээ дугаарыг нь бичиж илгээнэ үү.
           </p>
         </div>
@@ -321,14 +331,18 @@ export const CabinOptions: React.FC<{ onRequestQuote: (label: string) => void }>
               >
                 <img
                   src={m.variants[0].image}
-                  alt={`KLEEMANN ${m.code} бүхээг`}
+                  alt={`KLEEMANN ${m.code}`}
                   loading="lazy"
-                  className="w-full aspect-3/4 object-cover"
+                  className={`w-full aspect-3/4 ${
+                    theme.contain ? 'object-contain bg-white p-3' : 'object-cover'
+                  }`}
                 />
                 <div className="p-3">
-                  <div className="text-sm font-black text-ink">{m.code}</div>
+                  <div className="text-sm font-black text-ink leading-snug">{m.code}</div>
                   <div className="mt-0.5 text-[11px] text-ink-subtle">
-                    {m.variants.length} хувилбар
+                    {m.variants.length > 1
+                      ? `${m.variants.length} хувилбар`
+                      : `${m.variants[0].spec.length} үзүүлэлт`}
                   </div>
                 </div>
               </button>
