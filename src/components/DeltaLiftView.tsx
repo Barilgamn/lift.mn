@@ -47,6 +47,7 @@ import {
 import { DeltaLiftsLogo } from './DeltaLiftsLogo';
 import { Reveal } from './Reveal';
 import { CountUp } from './CountUp';
+import { ImageSlider } from './ImageSlider';
 import { useInView } from '../lib/useReveal';
 
 const PRODUCT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -298,7 +299,7 @@ export const DeltaLiftView: React.FC = () => {
       {/* 3. KLEEMANN брэнд */}
       <section id="kleemann" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-10 lg:gap-14 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-10 lg:gap-14 items-stretch">
 
             <Reveal>
               <SectionLabel icon={Globe}>Үйлдвэрлэгч</SectionLabel>
@@ -317,23 +318,26 @@ export const DeltaLiftView: React.FC = () => {
               </div>
             </Reveal>
 
-            <Reveal delay={120} className="grid grid-cols-2 gap-4">
-              <figure className="dl-sheen relative overflow-hidden rounded-xl border border-line">
-                <img
-                  src={PHOTOS.cabin}
-                  alt="KLEEMANN лифтний бүхээгний дотоод засал"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-              </figure>
-              <figure className="dl-sheen relative overflow-hidden rounded-xl border border-line">
-                <img
-                  src={PHOTOS.glassLift}
-                  alt="Тунгалаг бүхээгтэй дугуй панорама лифт"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-              </figure>
+            <Reveal delay={120} className="h-full">
+              <ImageSlider
+                images={[
+                  {
+                    src: PHOTOS.cabin,
+                    alt: 'KLEEMANN лифтний бүхээгний дотоод засал',
+                    caption: 'Далд гэрэлтүүлэгтэй бүхээгний дотоод засал',
+                  },
+                  {
+                    src: PHOTOS.glassLift,
+                    alt: 'Тунгалаг бүхээгтэй дугуй панорама лифт',
+                    caption: 'Муруй буюу вааран хэлбэрийн панорама бүхээг',
+                  },
+                  {
+                    src: PHOTOS.panel,
+                    alt: 'KLEEMANN-ы шинэ удирдлагын хавтан',
+                    caption: 'Шинэ үеийн удирдлагын хавтан',
+                  },
+                ]}
+              />
             </Reveal>
 
           </div>
@@ -364,15 +368,15 @@ export const DeltaLiftView: React.FC = () => {
           </Reveal>
 
           {/* Шинэ удирдлагын хавтан */}
-          <Reveal className="mt-10 grid grid-cols-1 sm:grid-cols-[0.55fr_1fr] gap-6 items-center p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line">
-            <div className="dl-sheen relative overflow-hidden rounded-xl border border-line">
-              <img
-                src={PHOTOS.panel}
-                alt="KLEEMANN-ы шинэ удирдлагын хавтан, бараан шилэн бүхээг"
-                className="w-full max-h-72 object-cover"
-                loading="lazy"
-              />
-            </div>
+          <Reveal className="mt-10 grid grid-cols-1 sm:grid-cols-[0.55fr_1fr] gap-6 items-stretch p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line">
+            <ImageSlider
+              images={[
+                {
+                  src: PHOTOS.panel,
+                  alt: 'KLEEMANN-ы шинэ удирдлагын хавтан, бараан шилэн бүхээг',
+                },
+              ]}
+            />
             <div>
               <h3 className="text-lg sm:text-xl font-black text-ink tracking-tight">
                 {OPERATING_PANELS.title}
@@ -459,7 +463,7 @@ export const DeltaLiftView: React.FC = () => {
           </div>
 
           {/* Бүрэн автомат авто зогсоолын систем */}
-          <Reveal className="dl-sheen relative mt-6 grid grid-cols-1 sm:grid-cols-[1fr_0.9fr] gap-6 items-center rounded-2xl bg-surface-3 border border-line overflow-hidden">
+          <Reveal className="dl-sheen relative mt-6 grid grid-cols-1 sm:grid-cols-[1fr_0.9fr] items-stretch rounded-2xl bg-surface-3 border border-line overflow-hidden">
             <div className="p-6 sm:p-8 order-2 sm:order-1">
               <div className="inline-flex items-center gap-2 px-3 h-7 rounded-full bg-accent/15 border border-accent/40 text-accent-ink text-[11px] font-bold uppercase tracking-wider">
                 <Car className="w-3.5 h-3.5" />
@@ -473,12 +477,14 @@ export const DeltaLiftView: React.FC = () => {
                 систем. Орон сууц, оффис, худалдааны төвийн зогсоолын хүрэлцээг нэмэгдүүлнэ.
               </p>
             </div>
-            <img
-              src={PHOTOS.parking}
-              alt="Бүрэн автомат авто машины давхар зогсоолын систем"
-              className="w-full h-full object-contain bg-white p-4 order-1 sm:order-2"
-              loading="lazy"
-            />
+            <div className="order-1 sm:order-2 bg-white flex items-center justify-center min-h-56">
+              <img
+                src={PHOTOS.parking}
+                alt="Бүрэн автомат авто машины давхар зогсоолын систем"
+                className="w-full h-full max-h-80 object-contain p-4"
+                loading="lazy"
+              />
+            </div>
           </Reveal>
         </div>
       </section>
@@ -486,26 +492,27 @@ export const DeltaLiftView: React.FC = () => {
       {/* 5. Инженер, техникийн алба */}
       <section id="engineering" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-1">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-stretch">
 
-            <Reveal className="order-2 lg:order-1 grid grid-cols-2 gap-4">
-              <img
-                src={PHOTOS.techDoor}
-                alt="KLEEMANN-ы инженер хаалганы угсралт дээр ажиллаж байна"
-                className="col-span-2 w-full object-cover rounded-xl border border-line"
-                loading="lazy"
-              />
-              <img
-                src={PHOTOS.techControl}
-                alt="Удирдлагын самбар дээрх техникчид"
-                className="w-full h-44 object-cover rounded-xl border border-line"
-                loading="lazy"
-              />
-              <img
-                src={PHOTOS.techShaft}
-                alt="Лифтний худаг дотор ажиллаж буй техникч"
-                className="w-full h-44 object-cover rounded-xl border border-line"
-                loading="lazy"
+            <Reveal className="order-2 lg:order-1 h-full">
+              <ImageSlider
+                images={[
+                  {
+                    src: PHOTOS.techDoor,
+                    alt: 'KLEEMANN-ы инженер хаалганы угсралт дээр ажиллаж байна',
+                    caption: 'Хаалганы механизмын угсралт, тохируулга',
+                  },
+                  {
+                    src: PHOTOS.techControl,
+                    alt: 'Удирдлагын самбар дээрх техникчид',
+                    caption: 'Удирдлагын самбарын оношилгоо',
+                  },
+                  {
+                    src: PHOTOS.techShaft,
+                    alt: 'Лифтний худаг дотор ажиллаж буй техникч',
+                    caption: 'Худаг доторх хөтөчийн шугамын ажил',
+                  },
+                ]}
               />
             </Reveal>
 
@@ -535,14 +542,22 @@ export const DeltaLiftView: React.FC = () => {
       {/* 6. Бид хэрхэн ажилладаг */}
       <section id="how-we-work" style={{ scrollMarginTop: navOffset + 64 }} className="theme-light py-16 md:py-20 border-b border-line bg-surface-2">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-stretch">
 
-            <Reveal className="dl-sheen relative overflow-hidden rounded-xl border border-line">
-              <img
-                src={PHOTOS.consult}
-                alt="Зураг төслийн шийдэл дээр ажиллаж буй инженерүүд"
-                className="w-full object-cover transition-transform duration-700 hover:scale-105"
-                loading="lazy"
+            <Reveal className="h-full">
+              <ImageSlider
+                images={[
+                  {
+                    src: PHOTOS.consult,
+                    alt: 'Зураг төслийн шийдэл дээр ажиллаж буй инженерүүд',
+                    caption: 'Талбай дээрх хэмжилт, техникийн зөвлөгөө',
+                  },
+                  {
+                    src: PHOTOS.techDoor,
+                    alt: 'Угсралтын ажил дээрх инженер',
+                    caption: 'Угсралт, суурилуулалтын хяналт',
+                  },
+                ]}
               />
             </Reveal>
 
