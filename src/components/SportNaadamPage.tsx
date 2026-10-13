@@ -1,22 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  ArrowDown,
   ArrowRight,
   Award,
-  Building2,
   CalendarDays,
+  Check,
   CheckCircle2,
   Download,
   FileText,
   Handshake,
   Loader2,
   MapPin,
-  PlayCircle,
   Trophy,
   Upload,
-  Users,
   X,
 } from 'lucide-react';
+// Постерын гарчгийн нарийн бүдүүн үсэг — кирилл (Ө, Ү) бүрэн. Зөвхөн энэ хуудсанд ачаална.
+import '@fontsource/oswald/600.css';
+import '@fontsource/oswald/700.css';
 import { Reveal } from './Reveal';
 import { submitForm, HOTLINE } from '../lib/submitForm';
 import { DOCUMENT_ACCEPT, readDocument, type Attachment } from '../lib/attachments';
@@ -30,6 +30,9 @@ import {
   SPORTS,
   sportById,
 } from '../data/naadamData';
+
+/** Постерын гарчгийн фонт */
+const display = { fontFamily: "'Oswald', 'Arial Narrow', sans-serif" } as const;
 
 const ORG_ICONS = [Trophy, Handshake, Award];
 
@@ -50,9 +53,15 @@ function useCountdown(target: string) {
 }
 
 const field =
-  'w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/15 text-white placeholder:text-white/40 ' +
-  'focus:border-[#F7B919] focus:bg-white/[0.09] focus:outline-none transition-colors';
-const labelCls = 'block text-xs font-bold uppercase tracking-wider text-white/70 mb-2';
+  'w-full h-12 px-4 rounded-xl bg-white border border-slate-300 text-base text-slate-900 placeholder:text-slate-400 ' +
+  'focus:border-[#0E5DA8] focus:ring-4 focus:ring-[#0E5DA8]/15 focus:outline-none transition';
+const labelCls = 'block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2';
+
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h2 style={display} className="text-center text-3xl sm:text-5xl font-bold uppercase tracking-tight text-[#0E5DA8]">
+    {children}
+  </h2>
+);
 
 export const SportNaadamPage: React.FC = () => {
   const countdown = useCountdown(NAADAM.startsAt);
@@ -61,183 +70,145 @@ export const SportNaadamPage: React.FC = () => {
     document.getElementById('register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
-    // Үндсэн сайтын бүрхүүл (PageShell) дотор — цэс, байршлын мөр, хөл хэсэг нь сайтынх
-    <div className="bg-[#030B1A] text-white overflow-x-hidden">
-      {/* Нүүр хэсэг */}
-      <section className="relative isolate border-b border-white/10">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(2,90,156,0.55),transparent_65%),radial-gradient(ellipse_at_bottom_right,rgba(247,185,25,0.16),transparent_55%)]" />
-        <div className="absolute inset-0 -z-10 opacity-[0.07] bg-[linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] bg-[size:48px_48px]" />
+    // Үндсэн сайтын бүрхүүл (PageShell) дотор. Өнгө төрх нь албан ёсны постерынх:
+    // цагаан дэвсгэр, зөөлөн цэнхэр/ягаан толбо, цэнхэр гарчиг, шар кран.
+    <div className="relative isolate overflow-hidden bg-white text-slate-800">
+      <div aria-hidden="true" className="pointer-events-none absolute -z-10 inset-0">
+        <div className="absolute -top-40 -right-40 w-[38rem] h-[38rem] rounded-full bg-sky-200/50 blur-3xl" />
+        <div className="absolute top-[30rem] -left-48 w-[32rem] h-[32rem] rounded-full bg-pink-200/40 blur-3xl" />
+        <div className="absolute bottom-40 right-0 w-[30rem] h-[30rem] rounded-full bg-indigo-100/60 blur-3xl" />
+        <img src="/images/sportnaadam/cranes.png" alt="" className="absolute bottom-0 right-2 sm:right-8 w-48 sm:w-80 opacity-60" />
+      </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-12 sm:pt-16 sm:pb-16 flex flex-col items-center text-center">
-          <Reveal>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F7B919]/15 border border-[#F7B919]/40 text-[#F7B919] text-[11px] sm:text-xs font-bold uppercase tracking-wider">
-              <Award className="w-4 h-4 shrink-0" />
-              <span>Барилгын салбарын 100 жилийн ой</span>
-            </div>
-          </Reveal>
+      {/* Постер */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
+        <Reveal>
+          <h1 className="sr-only">
+            {NAADAM.sector} {NAADAM.edition} {NAADAM.title.toLowerCase()} — {NAADAM.dateLabel}, {NAADAM.venue}
+          </h1>
+          <img
+            id="naadam-poster"
+            src={NAADAM.poster}
+            srcSet={`${NAADAM.posterSmall} 1000w, ${NAADAM.poster} 2000w`}
+            sizes="(min-width: 1152px) 1104px, calc(100vw - 2rem)"
+            width={2000}
+            height={1023}
+            alt={`${NAADAM.edition} спортын их наадам — ${NAADAM.dateLabel}, ${NAADAM.venue}. Зохион байгуулагч DELTA LIFTS, LIFT.MN`}
+            className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl shadow-sky-900/15 ring-1 ring-slate-200"
+          />
+        </Reveal>
 
-          <Reveal delay={80}>
-            <p className="mt-5 text-sm sm:text-base font-semibold text-sky-300/90">{NAADAM.sector}</p>
-            <h1 className="mt-2 text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] uppercase">
-              <span className="text-[#F7B919]">{NAADAM.edition}</span> {NAADAM.title}
-            </h1>
-          </Reveal>
-
-          <Reveal delay={160}>
-            <p className="mt-5 text-sm sm:text-lg text-white/75 leading-relaxed max-w-2xl mx-auto">
-              {NAADAM.jubilee}н хүрээнд {NAADAM.dateLong} зохион байгуулагдана.
-            </p>
-            <ul className="mt-6 flex flex-wrap justify-center gap-2.5">
-              <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
-                <CalendarDays className="w-4 h-4 text-[#F7B919]" />
-                {NAADAM.dateLabel}
-              </li>
-              <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
-                <MapPin className="w-4 h-4 text-[#F7B919]" />
+        {/* Огноо, байршил, тоолуур, бүртгүүлэх */}
+        <Reveal delay={80}>
+          <div className="relative mt-4 sm:mt-6 rounded-2xl bg-white/95 backdrop-blur border border-slate-200 shadow-xl shadow-sky-900/10 p-4 sm:p-6 grid gap-4 lg:grid-cols-[1fr_auto_auto] items-center">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start">
+              <span className="inline-flex items-center gap-2" style={display}>
+                <CalendarDays className="w-5 h-5 text-[#0E5DA8]" />
+                <span className="text-2xl font-bold text-[#0E5DA8]">{NAADAM.dateLabel}</span>
+              </span>
+              <span className="inline-flex items-center gap-2 font-semibold text-slate-700">
+                <MapPin className="w-5 h-5 text-[#0E5DA8]" />
                 {NAADAM.venue}
-              </li>
-            </ul>
-          </Reveal>
+              </span>
+            </div>
 
-          {/* Тоолуур */}
-          <Reveal delay={240}>
             {countdown.done ? (
-              <p className="mt-7 text-lg font-black text-[#F7B919]">Наадам эхэллээ! 🏆</p>
+              <p className="text-center font-bold text-[#0E5DA8]">Наадам эхэллээ! 🏆</p>
             ) : (
-              <div id="naadam-countdown" className="mt-7 flex items-stretch justify-center gap-2.5 sm:gap-3" aria-label="Наадам эхлэх хүртэл">
+              <div id="naadam-countdown" className="flex justify-center gap-2" aria-label="Наадам эхлэх хүртэл">
                 {[
                   [countdown.days, 'өдөр'],
                   [countdown.hours, 'цаг'],
                   [countdown.minutes, 'минут'],
                 ].map(([n, l]) => (
-                  <div key={l} className="w-20 sm:w-24 py-3 rounded-2xl bg-gradient-to-b from-white/[0.12] to-white/[0.04] border border-white/15 text-center">
-                    <div className="text-3xl sm:text-4xl font-black tabular-nums">{String(n).padStart(2, '0')}</div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-white/60">{l}</div>
+                  <div key={l} className="w-16 sm:w-[4.5rem] py-1.5 rounded-xl bg-[#0E5DA8] text-white text-center">
+                    <div style={display} className="text-2xl sm:text-3xl font-bold tabular-nums leading-tight">
+                      {String(n).padStart(2, '0')}
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-sky-100">{l}</div>
                   </div>
                 ))}
               </div>
             )}
-          </Reveal>
 
-          <Reveal delay={300}>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <button
-                type="button"
-                onClick={scrollToForm}
-                className="inline-flex items-center gap-2.5 h-14 px-7 rounded-2xl bg-[#F7B919] hover:bg-[#ffc935] text-[#0B2545] font-extrabold text-sm sm:text-base uppercase tracking-wider shadow-xl shadow-amber-900/30 cursor-pointer transition"
-              >
-                Байгууллагаа бүртгүүлэх
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <a
-                href="#naadam-video-section"
-                className="inline-flex items-center gap-2.5 h-14 px-6 rounded-2xl border border-white/25 hover:border-white/60 font-bold text-sm sm:text-base transition"
-              >
-                <PlayCircle className="w-5 h-5 text-[#F7B919]" />
-                Видео үзэх
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Видео ба урилга — видео том, утасны хүрээгүй */}
-      <section id="naadam-video-section" className="scroll-mt-32 relative isolate">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_left,rgba(2,90,156,0.35),transparent_60%)]" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 grid lg:grid-cols-[auto_1fr] gap-10 lg:gap-16 items-center">
-          <Reveal className="justify-self-center w-full max-w-[460px] lg:w-[min(460px,calc((100dvh-9rem)*9/16))]">
-            <div className="relative">
-              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-[#025A9C]/70 via-sky-500/20 to-[#F7B919]/50 blur-3xl opacity-60" aria-hidden="true" />
-              <div className="relative aspect-[9/16] rounded-3xl overflow-hidden bg-black ring-1 ring-white/20 shadow-2xl shadow-black/60">
-                <iframe
-                  id="naadam-video"
-                  title="Спортын их наадам — видео"
-                  src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(NAADAM.videoUrl)}&show_text=false&width=460`}
-                  className="absolute inset-0 w-full h-full border-0"
-                  loading="lazy"
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <a
-                href={NAADAM.videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-white/70 hover:text-white"
-              >
-                <PlayCircle className="w-4 h-4" />
-                Facebook дээр үзэх
-              </a>
-            </div>
-          </Reveal>
-
-          <Reveal delay={120} className="text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#F7B919]">
-              <Users className="w-4 h-4" />
-              Урилга
-            </div>
-            <p className="mt-4 text-xl sm:text-3xl font-bold leading-snug text-white/90">{NAADAM.intro}</p>
-            <p className="mt-6 text-2xl sm:text-4xl font-black text-[#F7B919] leading-tight">{NAADAM.slogan}</p>
-            <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2" aria-hidden="true">
-              {SPORTS.map((sp) => (
-                <span key={sp.id} title={sp.label} className="w-12 h-12 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-2xl">
-                  {sp.emoji}
-                </span>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Тэмцээний төрлүүд */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
-        <Reveal>
-          <div className="flex items-center gap-3 mb-8">
-            <Trophy className="w-7 h-7 text-[#F7B919]" />
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight">Тэмцээний төрлүүд</h2>
-          </div>
-        </Reveal>
-        <ul id="naadam-sports" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {SPORTS.map((s, i) => (
-            <Reveal key={s.id} as="li" delay={i * 60}>
-              <div className="group h-full flex flex-col items-center justify-center text-center gap-3 py-7 px-3 rounded-2xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/10 hover:border-[#F7B919]/60 hover:-translate-y-1 transition-all duration-300">
-                <span className="text-4xl sm:text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
-                  {s.emoji}
-                </span>
-                <span className="text-sm sm:text-base font-extrabold">{s.label}</span>
-              </div>
-            </Reveal>
-          ))}
-          <Reveal as="li" delay={SPORTS.length * 60} className="col-span-2 sm:col-span-3 lg:col-span-1">
             <button
               type="button"
               onClick={scrollToForm}
-              className="w-full h-full min-h-28 flex flex-col items-center justify-center gap-2 rounded-2xl bg-[#025A9C] hover:bg-[#0670bd] border border-sky-300/40 font-extrabold cursor-pointer transition"
+              className="inline-flex items-center justify-center gap-2 h-14 px-6 rounded-xl bg-[#F7C600] hover:bg-[#ffd21f] text-[#0B3F78] font-extrabold uppercase tracking-wider shadow-lg shadow-amber-500/25 cursor-pointer transition"
             >
-              <span>Багаа бүртгүүлэх</span>
-              <ArrowDown className="w-5 h-5" />
+              Бүртгүүлэх
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Урилга */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 text-center">
+        <Reveal>
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-slate-500">{NAADAM.sector}</p>
+          <p style={display} className="mt-2 text-4xl sm:text-6xl font-bold uppercase tracking-tight text-[#0E5DA8] leading-none">
+            {NAADAM.edition} {NAADAM.title}
+          </p>
+          <p className="mt-6 text-base sm:text-xl leading-relaxed text-slate-700">
+            {NAADAM.jubilee}н хүрээнд {NAADAM.dateLong} зохион байгуулагдана. {NAADAM.intro}
+          </p>
+          <p style={display} className="mt-6 text-2xl sm:text-4xl font-semibold uppercase tracking-tight text-[#0B3F78]">
+            <span className="bg-[linear-gradient(transparent_62%,rgba(247,198,0,0.55)_62%)] px-1 [box-decoration-break:clone]">
+              {NAADAM.slogan}
+            </span>
+          </p>
+        </Reveal>
+      </section>
+
+      {/* Тэмцээний төрлүүд */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20">
+        <Reveal>
+          <SectionTitle>Тэмцээний төрлүүд</SectionTitle>
+        </Reveal>
+        <ul id="naadam-sports" className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          {SPORTS.map((s, i) => (
+            <Reveal key={s.id} as="li" delay={i * 50} className={s.wide ? 'col-span-2' : ''}>
+              <div className="group h-full min-h-40 flex flex-col items-center justify-center gap-4 p-5 rounded-2xl bg-white/90 border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#0E5DA8]/40 hover:-translate-y-1 transition-all duration-300">
+                <img
+                  src={s.icon}
+                  alt=""
+                  className={`${s.wide ? 'h-14 sm:h-16' : 'h-16 sm:h-20'} max-w-full w-auto object-contain group-hover:scale-105 transition-transform`}
+                />
+                <span style={display} className="text-base sm:text-lg font-semibold uppercase tracking-wide text-slate-700 text-center">
+                  {s.label}
+                </span>
+              </div>
+            </Reveal>
+          ))}
+          <Reveal as="li" delay={SPORTS.length * 50} className="col-span-full">
+            <button
+              type="button"
+              onClick={scrollToForm}
+              className="w-full min-h-16 flex items-center justify-center gap-3 rounded-2xl bg-[#0E5DA8] hover:bg-[#0B3F78] text-white cursor-pointer transition"
+            >
+              <span style={display} className="text-xl sm:text-2xl font-bold uppercase tracking-wide">Багаа бүртгүүлэх</span>
+              <ArrowRight className="w-5 h-5" />
             </button>
           </Reveal>
         </ul>
       </section>
 
       {/* Зохион байгуулагчид */}
-      <section className="bg-white/[0.03] border-y border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid md:grid-cols-3 gap-4 sm:gap-5">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20">
+        <div className="grid md:grid-cols-3 gap-4">
           {ORGANIZERS.map((g, i) => {
-            const Icon = ORG_ICONS[i] ?? Building2;
+            const Icon = ORG_ICONS[i] ?? Trophy;
             return (
               <Reveal key={g.role} delay={i * 80}>
-                <div className="h-full rounded-2xl p-6 bg-[#06152F] border border-white/10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="w-10 h-10 rounded-xl bg-[#F7B919]/15 border border-[#F7B919]/40 flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-[#F7B919]" />
-                    </span>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-white/70">{g.role}</h3>
+                <div className="h-full rounded-2xl p-6 bg-white/90 border border-slate-200 border-t-4 border-t-[#F7C600] shadow-sm">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <Icon className="w-5 h-5 text-[#0E5DA8]" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">{g.role}</h3>
                   </div>
                   <ul className="space-y-2">
                     {g.names.map((n) => (
-                      <li key={n} className="text-sm sm:text-base font-bold leading-snug">{n}</li>
+                      <li key={n} className="font-bold leading-snug text-slate-800">{n}</li>
                     ))}
                   </ul>
                 </div>
@@ -251,15 +222,14 @@ export const SportNaadamPage: React.FC = () => {
       <section id="register" className="scroll-mt-32 max-w-3xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
         <Reveal>
           <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight">Бүртгэл</h2>
-            <p className="mt-3 text-sm sm:text-base text-white/70">
+            <SectionTitle>Бүртгэл</SectionTitle>
+            <p className="mt-3 text-sm sm:text-base text-slate-600">
               Байгууллагаа бүртгүүлж, оролцох төрлүүдээ сонгоно уу.
             </p>
           </div>
         </Reveal>
         <RegistrationForm />
       </section>
-
     </div>
   );
 };
@@ -328,21 +298,21 @@ const RegistrationForm: React.FC = () => {
 
   if (doneId) {
     return (
-      <div id="naadam-success" className="rounded-3xl p-8 sm:p-10 bg-gradient-to-b from-emerald-500/15 to-white/[0.03] border border-emerald-400/40 text-center">
-        <CheckCircle2 className="w-14 h-14 mx-auto text-emerald-400" />
-        <h3 className="mt-4 text-2xl font-black">Бүртгэл амжилттай!</h3>
-        <p className="mt-2 text-sm text-white/75">
-          <strong className="text-white">{org}</strong>-ийн бүртгэлийг хүлээн авлаа. Зохион байгуулагчид{' '}
-          <strong className="text-white">{phone}</strong> дугаарт холбогдоно.
+      <div id="naadam-success" className="rounded-3xl p-8 sm:p-10 bg-white border border-emerald-300 shadow-xl text-center">
+        <CheckCircle2 className="w-14 h-14 mx-auto text-emerald-500" />
+        <h3 style={display} className="mt-4 text-3xl font-bold uppercase text-[#0E5DA8]">Бүртгэл амжилттай!</h3>
+        <p className="mt-2 text-sm text-slate-600">
+          <strong className="text-slate-900">{org}</strong>-ийн бүртгэлийг хүлээн авлаа. Зохион байгуулагчид{' '}
+          <strong className="text-slate-900">{phone}</strong> дугаарт холбогдоно.
         </p>
-        <p className="mt-4 inline-block px-4 py-2 rounded-xl bg-white/10 font-mono font-bold">{doneId}</p>
-        <p className="mt-4 text-xs text-white/60">Лавлах: {HOTLINE} · {CONTACT_EMAIL}</p>
+        <p className="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-100 font-mono font-bold text-slate-800">{doneId}</p>
+        <p className="mt-4 text-xs text-slate-500">Лавлах: {HOTLINE} · {CONTACT_EMAIL}</p>
       </div>
     );
   }
 
   return (
-    <form id="naadam-form" onSubmit={submit} noValidate={false} className="rounded-3xl p-5 sm:p-8 bg-white/[0.04] border border-white/12 space-y-5">
+    <form id="naadam-form" onSubmit={submit} className="rounded-3xl p-5 sm:p-8 bg-white/95 border border-slate-200 shadow-xl shadow-sky-900/10 space-y-5">
       <div>
         <label htmlFor="nf-org" className={labelCls}>Байгууллагын нэр *</label>
         <input id="nf-org" required value={org} onChange={(e) => setOrg(e.target.value)} className={field} placeholder="Жишээ: Дельта Лифт ХХК" autoComplete="organization" />
@@ -374,13 +344,23 @@ const RegistrationForm: React.FC = () => {
             return (
               <label
                 key={s.id}
-                className={`flex items-center gap-3 min-h-14 px-4 rounded-xl border cursor-pointer select-none transition ${
-                  on ? 'bg-[#F7B919]/15 border-[#F7B919] text-white' : 'bg-white/[0.04] border-white/15 text-white/85 hover:border-white/35'
+                className={`relative flex items-center gap-3 min-h-16 pl-3 pr-12 rounded-xl border-2 cursor-pointer select-none transition has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-[#0E5DA8]/20 ${
+                  on ? 'bg-sky-50 border-[#0E5DA8]' : 'bg-white border-slate-200 hover:border-slate-400'
                 }`}
               >
-                <input type="checkbox" name="sports" value={s.id} checked={on} onChange={() => toggle(s.id)} className="w-5 h-5 accent-[#F7B919] shrink-0" />
-                <span className="text-2xl" aria-hidden="true">{s.emoji}</span>
-                <span className="font-bold text-sm sm:text-base">{s.label}</span>
+                <input type="checkbox" name="sports" value={s.id} checked={on} onChange={() => toggle(s.id)} className="sr-only" />
+                <span className="w-16 h-10 flex items-center justify-center shrink-0">
+                  <img src={s.icon} alt="" className="max-h-10 max-w-16 object-contain" />
+                </span>
+                <span style={display} className="font-semibold uppercase tracking-wide text-slate-800">{s.label}</span>
+                <span
+                  aria-hidden="true"
+                  className={`absolute right-3 w-6 h-6 rounded-md border-2 flex items-center justify-center ${
+                    on ? 'bg-[#0E5DA8] border-[#0E5DA8] text-white' : 'bg-white border-slate-300'
+                  }`}
+                >
+                  {on && <Check className="w-4 h-4" strokeWidth={3} />}
+                </span>
               </label>
             );
           })}
@@ -389,12 +369,12 @@ const RegistrationForm: React.FC = () => {
 
       {/* CS2 — багийн мэдүүлэг */}
       {needsTeamForm && (
-        <div id="nf-cs2" className="rounded-2xl p-5 bg-[#025A9C]/20 border border-sky-400/40 space-y-4">
+        <div id="nf-cs2" className="rounded-2xl p-5 bg-sky-50 border border-sky-200 space-y-4">
           <div className="flex items-start gap-3">
-            <span className="text-2xl" aria-hidden="true">🎮</span>
+            <img src="/images/sportnaadam/cs2.png" alt="" className="w-9 h-9 object-contain shrink-0" />
             <div>
-              <h3 className="font-black">E-sport · CS2 багийн мэдүүлэг</h3>
-              <p className="mt-1 text-xs sm:text-sm text-white/75 leading-relaxed">
+              <h3 style={display} className="text-lg font-bold uppercase text-[#0E5DA8]">E-sport · CS2 багийн мэдүүлэг</h3>
+              <p className="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
                 1) Загварыг татаж авна. 2) Багийн гишүүдийн мэдээллийг бөглөнө. 3) Бөглөсөн файлаа доор хавсаргана.
               </p>
             </div>
@@ -403,22 +383,22 @@ const RegistrationForm: React.FC = () => {
             id="nf-template"
             href={NAADAM.templateUrl}
             download="CS2-bagiin-medvvleg.docx"
-            className="flex items-center gap-3 h-12 px-4 rounded-xl bg-white text-[#0B2545] font-bold text-sm hover:bg-sky-50 transition"
+            className="flex items-center gap-3 h-12 px-4 rounded-xl bg-[#0E5DA8] hover:bg-[#0B3F78] text-white font-bold text-sm transition"
           >
-            <Download className="w-5 h-5 text-[#025A9C]" />
+            <Download className="w-5 h-5" />
             Мэдүүлгийн загвар татах (Word)
-            <span className="ml-auto text-xs font-semibold text-[#5B6B80]">.docx</span>
+            <span className="ml-auto text-xs font-semibold text-sky-100">.docx</span>
           </a>
 
           {teamFile ? (
-            <div className="flex items-center gap-3 h-12 px-4 rounded-xl bg-emerald-500/15 border border-emerald-400/50 text-sm">
-              <FileText className="w-5 h-5 text-emerald-300 shrink-0" />
+            <div className="flex items-center gap-3 h-12 px-4 rounded-xl bg-emerald-50 border border-emerald-300 text-sm text-emerald-900">
+              <FileText className="w-5 h-5 text-emerald-600 shrink-0" />
               <span className="truncate font-semibold">{teamFile.name}</span>
               <button
                 type="button"
                 onClick={() => setTeamFile(null)}
                 aria-label="Хавсралтыг устгах"
-                className="ml-auto w-10 h-10 -mr-2 flex items-center justify-center rounded-lg hover:bg-white/10 cursor-pointer"
+                className="ml-auto w-10 h-10 -mr-2 flex items-center justify-center rounded-lg hover:bg-emerald-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -426,9 +406,9 @@ const RegistrationForm: React.FC = () => {
           ) : (
             <label
               htmlFor="nf-file"
-              className="flex items-center justify-center gap-2 min-h-14 px-4 rounded-xl border-2 border-dashed border-white/30 hover:border-[#F7B919] text-sm font-bold cursor-pointer transition"
+              className="flex items-center justify-center gap-2 min-h-14 px-4 rounded-xl border-2 border-dashed border-sky-300 bg-white hover:border-[#0E5DA8] text-sm font-bold text-[#0B3F78] cursor-pointer transition"
             >
-              <Upload className="w-5 h-5 text-[#F7B919]" />
+              <Upload className="w-5 h-5 text-[#0E5DA8]" />
               Бөглөсөн мэдүүлгээ хавсаргах
               <input
                 id="nf-file"
@@ -442,13 +422,13 @@ const RegistrationForm: React.FC = () => {
               />
             </label>
           )}
-          <p className="text-[11px] text-white/55">Word (.docx, .doc) эсвэл PDF, 1.5 МБ хүртэл.</p>
-          {fileError && <p role="alert" className="text-xs font-semibold text-red-300">{fileError}</p>}
+          <p className="text-[11px] text-slate-500">Word (.docx, .doc) эсвэл PDF, 1.5 МБ хүртэл.</p>
+          {fileError && <p role="alert" className="text-xs font-semibold text-red-600">{fileError}</p>}
         </div>
       )}
 
       {error && (
-        <p role="alert" className="p-3 rounded-xl bg-red-500/15 border border-red-400/40 text-sm text-red-200">
+        <p role="alert" className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
           {error}
         </p>
       )}
@@ -456,7 +436,7 @@ const RegistrationForm: React.FC = () => {
       <button
         type="submit"
         disabled={sending}
-        className="w-full h-14 rounded-2xl bg-[#F7B919] hover:bg-[#ffc935] text-[#0B2545] font-black text-base uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-wait transition"
+        className="w-full h-14 rounded-2xl bg-[#F7C600] hover:bg-[#ffd21f] text-[#0B3F78] font-extrabold text-base uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer disabled:opacity-60 disabled:cursor-wait transition"
       >
         {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trophy className="w-5 h-5" />}
         {sending ? 'Илгээж байна…' : 'Бүртгүүлэх'}

@@ -20,7 +20,9 @@ export const NAADAM = {
   intro:
     'Салбарын хамт олны нөхөрлөл, хамтын ажиллагааг бэхжүүлж, багийн эв нэгдэл, хурд хүч, ' +
     'авхаалж самбаагаа сорих энэхүү наадамд байгууллагуудыг идэвхтэй оролцохыг урьж байна.',
-  videoUrl: 'https://www.facebook.com/reel/1141804368520782',
+  /** Албан ёсны постер — зохион байгуулагчдын лого, төрлүүд, огноо */
+  poster: '/images/sportnaadam/poster.jpg',
+  posterSmall: '/images/sportnaadam/poster-1000.jpg',
   templateUrl: '/files/sportnaadam-cs2-bagiin-medvvleg.docx',
 } as const;
 
@@ -28,19 +30,23 @@ export interface Sport {
   id: string;
   label: string;
   emoji: string;
+  /** Постероос хайчилсан шугаман icon (public/images/sportnaadam/<id>.png) */
+  icon: string;
+  /** Өргөн icon (олс таталт) — сүлжээнд хоёр нүд эзэлнэ */
+  wide?: boolean;
   /** Багийн мэдүүлэг (Word) шаардлагатай эсэх */
   needsTeamForm?: boolean;
 }
 
 /** Танилцуулгад харагдах дараалал */
 export const SPORTS: Sport[] = [
-  { id: 'basketball', label: 'Сагсан бөмбөг', emoji: '🏀' },
-  { id: 'volleyball', label: 'Гар бөмбөг', emoji: '🏐' },
-  { id: 'table-tennis', label: 'Ширээний теннис', emoji: '🏓' },
-  { id: 'chess', label: 'Шатар', emoji: '♟️' },
-  { id: 'darts', label: 'Дартс', emoji: '🎯' },
-  { id: 'tug-of-war', label: 'Олс таталт', emoji: '🪢' },
-  { id: 'cs2', label: 'E-sport · CS2', emoji: '🎮', needsTeamForm: true },
+  { id: 'basketball', label: 'Сагсан бөмбөг', emoji: '🏀', icon: '/images/sportnaadam/basketball.png' },
+  { id: 'volleyball', label: 'Гар бөмбөг', emoji: '🏐', icon: '/images/sportnaadam/volleyball.png' },
+  { id: 'table-tennis', label: 'Ширээний теннис', emoji: '🏓', icon: '/images/sportnaadam/table-tennis.png' },
+  { id: 'chess', label: 'Шатар', emoji: '♟️', icon: '/images/sportnaadam/chess.png' },
+  { id: 'darts', label: 'Дартс', emoji: '🎯', icon: '/images/sportnaadam/darts.png' },
+  { id: 'tug-of-war', label: 'Олс таталт', emoji: '🪢', icon: '/images/sportnaadam/tug-of-war.png', wide: true },
+  { id: 'cs2', label: 'E-sport · CS2', emoji: '🎮', icon: '/images/sportnaadam/cs2.png', needsTeamForm: true },
 ];
 
 /** Бүртгэлийн маягтын дараалал */
