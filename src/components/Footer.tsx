@@ -9,7 +9,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { ActiveSection } from '../types';
-import { DeltaLiftsLogo } from './DeltaLiftsLogo';
+import { LiftMnLogo } from './LiftMnLogo';
+import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 interface FooterProps {
   onSelectSection: (section: ActiveSection) => void;
@@ -42,12 +43,12 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
           {/* 1. Компани */}
           <div>
             <div className="mb-4">
-              <DeltaLiftsLogo size="md" showText={true} />
+              <LiftMnLogo className="h-8" />
             </div>
             <p className="text-xs leading-relaxed mb-4">
-              "DELTA LIFT" ХХК нь Монгол Улсын барилгын салбарт найдвартай ажиллагаатай лифт,
-              эскалатор нийлүүлэлт, угсралт, 24/7 засвар үйлчилгээ болон сэлбэг хангамжийн
-              чиглэлээр тэргүүлэгч байгууллага юм.
+              {SHOW_DELTA_LIFT
+                ? '"DELTA LIFT" ХХК нь Монгол Улсын барилгын салбарт найдвартай ажиллагаатай лифт, эскалатор нийлүүлэлт, угсралт, 24/7 засвар үйлчилгээ болон сэлбэг хангамжийн чиглэлээр тэргүүлэгч байгууллага юм.'
+                : `${SITE_NAME} нь лифт, эскалаторын 24/7 засвар үйлчилгээ болон сэлбэг хэрэгслийн хангамжийн нэгдсэн цахим портал юм.`}
             </p>
             <div className="flex items-center gap-2 text-xs text-brand font-semibold">
               <ShieldCheck className="w-4 h-4 shrink-0" />
@@ -59,12 +60,14 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
           <div>
             <ColumnTitle>Үндсэн цэсүүд</ColumnTitle>
             <ul className="space-y-2.5 text-xs">
-              <li>
-                <button onClick={() => onSelectSection('delta-lift')} className={linkClass}>
-                  <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
-                  <span>DELTA LIFT (Брэнд, Төслүүд, Хамтрагчид)</span>
-                </button>
-              </li>
+              {SHOW_DELTA_LIFT && (
+                <li>
+                  <button onClick={() => onSelectSection('delta-lift')} className={linkClass}>
+                    <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
+                    <span>DELTA LIFT (Брэнд, Төслүүд, Хамтрагчид)</span>
+                  </button>
+                </li>
+              )}
               <li>
                 <button onClick={() => onSelectSection('service')} className={linkClass}>
                   <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
@@ -121,14 +124,14 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
                 * Дугаар нь хэвээрээ — утаснаас шууд залгаж болно.
                 */}
               <a
-                href="tel:+97677232222"
+                href="tel:+97695002222"
                 className="block p-3 rounded-xl bg-paper-3 border border-line-light hover:border-brand transition-colors"
               >
                 <div className="text-[11px] font-bold text-ink-dark-muted uppercase tracking-wide">
                   24/7 Лифт гацсан дуудлага
                 </div>
                 <div className="text-lg font-black text-ink-dark font-mono mt-0.5">
-                  (+976) 7723-2222
+                  (+976) 9500-2222
                 </div>
                 <div className="text-[10px] text-ink-dark-subtle mt-0.5">
                   Яаралтай тусламжийн инженерийн шуурхай бригад
@@ -137,8 +140,8 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
 
               <div className="flex items-center gap-2">
                 <PhoneCall className="w-4 h-4 text-brand shrink-0" />
-                <a href="tel:+97677232222" className="hover:text-brand transition-colors font-mono">
-                  Утас: (+976) 7723-2222
+                <a href="tel:+97695002222" className="hover:text-brand transition-colors font-mono">
+                  Утас: (+976) 9500-2222
                 </a>
               </div>
               <div className="flex items-center gap-2">
@@ -169,8 +172,13 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
         {/* Доод мөр */}
         <div className="pt-8 border-t border-line-light flex flex-wrap items-center justify-between gap-4 text-xs text-ink-dark-subtle">
           <div>
-            © 2026 <span className="text-ink-dark font-semibold">DELTA LIFTS</span> ·{' '}
-            <span className="text-brand font-semibold">LIFT.MN</span>. Бүх эрх хуулиар
+            © 2026{' '}
+            {SHOW_DELTA_LIFT && (
+              <>
+                <span className="text-ink-dark font-semibold">DELTA LIFTS</span> ·{' '}
+              </>
+            )}
+            <span className="text-brand font-semibold">{SITE_NAME}</span>. Бүх эрх хуулиар
             хамгаалагдсан.
           </div>
           <div className="flex items-center gap-4">

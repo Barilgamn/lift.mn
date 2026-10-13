@@ -11,7 +11,7 @@ import {
   Package,
 } from 'lucide-react';
 import { AdminStoreProvider, useAdminStore } from '../../store/adminStore';
-import { DeltaLiftsLogo } from '../DeltaLiftsLogo';
+import { LiftMnLogo } from '../LiftMnLogo';
 import { AdminLogin } from './AdminLogin';
 
 export const ADMIN_NAV = [
@@ -30,12 +30,12 @@ const AdminChrome: React.FC = () => {
       <header className="sticky top-0 z-30 bg-paper border-b border-line-light">
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 h-16">
           <div className="flex items-center gap-3 min-w-0">
-            <DeltaLiftsLogo size="sm" showText={false} className="shrink-0" />
+            <LiftMnLogo className="h-5 shrink-0" />
             <div className="min-w-0">
               <div className="text-sm font-black tracking-tight text-ink-dark truncate">
                 Удирдлагын хэсэг
               </div>
-              <div className="text-[11px] text-ink-dark-muted truncate">LIFT.MN · DELTA LIFT</div>
+              <div className="text-[11px] text-ink-dark-muted truncate">LIFT.MN</div>
             </div>
           </div>
 

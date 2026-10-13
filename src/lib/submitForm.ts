@@ -20,7 +20,7 @@ import { getSupabase, isSupabaseConfigured, friendlyError } from './supabase';
 const LIMITS = { phone: 40, contactName: 120, summary: 300 } as const;
 
 /** Холбоо барих дугаар — илгээлт бүтэлгүйтвэл зочинд санал болгоно */
-export const HOTLINE = '7723-2222';
+export const HOTLINE = '9500-2222';
 
 export interface SubmitInput {
   contactName?: string;

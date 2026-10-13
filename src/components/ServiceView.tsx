@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { submitForm, HOTLINE } from '../lib/submitForm';
+import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 /** Энэ төхөөрөмжөөс илгээсэн хүсэлтүүдийн түлхүүр */
 const MY_TICKETS_KEY = 'lift.mn:my-tickets';
@@ -1102,7 +1103,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
           <div className="grid lg:grid-cols-[1fr_1.6fr] gap-8 lg:gap-12 items-start">
             <div>
               <div className="text-xs font-bold text-brand-bright uppercase tracking-widest mb-2">
-                Яагаад DELTA LIFT?
+                Яагаад {SHOW_DELTA_LIFT ? 'DELTA LIFT' : SITE_NAME}?
               </div>
               <h2 className="text-2xl md:text-3xl font-black text-ink tracking-tight mb-3">
                 Найдвартай засварын түнш

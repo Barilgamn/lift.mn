@@ -8,7 +8,16 @@ import {
   MapPin
 } from 'lucide-react';
 import { ActiveSection } from '../types';
-import { DeltaLiftsLogo, DeltaLiftsMark } from './DeltaLiftsLogo';
+import { DeltaLiftsMark } from './DeltaLiftsLogo';
+import { LiftMnLogo } from './LiftMnLogo';
+import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
+
+/**
+ * DELTA LIFT нуугдсан үед хоёр л багана үлдэнэ. Бүтэн өргөнөөр сунгавал
+ * өргөн дэлгэц дээр хоосон, сунжирсан харагддаг тул голд нь нарийн
+ * хүрээнд хоёр карт болгон байрлуулна.
+ */
+const NARROW = !SHOW_DELTA_LIFT;
 
 interface PortalHomeProps {
   onSelectSection: (section: ActiveSection) => void;
@@ -22,13 +31,13 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
       id="portal-container"
       className="relative min-h-dvh md:h-dvh w-full flex flex-col justify-between overflow-x-hidden md:overflow-hidden bg-surface-0 text-white"
     >
-      {/* Top Header Bar: Centered & Enlarged Delta Lifts Logo */}
+      {/* Дээд мөр: голлосон LIFT.MN лого */}
       <header 
         id="portal-header" 
         className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 border-b border-line-light bg-paper shrink-0 shadow-sm"
       >
         <div className="flex items-center gap-3 sm:gap-4">
-          <DeltaLiftsLogo size="lg" showText={true} />
+          <LiftMnLogo className="h-7 sm:h-9" />
           <div className="hidden md:block h-7 w-px bg-line-light" />
           <span className="hidden md:inline text-xs lg:text-sm font-bold tracking-widest text-ink-dark-muted uppercase">
             МОНГОЛЫН ЛИФТ, ЭСКАЛАТОРЫН НЭГДСЭН ЦАХИМ ТАЛБАР
@@ -49,7 +58,9 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
          * зурдаг тул order-оор байр сольсны дараа буруу талд гарна.
          * Оронд нь хэсэг бүрд харагдах байрлалынх нь дагуу хүрээ өгөв.
          */
-        className="relative z-10 flex-1 w-full flex flex-col md:flex-row"
+        className={`relative z-10 flex-1 w-full flex flex-col md:flex-row ${
+          NARROW ? 'md:max-w-5xl md:mx-auto md:gap-4 md:p-4 lg:gap-5 lg:py-6' : ''
+        }`}
       >
         {/* Сэлбэг — утсанд 1-рт, дэлгэц дээр 2-рт */}
         <section
@@ -62,13 +73,19 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
            * дэлгэц дээр 1.3 дахин өргөн, дэвсгэр нь цайвар (зураг илүү
            * харагдана), дээд зураас нь өтгөн, товч нь дүүрэн өнгөтэй.
            */
-          className="md:order-2 md:border-l md:border-line group relative flex-1 md:flex-[1.32] flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.45]"
+          className={`md:order-2 ${
+            NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : 'md:border-l md:border-line'
+          } group relative flex-1 md:flex-[1.32] flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.45]`}
         >
           {/* Background Image */}
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
             style={{
-              backgroundImage: `url('/images/lift_parts_hero.jpg')`
+              // Эх зургийн дээд хэсэгт "DELTA LIFT" самбар харагддаг тул нуусан
+              // үед түүнийг тайрсан хувилбарыг ашиглана
+              backgroundImage: SHOW_DELTA_LIFT
+                ? `url('/images/lift_parts_hero.jpg')`
+                : `url('/images/parts_hero.jpg')`
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/80 via-[#06152F]/62 to-[#020813]/88 group-hover:from-[#040E20]/70 group-hover:via-[#092144]/48 group-hover:to-[#020813]/80 transition-all duration-500" />
@@ -136,7 +153,9 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           onClick={() => onSelectSection('service')}
           role="button"
           tabIndex={0}
-          className="md:order-1 border-t border-line md:border-t-0 group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+          className={`md:order-1 border-t border-line md:border-t-0 ${
+            NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : ''
+          } group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]`}
         >
           {/* Background Image */}
           <div 
@@ -204,7 +223,8 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           </div>
         </section>
 
-        {/* DELTA LIFT — хоёуланд нь 3-рт */}
+        {/* DELTA LIFT — хоёуланд нь 3-рт. Түр нуусан (src/config.ts) */}
+        {SHOW_DELTA_LIFT && (
         <section
           id="portal-column-delta"
           onClick={() => onSelectSection('delta-lift')}
@@ -285,6 +305,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
             </div>
           </div>
         </section>
+        )}
       </main>
 
       {/* Footer Bar: Contains Emergency Hotline & Contacts */}
@@ -293,17 +314,21 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         className="relative z-30 w-full px-4 sm:px-8 py-2.5 md:py-3 flex flex-wrap items-center justify-between gap-3 border-t border-line-light bg-paper text-[11px] md:text-xs text-ink-dark-muted shrink-0"
       >
         <div className="flex items-center gap-2">
-          <span>© 2026 <strong className="text-ink-dark">DELTA LIFTS</strong> · <strong className="text-brand">LIFT.MN</strong>. Бүх эрх хуулиар хамгаалагдсан.</span>
+          <span>
+            © 2026{' '}
+            {SHOW_DELTA_LIFT && (<><strong className="text-ink-dark">DELTA LIFTS</strong> · </>)}
+            <strong className="text-brand">{SITE_NAME}</strong>. Бүх эрх хуулиар хамгаалагдсан.
+          </span>
         </div>
 
         {/* Хөл хэсгийн холбоо барих мэдээлэл */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
           <a 
-            href="tel:+97677232222"
+            href="tel:+97695002222"
             className="flex items-center gap-1.5 hover:text-brand transition-colors"
           >
             <PhoneCall className="w-3.5 h-3.5 text-brand" />
-            <span className="font-mono font-semibold">(+976) 7723-2222</span>
+            <span className="font-mono font-semibold">(+976) 9500-2222</span>
           </a>
 
           <span className="hidden xl:inline text-ink-dark-subtle" aria-hidden="true">·</span>

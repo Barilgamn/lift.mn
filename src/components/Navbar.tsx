@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { ActiveSection } from '../types';
-import { DeltaLiftsLogo } from './DeltaLiftsLogo';
+import { LiftMnLogo } from './LiftMnLogo';
+import { SHOW_DELTA_LIFT } from '../config';
 import { CART_BUMP_EVENT } from '../lib/flyToCart';
 
 interface NavbarProps {
@@ -48,10 +49,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden sm:inline">24/7 Лифт гацсан яаралтай дуудлагын алба:</span>
             </span>
             <a
-              href="tel:+97677232222"
+              href="tel:+97695002222"
               className="font-mono font-bold text-brand hover:text-brand-hover transition shrink-0"
             >
-              7723-2222
+              9500-2222
             </a>
           </div>
           <div className="hidden lg:flex items-center gap-4 text-ink-dark-muted">
@@ -74,14 +75,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           title="Үндсэн портал хуудас руу буцах"
           aria-label="Үндсэн портал хуудас руу буцах"
         >
-          <DeltaLiftsLogo size="sm" showText={false} className="lg:hidden" />
-          <DeltaLiftsLogo size="sm" showText={true} className="hidden lg:block" />
+          <LiftMnLogo className="h-5 sm:h-6 lg:h-7" />
         </button>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}
         <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-paper-3 border border-line-light min-w-0 shrink">
           
-          {/* Sub-site 1: DELTA LIFT */}
+          {/* Sub-site 1: DELTA LIFT — түр нуусан (src/config.ts) */}
+          {SHOW_DELTA_LIFT && (
           <button
             id="nav-tab-delta"
             title="DELTA LIFT"
@@ -96,6 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Building2 className="w-4 h-4 shrink-0" />
             <span className="hidden lg:inline">DELTA LIFT</span>
           </button>
+          )}
 
           {/* Sub-site 2: Сэлбэг хэрэгсэл */}
           <button

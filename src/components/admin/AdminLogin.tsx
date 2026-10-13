@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AlertTriangle, Loader2, Lock, ShieldOff } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
-import { DeltaLiftsLogo } from '../DeltaLiftsLogo';
+import { LiftMnLogo } from '../LiftMnLogo';
 
 const field =
   'w-full h-11 px-3 rounded-lg bg-paper-2 border border-line-light text-sm text-ink-dark ' +
@@ -12,7 +12,7 @@ const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="theme-light min-h-dvh bg-surface-2 flex items-center justify-center px-4 py-10">
     <div className="w-full max-w-sm">
       <div className="flex justify-center mb-6">
-        <DeltaLiftsLogo size="lg" showText />
+        <LiftMnLogo className="h-10" />
       </div>
       <div className="rounded-xl bg-paper border border-line-light p-6">{children}</div>
     </div>

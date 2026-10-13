@@ -9,7 +9,7 @@ export const ROUTES: Record<ActiveSection, { path: string; title: string; label:
   },
   'delta-lift': {
     path: '/delta-lift',
-    title: 'DELTA LIFT — Дельта Элеватор ХХК | LIFT.MN',
+    title: 'DELTA LIFT — "Дельта Лифт" ХХК | LIFT.MN',
     label: 'DELTA LIFT',
   },
   parts: {
