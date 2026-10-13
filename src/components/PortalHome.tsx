@@ -122,7 +122,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
             </p>
 
             <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга
+              Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга, суурилуулалт
             </p>
 
             {/* Representative Keywords Row */}
