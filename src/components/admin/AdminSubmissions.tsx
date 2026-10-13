@@ -6,7 +6,7 @@ import { Badge, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './ad
 import { Link } from 'react-router-dom';
 import { isPriceQuote, isPublicDetailKey } from '../../lib/priceQuote';
 import { isNaadamEntry } from '../../data/naadamData';
-import { attachmentName, downloadDataUrl, isDocumentEntry } from '../../lib/attachments';
+import { attachmentName, downloadAttachment, isDocumentEntry } from '../../lib/attachments';
 
 const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
   { value: 'all', label: 'Бүгд' },
@@ -43,7 +43,7 @@ export const AdminSubmissions: React.FC = () => {
     // `_`-ээр эхэлсэн нь программын дотоод талбар (жишээ нь админы үнэ) — нууна
     const entries = Object.entries(open?.details ?? {}).filter(([k]) => isPublicDetailKey(k));
     return [
-      entries.filter(([, v]) => !String(v).startsWith('data:')),
+      entries.filter(([, v]) => !String(v).startsWith('data:') && !isDocumentEntry(v)),
       entries.filter(([, v]) => String(v).startsWith('data:image/')),
       entries.filter(([, v]) => isDocumentEntry(v)),
     ];
@@ -262,7 +262,7 @@ export const AdminSubmissions: React.FC = () => {
                       <li key={k}>
                         <button
                           type="button"
-                          onClick={() => void downloadDataUrl(String(src), attachmentName(k))}
+                          onClick={() => void downloadAttachment(String(src), attachmentName(k))}
                           className="w-full flex items-center gap-2 h-10 px-3 rounded-lg border border-line-light hover:border-brand text-xs font-semibold text-ink-dark cursor-pointer"
                         >
                           <span className="truncate">{attachmentName(k)}</span>

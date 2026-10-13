@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Download, FileText, Mail, Phone, Search, Sheet } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
-import { attachmentName, downloadDataUrl, isDocumentEntry } from '../../lib/attachments';
+import { attachmentName, downloadAttachment, isDocumentEntry } from '../../lib/attachments';
 import { NK, NAADAM, SPORTS, isNaadamEntry, sportById } from '../../data/naadamData';
 import { Badge, PageHead, Panel, SUBMISSION_STATUS } from './adminUi';
 import type { Submission } from '../../types';
@@ -161,11 +161,11 @@ export const AdminNaadam: React.FC = () => {
                   <button
                     key={k}
                     type="button"
-                    onClick={() => void downloadDataUrl(v, attachmentName(k))}
+                    onClick={() => void downloadAttachment(v, attachmentName(k))}
                     className="flex items-center gap-2 h-10 px-3 rounded-lg border border-line-light hover:border-brand text-xs font-semibold text-ink-dark cursor-pointer"
                   >
                     <FileText className="w-4 h-4 text-brand shrink-0" />
-                    <span className="truncate">CS2 мэдүүлэг: {attachmentName(k)}</span>
+                    <span className="truncate">Мэдүүлэг: {attachmentName(k)}</span>
                     <Download className="w-4 h-4 ml-auto text-brand shrink-0" />
                   </button>
                 ))}

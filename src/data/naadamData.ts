@@ -6,6 +6,9 @@
 /** Бүртгэлийг `submissions` дотор ялгах тэмдэг (kind = 'booking') */
 export const NAADAM_TYPE = 'Спортын наадам 2026';
 
+/** Багийн мэдүүлэг хадгалах Supabase Storage сан (supabase/schema.sql) */
+export const NAADAM_BUCKET = 'naadam';
+
 export const NAADAM = {
   edition: '17-р',
   title: 'Спортын их наадам',
@@ -23,7 +26,11 @@ export const NAADAM = {
   /** Албан ёсны постер — зохион байгуулагчдын лого, төрлүүд, огноо */
   poster: '/images/sportnaadam/poster.jpg',
   posterSmall: '/images/sportnaadam/poster-1000.jpg',
-  templateUrl: '/files/sportnaadam-cs2-bagiin-medvvleg.docx',
+  /** Багийн мэдүүлгийн загвар — бүх төрөлд нэг загвар */
+  templateUrl: '/files/sportnaadam-bagiin-medvvleg.docx',
+  /** Наадмын лавлах — сайтын ерөнхий утаснаас тусдаа */
+  phones: ['9663-2222', '9500-2222'],
+  email: 'info@lift.mn',
 } as const;
 
 export interface Sport {
@@ -34,8 +41,6 @@ export interface Sport {
   icon: string;
   /** Өргөн icon (олс таталт) — сүлжээнд хоёр нүд эзэлнэ */
   wide?: boolean;
-  /** Багийн мэдүүлэг (Word) шаардлагатай эсэх */
-  needsTeamForm?: boolean;
 }
 
 /** Танилцуулгад харагдах дараалал */
@@ -46,7 +51,7 @@ export const SPORTS: Sport[] = [
   { id: 'chess', label: 'Шатар', emoji: '♟️', icon: '/images/sportnaadam/chess.png' },
   { id: 'darts', label: 'Дартс', emoji: '🎯', icon: '/images/sportnaadam/darts.png' },
   { id: 'tug-of-war', label: 'Олс таталт', emoji: '🪢', icon: '/images/sportnaadam/tug-of-war.png', wide: true },
-  { id: 'cs2', label: 'E-sport · CS2', emoji: '🎮', icon: '/images/sportnaadam/cs2.png', needsTeamForm: true },
+  { id: 'cs2', label: 'E-sport · CS2', emoji: '🎮', icon: '/images/sportnaadam/cs2.png' },
 ];
 
 /** Бүртгэлийн маягтын дараалал */

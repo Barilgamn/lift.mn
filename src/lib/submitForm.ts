@@ -38,7 +38,7 @@ export interface SubmitInput {
   photos?: string[];
   /**
    * Хавсаргасан баримт (Word, PDF) — `src/lib/attachments.ts`-ийн
-   * `readDocument`-оор уншсан. `details` дотор "Файл: <нэр>" түлхүүрээр орно.
+   * `storeDocument`-оор хадгалсан. `details` дотор "Файл: <нэр>" түлхүүрээр орно.
    */
   attachments?: Attachment[];
 }
@@ -96,8 +96,8 @@ function withPhotos(details: Record<string, string>, photos?: string[]): Record<
 /** Баримтуудыг details дотор нэрээр нь байрлуулна. Зураг биш data URL л нэвтэрнэ. */
 function withAttachments(details: Record<string, string>, files?: Attachment[]): Record<string, string> {
   for (const f of files ?? []) {
-    if (!isDocumentEntry(f.dataUrl)) continue;
-    details[`${ATTACHMENT_PREFIX}${f.name.slice(0, 100)}`] = f.dataUrl;
+    if (!isDocumentEntry(f.value)) continue;
+    details[`${ATTACHMENT_PREFIX}${f.name.slice(0, 100)}`] = f.value;
   }
   return details;
 }

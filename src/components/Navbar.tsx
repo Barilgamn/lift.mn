@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BookOpen, Building2, Wrench, ShoppingBag, ShoppingCart, PhoneCall } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
-import { CONTACT_EMAIL, SHOW_DELTA_LIFT } from '../config';
+import { SHOW_DELTA_LIFT } from '../config';
 import { CART_BUMP_EVENT } from '../lib/flyToCart';
 
 interface NavbarProps {
@@ -36,36 +36,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
     <header className="sticky top-0 z-40 w-full bg-paper/95 backdrop-blur-md border-b border-line-light text-ink-dark shadow-sm">
-      {/* Top emergency announcement bar */}
-      <div className="bg-paper-3 border-b border-line-light py-1.5 px-4 text-xs">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger-soft opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
-            </span>
-            {/* Нарийн дэлгэцэд богино хувилбар — өмнө нь хоёр мөр болж эвдэрдэг байв */}
-            <span className="text-red-700 font-semibold truncate">
-              <span className="sm:hidden">24/7 яаралтай дуудлага</span>
-              <span className="hidden sm:inline">24/7 Лифт гацсан яаралтай дуудлагын алба:</span>
-            </span>
-            <a
-              href="tel:+97677232222"
-              className="font-mono font-bold text-brand hover:text-brand-hover transition shrink-0 py-1.5 -my-1.5 px-1 -mx-1"
-            >
-              7723-2222
-            </a>
-          </div>
-          <div className="hidden lg:flex items-center gap-4 text-ink-dark-muted">
-            <span>Даваа - Ням 24 цаг</span>
-            <span aria-hidden="true">·</span>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-brand transition">{CONTACT_EMAIL}</a>
-            <span aria-hidden="true">·</span>
-            <span>Улаанбаатар хот даяар</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3">
         {/* Зүүн тал: зөвхөн лого. Дарахад портал руу буцна. */}

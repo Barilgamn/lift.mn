@@ -9,7 +9,9 @@ import {
   FileText,
   Handshake,
   Loader2,
+  Mail,
   MapPin,
+  Phone,
   Trophy,
   Upload,
   X,
@@ -18,12 +20,12 @@ import {
 import '@fontsource/oswald/600.css';
 import '@fontsource/oswald/700.css';
 import { Reveal } from './Reveal';
-import { submitForm, HOTLINE } from '../lib/submitForm';
-import { DOCUMENT_ACCEPT, readDocument, type Attachment } from '../lib/attachments';
-import { CONTACT_EMAIL } from '../config';
+import { submitForm } from '../lib/submitForm';
+import { DOCUMENT_ACCEPT, checkDocument, storeDocument, type Attachment } from '../lib/attachments';
 import {
   FORM_SPORT_ORDER,
   NAADAM,
+  NAADAM_BUCKET,
   NAADAM_TYPE,
   NK,
   ORGANIZERS,
@@ -218,6 +220,27 @@ export const SportNaadamPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Холбоо барих */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
+        <Reveal>
+          <div id="naadam-contact" className="rounded-2xl bg-[#0E5DA8] text-white p-5 sm:p-6 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+            <h3 style={display} className="text-xl sm:text-2xl font-bold uppercase tracking-wide shrink-0">Холбоо барих</h3>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {NAADAM.phones.map((ph) => (
+                <a key={ph} href={`tel:+976${ph.replace(/\D/g, '')}`} className="inline-flex items-center gap-2 py-2 font-bold text-lg hover:text-[#F7C600]">
+                  <Phone className="w-5 h-5 text-[#F7C600]" />
+                  {ph}
+                </a>
+              ))}
+              <a href={`mailto:${NAADAM.email}`} className="inline-flex items-center gap-2 py-2 font-bold text-lg hover:text-[#F7C600]">
+                <Mail className="w-5 h-5 text-[#F7C600]" />
+                {NAADAM.email}
+              </a>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
       {/* Бүртгэл */}
       <section id="register" className="scroll-mt-32 max-w-3xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
         <Reveal>
@@ -235,6 +258,8 @@ export const SportNaadamPage: React.FC = () => {
 };
 
 /** Бүртгэлийн маягт */
+const MAX_FILES = 7;
+
 const RegistrationForm: React.FC = () => {
   const [org, setOrg] = useState('');
   const [name, setName] = useState('');
@@ -242,27 +267,29 @@ const RegistrationForm: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [picked, setPicked] = useState<string[]>([]);
-  const [teamFile, setTeamFile] = useState<Attachment | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [fileError, setFileError] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [doneId, setDoneId] = useState('');
 
   const formSports = useMemo(() => FORM_SPORT_ORDER.map((id) => sportById(id)!).filter(Boolean), []);
-  const needsTeamForm = picked.some((id) => sportById(id)?.needsTeamForm);
 
   const toggle = (id: string) =>
     setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const onFile = async (file?: File) => {
+  const addFiles = (list: FileList | null) => {
     setFileError('');
-    if (!file) return;
-    try {
-      setTeamFile(await readDocument(file));
-    } catch (e) {
-      setTeamFile(null);
-      setFileError((e as Error).message);
+    const incoming = Array.from(list ?? []);
+    for (const f of incoming) {
+      const problem = checkDocument(f);
+      if (problem) return setFileError(problem);
     }
+    setFiles((prev) => {
+      const merged = [...prev, ...incoming.filter((f) => !prev.some((p) => p.name === f.name && p.size === f.size))];
+      if (merged.length > MAX_FILES) setFileError(`${MAX_FILES}-аас олон файл хавсаргах боломжгүй.`);
+      return merged.slice(0, MAX_FILES);
+    });
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -270,10 +297,18 @@ const RegistrationForm: React.FC = () => {
     setError('');
     if (picked.length === 0) return setError('Оролцох дор хаяж нэг төрлийг сонгоно уу.');
     if (phone.replace(/\D/g, '').length < 8) return setError('Утасны дугаараа бүрэн оруулна уу.');
-    if (needsTeamForm && !teamFile) return setError('E-sport · CS2-т оролцох бол багийн мэдүүлгийг хавсаргана уу.');
+    if (files.length === 0) return setError('Бөглөсөн багийн мэдүүлгээ хавсаргана уу.');
 
     const sportLabels = picked.map((id) => sportById(id)?.label ?? id);
     setSending(true);
+    let attachments: Attachment[];
+    try {
+      attachments = [];
+      for (const f of files) attachments.push(await storeDocument(f, NAADAM_BUCKET, NAADAM.email));
+    } catch (err) {
+      setSending(false);
+      return setError((err as Error).message);
+    }
     const result = await submitForm('booking', {
       contactName: name,
       phone,
@@ -288,7 +323,7 @@ const RegistrationForm: React.FC = () => {
         [NK.sports]: sportLabels.join(', '),
         [NK.sportIds]: picked.join(','),
       },
-      attachments: needsTeamForm && teamFile ? [teamFile] : [],
+      attachments,
     });
     setSending(false);
     if (result.status === 'failed') return setError(result.message);
@@ -306,7 +341,9 @@ const RegistrationForm: React.FC = () => {
           <strong className="text-slate-900">{phone}</strong> дугаарт холбогдоно.
         </p>
         <p className="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-100 font-mono font-bold text-slate-800">{doneId}</p>
-        <p className="mt-4 text-xs text-slate-500">Лавлах: {HOTLINE} · {CONTACT_EMAIL}</p>
+        <p className="mt-4 text-xs text-slate-500">
+          Лавлах: {NAADAM.phones.join(', ')} · {NAADAM.email}
+        </p>
       </div>
     );
   }
@@ -367,65 +404,70 @@ const RegistrationForm: React.FC = () => {
         </div>
       </fieldset>
 
-      {/* CS2 — багийн мэдүүлэг */}
-      {needsTeamForm && (
-        <div id="nf-cs2" className="rounded-2xl p-5 bg-sky-50 border border-sky-200 space-y-4">
-          <div className="flex items-start gap-3">
-            <img src="/images/sportnaadam/cs2.png" alt="" className="w-9 h-9 object-contain shrink-0" />
-            <div>
-              <h3 style={display} className="text-lg font-bold uppercase text-[#0E5DA8]">E-sport · CS2 багийн мэдүүлэг</h3>
-              <p className="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                1) Загварыг татаж авна. 2) Багийн гишүүдийн мэдээллийг бөглөнө. 3) Бөглөсөн файлаа доор хавсаргана.
-              </p>
-            </div>
-          </div>
-          <a
-            id="nf-template"
-            href={NAADAM.templateUrl}
-            download="CS2-bagiin-medvvleg.docx"
-            className="flex items-center gap-3 h-12 px-4 rounded-xl bg-[#0E5DA8] hover:bg-[#0B3F78] text-white font-bold text-sm transition"
-          >
-            <Download className="w-5 h-5" />
-            Мэдүүлгийн загвар татах (Word)
-            <span className="ml-auto text-xs font-semibold text-sky-100">.docx</span>
-          </a>
-
-          {teamFile ? (
-            <div className="flex items-center gap-3 h-12 px-4 rounded-xl bg-emerald-50 border border-emerald-300 text-sm text-emerald-900">
-              <FileText className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span className="truncate font-semibold">{teamFile.name}</span>
-              <button
-                type="button"
-                onClick={() => setTeamFile(null)}
-                aria-label="Хавсралтыг устгах"
-                className="ml-auto w-10 h-10 -mr-2 flex items-center justify-center rounded-lg hover:bg-emerald-100 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <label
-              htmlFor="nf-file"
-              className="flex items-center justify-center gap-2 min-h-14 px-4 rounded-xl border-2 border-dashed border-sky-300 bg-white hover:border-[#0E5DA8] text-sm font-bold text-[#0B3F78] cursor-pointer transition"
-            >
-              <Upload className="w-5 h-5 text-[#0E5DA8]" />
-              Бөглөсөн мэдүүлгээ хавсаргах
-              <input
-                id="nf-file"
-                type="file"
-                accept={DOCUMENT_ACCEPT}
-                onChange={(e) => {
-                  void onFile(e.target.files?.[0]);
-                  e.target.value = '';
-                }}
-                className="sr-only"
-              />
-            </label>
-          )}
-          <p className="text-[11px] text-slate-500">Word (.docx, .doc) эсвэл PDF, 1.5 МБ хүртэл.</p>
-          {fileError && <p role="alert" className="text-xs font-semibold text-red-600">{fileError}</p>}
+      {/* Багийн мэдүүлэг — бүх төрөлд */}
+      <div id="nf-declaration" className="rounded-2xl p-5 bg-sky-50 border border-sky-200 space-y-4">
+        <div>
+          <h3 style={display} className="text-xl font-bold uppercase text-[#0E5DA8]">Багийн мэдүүлэг *</h3>
+          <ol className="mt-2 space-y-1 text-sm text-slate-700 list-decimal list-inside">
+            <li>Мэдүүлгийн загварыг татаж авна.</li>
+            <li>Баг тус бүрийн тоглогчдын мэдээлэл, зургийг бөглөнө.</li>
+            <li>Бөглөсөн мэдүүлгээ доор хавсаргана — олон багтай бол бүгдийг нь.</li>
+          </ol>
         </div>
-      )}
+        <a
+          id="nf-template"
+          href={NAADAM.templateUrl}
+          download="Sportyn-naadam-bagiin-medvvleg.docx"
+          className="flex items-center gap-3 h-12 px-4 rounded-xl bg-[#0E5DA8] hover:bg-[#0B3F78] text-white font-bold text-sm transition"
+        >
+          <Download className="w-5 h-5" />
+          Мэдүүлгийн загвар татах (Word)
+          <span className="ml-auto text-xs font-semibold text-sky-100">.docx</span>
+        </a>
+
+        {files.length > 0 && (
+          <ul id="nf-files" className="space-y-2">
+            {files.map((f) => (
+              <li key={f.name + f.size} className="flex items-center gap-3 h-12 px-4 rounded-xl bg-emerald-50 border border-emerald-300 text-sm text-emerald-900">
+                <FileText className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span className="truncate font-semibold">{f.name}</span>
+                <span className="ml-auto text-xs text-emerald-700 shrink-0">{f.size < 1024 * 1024 ? `${Math.max(1, Math.round(f.size / 1024))} КБ` : `${(f.size / 1024 / 1024).toFixed(1)} МБ`}</span>
+                <button
+                  type="button"
+                  onClick={() => setFiles((p) => p.filter((x) => x !== f))}
+                  aria-label={`${f.name} хасах`}
+                  className="w-10 h-10 -mr-2 flex items-center justify-center rounded-lg hover:bg-emerald-100 cursor-pointer shrink-0"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {files.length < MAX_FILES && (
+          <label
+            htmlFor="nf-file"
+            className="flex items-center justify-center gap-2 min-h-14 px-4 rounded-xl border-2 border-dashed border-sky-300 bg-white hover:border-[#0E5DA8] text-sm font-bold text-[#0B3F78] cursor-pointer transition"
+          >
+            <Upload className="w-5 h-5 text-[#0E5DA8]" />
+            {files.length ? 'Өөр багийн мэдүүлэг нэмэх' : 'Бөглөсөн мэдүүлгээ хавсаргах'}
+            <input
+              id="nf-file"
+              type="file"
+              multiple
+              accept={DOCUMENT_ACCEPT}
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = '';
+              }}
+              className="sr-only"
+            />
+          </label>
+        )}
+        <p className="text-[11px] text-slate-500">Word (.docx, .doc) эсвэл PDF, файл бүр 20 МБ хүртэл.</p>
+        {fileError && <p role="alert" className="text-xs font-semibold text-red-600">{fileError}</p>}
+      </div>
 
       {error && (
         <p role="alert" className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">

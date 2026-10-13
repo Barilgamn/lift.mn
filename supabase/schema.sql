@@ -247,3 +247,37 @@ drop policy if exists "products: admin all" on public.products;
 create policy "products: admin all"
   on public.products for all
   using (public.is_admin()) with check (public.is_admin());
+
+-- ========================================================= storage: naadam
+-- Багийн мэдүүлэг (Word/PDF). Тайлбарыг supabase/naadam-storage.sql-ээс үзнэ үү.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'naadam', 'naadam', false, 20971520,
+  array[
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ]
+)
+on conflict (id) do update
+  set public = false,
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "naadam: guest upload" on storage.objects;
+create policy "naadam: guest upload"
+  on storage.objects for insert
+  to anon, authenticated
+  with check (bucket_id = 'naadam');
+
+drop policy if exists "naadam: admin read" on storage.objects;
+create policy "naadam: admin read"
+  on storage.objects for select
+  to authenticated
+  using (bucket_id = 'naadam' and public.is_admin());
+
+drop policy if exists "naadam: admin delete" on storage.objects;
+create policy "naadam: admin delete"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'naadam' and public.is_admin());
