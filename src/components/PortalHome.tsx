@@ -11,6 +11,10 @@ import {
 import { ActiveSection } from '../types';
 import { DeltaLiftsMark } from './DeltaLiftsLogo';
 import { LiftMnLogo } from './LiftMnLogo';
+import { ROUTES } from '../routes';
+import { NAADAM, SPORTS } from '../data/naadamData';
+// Баннерын гарчгийн фонт (наадмын хуудастай ижил)
+import '@fontsource/oswald/700.css';
 import { CONTACT_EMAIL, SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 /**
@@ -165,6 +169,38 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           </span>
         </div>
       </header>
+
+      {/* Спортын их наадам 2026 — нарийхан баннер (постерын өнгө төрхтэй) */}
+      <a
+        id="portal-naadam-banner"
+        href={ROUTES.sportnaadam.path}
+        onClick={(e) => {
+          e.preventDefault();
+          onSelectSection('sportnaadam');
+        }}
+        className="group relative z-20 block shrink-0 overflow-hidden bg-white border-b border-slate-200"
+      >
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(186,230,253,0.7),transparent_55%),radial-gradient(ellipse_at_right,rgba(251,207,232,0.45),transparent_50%)]" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-[4.5rem] flex items-center gap-3 sm:gap-5">
+          <div className="min-w-0 flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
+            <span style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }} className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-[#0E5DA8] leading-tight truncate">
+              {NAADAM.edition} спортын их наадам
+            </span>
+            <span className="text-[11px] sm:text-sm font-bold text-slate-600 truncate">
+              {NAADAM.dateLabel} · {NAADAM.venue}
+            </span>
+          </div>
+          <div className="hidden lg:flex items-center gap-3 ml-auto" aria-hidden="true">
+            {SPORTS.map((sp) => (
+              <img key={sp.id} src={sp.icon} alt="" className={`${sp.wide ? 'h-6' : 'h-8'} w-auto`} />
+            ))}
+          </div>
+          <span className="ml-auto lg:ml-4 shrink-0 inline-flex items-center gap-1.5 h-10 sm:h-11 px-3 sm:px-5 rounded-xl bg-[#F7C600] group-hover:bg-[#ffd21f] text-[#0B3F78] text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-md shadow-amber-500/25 transition">
+            Бүртгүүлэх
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </span>
+        </div>
+      </a>
 
       {/* Үндсэн хэсэг — гурван бүтэн дэлгэцийн багана */}
       <main 

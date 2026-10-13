@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight,
   Award,
-  CalendarDays,
   Check,
   CheckCircle2,
   Download,
@@ -10,7 +9,6 @@ import {
   Handshake,
   Loader2,
   Mail,
-  MapPin,
   Phone,
   Trophy,
   Upload,
@@ -82,77 +80,75 @@ export const SportNaadamPage: React.FC = () => {
         <img src="/images/sportnaadam/cranes.png" alt="" className="absolute bottom-0 right-2 sm:right-8 w-48 sm:w-80 opacity-60" />
       </div>
 
-      {/* Постер */}
+      {/*
+        * Постер + огноо, байршил, тоолуур — нэг карт. Постерын доод мөрийг
+        * (огноо, GAN/ATTILA, вэб/имэйл) тайрч, оронд нь энэ мөрийг тавьсан —
+        * ижил мэдээлэл давхардахгүй.
+        */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
         <Reveal>
           <h1 className="sr-only">
             {NAADAM.sector} {NAADAM.edition} {NAADAM.title.toLowerCase()} — {NAADAM.dateLabel}, {NAADAM.venue}
           </h1>
-          <img
-            id="naadam-poster"
-            src={NAADAM.poster}
-            srcSet={`${NAADAM.posterSmall} 1000w, ${NAADAM.poster} 2000w`}
-            sizes="(min-width: 1152px) 1104px, calc(100vw - 2rem)"
-            width={2000}
-            height={1023}
-            alt={`${NAADAM.edition} спортын их наадам — ${NAADAM.dateLabel}, ${NAADAM.venue}. Зохион байгуулагч DELTA LIFTS, LIFT.MN`}
-            className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl shadow-sky-900/15 ring-1 ring-slate-200"
-          />
-        </Reveal>
+          <div id="naadam-hero" className="rounded-2xl sm:rounded-3xl overflow-hidden bg-white shadow-2xl shadow-sky-900/15 ring-1 ring-slate-200">
+            <img
+              id="naadam-poster"
+              src={NAADAM.poster}
+              srcSet={`${NAADAM.posterSmall} 1000w, ${NAADAM.poster} 2000w`}
+              sizes="(min-width: 1152px) 1104px, calc(100vw - 2rem)"
+              width={2000}
+              height={752}
+              alt={`${NAADAM.sector} ${NAADAM.edition} спортын их наадам. Зохион байгуулагч DELTA LIFTS, LIFT.MN`}
+              className="w-full h-auto"
+            />
 
-        {/* Огноо, байршил, тоолуур, бүртгүүлэх */}
-        <Reveal delay={80}>
-          <div className="relative mt-4 sm:mt-6 rounded-2xl bg-white/95 backdrop-blur border border-slate-200 shadow-xl shadow-sky-900/10 p-4 sm:p-6 grid gap-4 lg:grid-cols-[1fr_auto_auto] items-center">
-            <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-2" style={display}>
-                <CalendarDays className="w-5 h-5 text-[#0E5DA8]" />
-                <span className="text-2xl font-bold text-[#0E5DA8]">{NAADAM.dateLabel}</span>
-              </span>
-              <span className="inline-flex items-center gap-2 font-semibold text-slate-700">
-                <MapPin className="w-5 h-5 text-[#0E5DA8]" />
-                {NAADAM.venue}
-              </span>
-            </div>
-
-            {countdown.done ? (
-              <p className="text-center font-bold text-[#0E5DA8]">Наадам эхэллээ! 🏆</p>
-            ) : (
-              <div id="naadam-countdown" className="flex justify-center gap-2" aria-label="Наадам эхлэх хүртэл">
-                {[
-                  [countdown.days, 'өдөр'],
-                  [countdown.hours, 'цаг'],
-                  [countdown.minutes, 'минут'],
-                ].map(([n, l]) => (
-                  <div key={l} className="w-16 sm:w-[4.5rem] py-1.5 rounded-xl bg-[#0E5DA8] text-white text-center">
-                    <div style={display} className="text-2xl sm:text-3xl font-bold tabular-nums leading-tight">
-                      {String(n).padStart(2, '0')}
-                    </div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-sky-100">{l}</div>
-                  </div>
-                ))}
+            <div className="border-t border-slate-200 bg-gradient-to-r from-white via-sky-50/60 to-white px-4 sm:px-6 py-4 sm:py-5 grid gap-4 lg:grid-cols-[auto_1fr_auto_auto] items-center">
+              <div className="flex items-center justify-center lg:justify-start gap-4 sm:gap-5">
+                <span style={display} className="text-3xl sm:text-4xl font-bold text-[#0E5DA8] tracking-tight whitespace-nowrap">
+                  {NAADAM.dateLabel}
+                </span>
+                <span className="w-px h-10 bg-slate-300" aria-hidden="true" />
+                <img src="/images/sportnaadam/gan.png" alt="GAN Sports Center" className="h-8 sm:h-10 w-auto" />
+                <img src="/images/sportnaadam/attila.png" alt="ATTILA" className="h-11 sm:h-14 w-auto" />
               </div>
-            )}
+              <span className="hidden lg:block" />
 
-            <button
-              type="button"
-              onClick={scrollToForm}
-              className="inline-flex items-center justify-center gap-2 h-14 px-6 rounded-xl bg-[#F7C600] hover:bg-[#ffd21f] text-[#0B3F78] font-extrabold uppercase tracking-wider shadow-lg shadow-amber-500/25 cursor-pointer transition"
-            >
-              Бүртгүүлэх
-              <ArrowRight className="w-5 h-5" />
-            </button>
+              {countdown.done ? (
+                <p className="text-center font-bold text-[#0E5DA8]">Наадам эхэллээ! 🏆</p>
+              ) : (
+                <div id="naadam-countdown" className="flex justify-center gap-2" aria-label="Наадам эхлэх хүртэл">
+                  {[
+                    [countdown.days, 'өдөр'],
+                    [countdown.hours, 'цаг'],
+                    [countdown.minutes, 'минут'],
+                  ].map(([n, l]) => (
+                    <div key={l} className="w-16 sm:w-[4.5rem] py-1.5 rounded-xl bg-[#0E5DA8] text-white text-center">
+                      <div style={display} className="text-2xl sm:text-3xl font-bold tabular-nums leading-tight">
+                        {String(n).padStart(2, '0')}
+                      </div>
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-sky-100">{l}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={scrollToForm}
+                className="inline-flex items-center justify-center gap-2 h-14 px-6 rounded-xl bg-[#F7C600] hover:bg-[#ffd21f] text-[#0B3F78] font-extrabold uppercase tracking-wider shadow-lg shadow-amber-500/25 cursor-pointer transition"
+              >
+                Бүртгүүлэх
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </Reveal>
       </section>
 
-      {/* Урилга */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 text-center">
+      {/* Урилга — гарчиг нь постерт байгаа тул зөвхөн урилгын үг */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 text-center">
         <Reveal>
-          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-slate-500">{NAADAM.sector}</p>
-          <p style={display} className="mt-2 text-4xl sm:text-6xl font-bold uppercase tracking-tight text-[#0E5DA8] leading-none">
-            {NAADAM.edition} {NAADAM.title}
-          </p>
-          <p className="mt-6 text-base sm:text-xl leading-relaxed text-slate-700">
+          <p className="text-base sm:text-xl leading-relaxed text-slate-700">
             {NAADAM.jubilee}н хүрээнд {NAADAM.dateLong} зохион байгуулагдана. {NAADAM.intro}
           </p>
           <p style={display} className="mt-6 text-2xl sm:text-4xl font-semibold uppercase tracking-tight text-[#0B3F78]">

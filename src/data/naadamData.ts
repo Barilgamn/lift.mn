@@ -23,9 +23,9 @@ export const NAADAM = {
   intro:
     'Салбарын хамт олны нөхөрлөл, хамтын ажиллагааг бэхжүүлж, багийн эв нэгдэл, хурд хүч, ' +
     'авхаалж самбаагаа сорих энэхүү наадамд байгууллагуудыг идэвхтэй оролцохыг урьж байна.',
-  /** Албан ёсны постер — зохион байгуулагчдын лого, төрлүүд, огноо */
-  poster: '/images/sportnaadam/poster.jpg',
-  posterSmall: '/images/sportnaadam/poster-1000.jpg',
+  /** Албан ёсны постерын дээд хэсэг (огноо, холбоо барих мөрийг тайрсан) */
+  poster: '/images/sportnaadam/poster-top.jpg',
+  posterSmall: '/images/sportnaadam/poster-top-1000.jpg',
   /** Багийн мэдүүлгийн загвар — бүх төрөлд нэг загвар */
   templateUrl: '/files/sportnaadam-bagiin-medvvleg.docx',
   /** Наадмын лавлах — сайтын ерөнхий утаснаас тусдаа */
