@@ -34,7 +34,7 @@ export const COMPANY = {
   address:
     'Юнион Бюлдинг, Юнеско-ийн гудамж, Нарны зам-62, 1-р хороо, Сүхбаатар дүүрэг, ' +
     'Улаанбаатар хот 14230, Монгол улс',
-  phone: '9500-2222',
+  phone: '7723-2222',
   email: CONTACT_EMAIL,
   web: 'www.lift.mn',
 } as const;

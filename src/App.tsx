@@ -91,18 +91,14 @@ export default function App() {
   }, [cartItems]);
 
   const isAdmin = location.pathname.startsWith('/admin');
-  /** Тусдаа арга хэмжээний хуудас — гарчгаа өөрөө тохируулна */
-  const isStandalone = location.pathname.startsWith('/sportnaadam');
 
   // Хуудас солигдох бүрд гарчгийг шинэчилж, дээш нь гүйлгэнэ
   useEffect(() => {
-    if (!isStandalone) {
-      document.title = isAdmin
-        ? 'Удирдлагын хэсэг | LIFT.MN'
-        : ROUTES[activeSection].title;
-    }
+    document.title = isAdmin
+      ? 'Удирдлагын хэсэг | LIFT.MN'
+      : ROUTES[activeSection].title;
     window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [activeSection, isAdmin, isStandalone, location.pathname]);
+  }, [activeSection, isAdmin, location.pathname]);
 
   const handleSelectSection = (section: ActiveSection) => {
     navigate(ROUTES[section].path);
@@ -228,13 +224,20 @@ export default function App() {
           }
         />
 
-        {/* Спортын их наадам 2026 — бүртгэлийн хуудас (өөрийн толгой, хөлтэй) */}
+        {/* Спортын их наадам 2026 — бүртгэлийн хуудас */}
         <Route
-          path="/sportnaadam"
+          path={ROUTES.sportnaadam.path}
           element={
-            <Suspense fallback={<div className="min-h-dvh bg-[#030B1A]" />}>
-              <SportNaadamPage />
-            </Suspense>
+            <PageShell
+              section="sportnaadam"
+              onSelectSection={handleSelectSection}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
+              <Suspense fallback={<div className="min-h-[60vh] bg-[#030B1A]" />}>
+                <SportNaadamPage />
+              </Suspense>
+            </PageShell>
           }
         />
 

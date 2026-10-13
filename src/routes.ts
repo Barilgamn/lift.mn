@@ -27,6 +27,11 @@ export const ROUTES: Record<ActiveSection, { path: string; title: string; label:
     title: 'Норм дүрэм, техникийн шийдлүүд | LIFT.MN',
     label: 'Норм дүрэм',
   },
+  sportnaadam: {
+    path: '/sportnaadam',
+    title: '17-р спортын их наадам 2026 — бүртгэл | LIFT.MN',
+    label: 'Спортын наадам',
+  },
 };
 
 /** Барааны дэлгэрэнгүй хуудасны зам */

@@ -327,11 +327,11 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         {/* Хөл хэсгийн холбоо барих мэдээлэл */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
           <a 
-            href="tel:+97695002222"
+            href="tel:+97677232222"
             className="flex items-center gap-1.5 hover:text-brand transition-colors"
           >
             <PhoneCall className="w-3.5 h-3.5 text-brand" />
-            <span className="font-mono font-semibold">(+976) 9500-2222</span>
+            <span className="font-mono font-semibold">(+976) 7723-2222</span>
           </a>
 
           <span className="hidden xl:inline text-ink-dark-subtle" aria-hidden="true">·</span>

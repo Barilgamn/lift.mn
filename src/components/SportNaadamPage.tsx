@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   ArrowDown,
   ArrowRight,
@@ -18,7 +17,6 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { LiftMnLogo } from './LiftMnLogo';
 import { Reveal } from './Reveal';
 import { submitForm, HOTLINE } from '../lib/submitForm';
 import { DOCUMENT_ACCEPT, readDocument, type Attachment } from '../lib/attachments';
@@ -59,120 +57,107 @@ const labelCls = 'block text-xs font-bold uppercase tracking-wider text-white/70
 export const SportNaadamPage: React.FC = () => {
   const countdown = useCountdown(NAADAM.startsAt);
 
-  useEffect(() => {
-    document.title = `${NAADAM.edition} ${NAADAM.title} 2026 — бүртгэл | LIFT.MN`;
-  }, []);
-
   const scrollToForm = () =>
     document.getElementById('register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
-    <div className="min-h-dvh bg-[#030B1A] text-white font-sans overflow-x-hidden">
-      {/* Толгой */}
-      <header className="sticky top-0 z-40 bg-[#030B1A]/85 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-          <Link to="/" aria-label="LIFT.MN нүүр хуудас" className="py-3 -my-3 shrink-0">
-            <span className="inline-flex items-center rounded-lg bg-white px-2.5 py-1.5">
-              <LiftMnLogo className="h-5 sm:h-6" />
-            </span>
-          </Link>
-          <button
-            type="button"
-            onClick={scrollToForm}
-            className="inline-flex items-center gap-2 h-11 px-4 sm:px-5 rounded-xl bg-[#F7B919] hover:bg-[#ffc935] text-[#0B2545] font-extrabold text-xs sm:text-sm uppercase tracking-wider cursor-pointer transition"
-          >
-            Бүртгүүлэх
-            <ArrowDown className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
-
+    // Үндсэн сайтын бүрхүүл (PageShell) дотор — цэс, байршлын мөр, хөл хэсэг нь сайтынх
+    <div className="bg-[#030B1A] text-white overflow-x-hidden">
       {/* Нүүр хэсэг */}
-      <section className="relative isolate">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(2,90,156,0.55),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(247,185,25,0.18),transparent_55%)]" />
+      <section className="relative isolate border-b border-white/10">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(2,90,156,0.55),transparent_65%),radial-gradient(ellipse_at_bottom_right,rgba(247,185,25,0.16),transparent_55%)]" />
         <div className="absolute inset-0 -z-10 opacity-[0.07] bg-[linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-14 sm:pt-16 sm:pb-20 grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-center">
-          <div>
-            <Reveal>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F7B919]/15 border border-[#F7B919]/40 text-[#F7B919] text-[11px] sm:text-xs font-bold uppercase tracking-wider">
-                <Award className="w-4 h-4 shrink-0" />
-                <span>Барилгын салбарын 100 жилийн ой</span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-12 sm:pt-16 sm:pb-16 flex flex-col items-center text-center">
+          <Reveal>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F7B919]/15 border border-[#F7B919]/40 text-[#F7B919] text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+              <Award className="w-4 h-4 shrink-0" />
+              <span>Барилгын салбарын 100 жилийн ой</span>
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <p className="mt-5 text-sm sm:text-base font-semibold text-sky-300/90">{NAADAM.sector}</p>
+            <h1 className="mt-2 text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] uppercase">
+              <span className="text-[#F7B919]">{NAADAM.edition}</span> {NAADAM.title}
+            </h1>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <p className="mt-5 text-sm sm:text-lg text-white/75 leading-relaxed max-w-2xl mx-auto">
+              {NAADAM.jubilee}н хүрээнд {NAADAM.dateLong} зохион байгуулагдана.
+            </p>
+            <ul className="mt-6 flex flex-wrap justify-center gap-2.5">
+              <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
+                <CalendarDays className="w-4 h-4 text-[#F7B919]" />
+                {NAADAM.dateLabel}
+              </li>
+              <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
+                <MapPin className="w-4 h-4 text-[#F7B919]" />
+                {NAADAM.venue}
+              </li>
+            </ul>
+          </Reveal>
+
+          {/* Тоолуур */}
+          <Reveal delay={240}>
+            {countdown.done ? (
+              <p className="mt-7 text-lg font-black text-[#F7B919]">Наадам эхэллээ! 🏆</p>
+            ) : (
+              <div id="naadam-countdown" className="mt-7 flex items-stretch justify-center gap-2.5 sm:gap-3" aria-label="Наадам эхлэх хүртэл">
+                {[
+                  [countdown.days, 'өдөр'],
+                  [countdown.hours, 'цаг'],
+                  [countdown.minutes, 'минут'],
+                ].map(([n, l]) => (
+                  <div key={l} className="w-20 sm:w-24 py-3 rounded-2xl bg-gradient-to-b from-white/[0.12] to-white/[0.04] border border-white/15 text-center">
+                    <div className="text-3xl sm:text-4xl font-black tabular-nums">{String(n).padStart(2, '0')}</div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-white/60">{l}</div>
+                  </div>
+                ))}
               </div>
-            </Reveal>
+            )}
+          </Reveal>
 
-            <Reveal delay={80}>
-              <p className="mt-5 text-sm sm:text-base font-semibold text-sky-300/90">{NAADAM.sector}</p>
-              <h1 className="mt-2 text-4xl sm:text-6xl font-black tracking-tight leading-[1.05] uppercase">
-                <span className="text-[#F7B919]">{NAADAM.edition}</span> {NAADAM.title.split(' ')[0]}
-                <span className="block">{NAADAM.title.split(' ').slice(1).join(' ')}</span>
-              </h1>
-            </Reveal>
-
-            <Reveal delay={160}>
-              <p className="mt-5 text-sm sm:text-lg text-white/75 leading-relaxed max-w-xl">
-                {NAADAM.jubilee}н хүрээнд {NAADAM.dateLong} зохион байгуулагдана.
-              </p>
-              <ul className="mt-6 flex flex-wrap gap-2.5">
-                <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
-                  <CalendarDays className="w-4 h-4 text-[#F7B919]" />
-                  {NAADAM.dateLabel}
-                </li>
-                <li className="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-white/[0.07] border border-white/15 text-sm font-bold">
-                  <MapPin className="w-4 h-4 text-[#F7B919]" />
-                  {NAADAM.venue}
-                </li>
-              </ul>
-            </Reveal>
-
-            {/* Тоолуур */}
-            <Reveal delay={240}>
-              {countdown.done ? (
-                <p className="mt-7 text-lg font-black text-[#F7B919]">Наадам эхэллээ! 🏆</p>
-              ) : (
-                <div id="naadam-countdown" className="mt-7 flex items-stretch gap-2.5 sm:gap-3" aria-label="Наадам эхлэх хүртэл">
-                  {[
-                    [countdown.days, 'өдөр'],
-                    [countdown.hours, 'цаг'],
-                    [countdown.minutes, 'минут'],
-                  ].map(([n, l]) => (
-                    <div key={l} className="w-20 sm:w-24 py-3 rounded-2xl bg-gradient-to-b from-white/[0.12] to-white/[0.04] border border-white/15 text-center">
-                      <div className="text-3xl sm:text-4xl font-black tabular-nums">{String(n).padStart(2, '0')}</div>
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-white/60">{l}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Reveal>
-
-            <Reveal delay={300}>
+          <Reveal delay={300}>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={scrollToForm}
-                className="mt-8 inline-flex items-center gap-2.5 h-14 px-7 rounded-2xl bg-[#025A9C] hover:bg-[#0670bd] border border-sky-300/40 font-extrabold text-sm sm:text-base uppercase tracking-wider shadow-xl shadow-sky-900/40 cursor-pointer transition"
+                className="inline-flex items-center gap-2.5 h-14 px-7 rounded-2xl bg-[#F7B919] hover:bg-[#ffc935] text-[#0B2545] font-extrabold text-sm sm:text-base uppercase tracking-wider shadow-xl shadow-amber-900/30 cursor-pointer transition"
               >
                 Байгууллагаа бүртгүүлэх
                 <ArrowRight className="w-5 h-5" />
               </button>
-            </Reveal>
-          </div>
+              <a
+                href="#naadam-video-section"
+                className="inline-flex items-center gap-2.5 h-14 px-6 rounded-2xl border border-white/25 hover:border-white/60 font-bold text-sm sm:text-base transition"
+              >
+                <PlayCircle className="w-5 h-5 text-[#F7B919]" />
+                Видео үзэх
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
-          {/* Видео */}
-          <Reveal delay={120} className="justify-self-center w-full max-w-[340px]">
+      {/* Видео ба урилга — видео том, утасны хүрээгүй */}
+      <section id="naadam-video-section" className="scroll-mt-32 relative isolate">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_left,rgba(2,90,156,0.35),transparent_60%)]" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 grid lg:grid-cols-[auto_1fr] gap-10 lg:gap-16 items-center">
+          <Reveal className="justify-self-center w-full max-w-[460px] lg:w-[min(460px,calc((100dvh-9rem)*9/16))]">
             <div className="relative">
-              <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-[#025A9C]/60 to-[#F7B919]/40 blur-2xl opacity-60" aria-hidden="true" />
-              <div className="relative rounded-[2rem] p-2 bg-gradient-to-br from-white/25 to-white/5 border border-white/20 shadow-2xl">
-                <div className="relative aspect-[9/16] rounded-[1.6rem] overflow-hidden bg-black">
-                  <iframe
-                    id="naadam-video"
-                    title="Спортын их наадам — видео"
-                    src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(NAADAM.videoUrl)}&show_text=false&width=320`}
-                    className="absolute inset-0 w-full h-full border-0"
-                    loading="lazy"
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
+              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-[#025A9C]/70 via-sky-500/20 to-[#F7B919]/50 blur-3xl opacity-60" aria-hidden="true" />
+              <div className="relative aspect-[9/16] rounded-3xl overflow-hidden bg-black ring-1 ring-white/20 shadow-2xl shadow-black/60">
+                <iframe
+                  id="naadam-video"
+                  title="Спортын их наадам — видео"
+                  src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(NAADAM.videoUrl)}&show_text=false&width=460`}
+                  className="absolute inset-0 w-full h-full border-0"
+                  loading="lazy"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                />
               </div>
               <a
                 href={NAADAM.videoUrl}
@@ -185,16 +170,23 @@ export const SportNaadamPage: React.FC = () => {
               </a>
             </div>
           </Reveal>
-        </div>
-      </section>
 
-      {/* Урилга */}
-      <section className="border-y border-white/10 bg-white/[0.03]">
-        <Reveal className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
-          <Users className="w-9 h-9 mx-auto text-[#F7B919]" />
-          <p className="mt-5 text-lg sm:text-2xl font-semibold leading-relaxed text-white/90">{NAADAM.intro}</p>
-          <p className="mt-5 text-xl sm:text-3xl font-black text-[#F7B919]">{NAADAM.slogan}</p>
-        </Reveal>
+          <Reveal delay={120} className="text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#F7B919]">
+              <Users className="w-4 h-4" />
+              Урилга
+            </div>
+            <p className="mt-4 text-xl sm:text-3xl font-bold leading-snug text-white/90">{NAADAM.intro}</p>
+            <p className="mt-6 text-2xl sm:text-4xl font-black text-[#F7B919] leading-tight">{NAADAM.slogan}</p>
+            <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2" aria-hidden="true">
+              {SPORTS.map((sp) => (
+                <span key={sp.id} title={sp.label} className="w-12 h-12 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center text-2xl">
+                  {sp.emoji}
+                </span>
+              ))}
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* Тэмцээний төрлүүд */}
@@ -256,7 +248,7 @@ export const SportNaadamPage: React.FC = () => {
       </section>
 
       {/* Бүртгэл */}
-      <section id="register" className="scroll-mt-20 max-w-3xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+      <section id="register" className="scroll-mt-32 max-w-3xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
         <Reveal>
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-4xl font-black tracking-tight">Бүртгэл</h2>
@@ -268,16 +260,6 @@ export const SportNaadamPage: React.FC = () => {
         <RegistrationForm />
       </section>
 
-      {/* Хөл */}
-      <footer className="border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/60">
-          <span>© 2026 LIFT.MN · DELTA LIFT</span>
-          <span className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-            <a href={`tel:+976${HOTLINE.replace(/\D/g, '')}`} className="py-2 -my-2 hover:text-white">Лавлах: {HOTLINE}</a>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="py-2 -my-2 hover:text-white">{CONTACT_EMAIL}</a>
-          </span>
-        </div>
-      </footer>
     </div>
   );
 };

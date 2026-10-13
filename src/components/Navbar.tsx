@@ -50,10 +50,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden sm:inline">24/7 Лифт гацсан яаралтай дуудлагын алба:</span>
             </span>
             <a
-              href="tel:+97695002222"
+              href="tel:+97677232222"
               className="font-mono font-bold text-brand hover:text-brand-hover transition shrink-0 py-1.5 -my-1.5 px-1 -mx-1"
             >
-              9500-2222
+              7723-2222
             </a>
           </div>
           <div className="hidden lg:flex items-center gap-4 text-ink-dark-muted">
@@ -230,7 +230,7 @@ const MobileNav: React.FC<{
       })}
       <a
         id="mnav-call"
-        href="tel:+97695002222"
+        href="tel:+97677232222"
         className="flex flex-col items-center justify-center gap-1 text-[11px] font-bold text-red-700"
       >
         <PhoneCall className="w-5 h-5" />

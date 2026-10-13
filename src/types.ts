@@ -1,4 +1,4 @@
-export type ActiveSection = 'portal' | 'delta-lift' | 'service' | 'parts' | 'standards';
+export type ActiveSection = 'portal' | 'delta-lift' | 'service' | 'parts' | 'standards' | 'sportnaadam';
 
 export interface TariffItem {
   id: string;
