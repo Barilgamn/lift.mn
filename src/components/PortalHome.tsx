@@ -20,6 +20,126 @@ import { CONTACT_EMAIL, SHOW_DELTA_LIFT, SITE_NAME } from '../config';
  */
 const NARROW = !SHOW_DELTA_LIFT;
 
+interface PortalCardProps {
+  id: string;
+  /** Дэлгэц дээрх байрлал (lg:order-*) */
+  order: string;
+  onOpen: () => void;
+  image: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  title: string;
+  subtitle: string;
+  description: string;
+  tags: string[];
+  cta: string;
+  /** Гол үйлчилгээ — дэвсгэр цайвар, дээд зураас өтгөн, товч дүүрэн өнгөтэй */
+  featured?: boolean;
+}
+
+/**
+ * Нүүрний карт. Гурван карт яг ижил бүтэцтэй байж, гарчиг, дэд гарчиг,
+ * тайлбар, шошго, товч нь хажуу картынхаа түвшинд эгнэнэ:
+ *   - гарчиг үргэлж нэг мөрөнд (хэмжээ нь өргөнөөс хамаарч багасна)
+ *   - дэд гарчигт хоёр мөрийн зай нөөцөлсөн
+ *   - тайлбарт ижил өндөр нөөцөлж (lg: 6, xl: 4 мөр), шошго нь 2×2 тор
+ */
+const PortalCard: React.FC<PortalCardProps> = ({
+  id, order, onOpen, image, icon: Icon, title, subtitle, description, tags, cta, featured,
+}) => (
+  <section
+    id={id}
+    onClick={onOpen}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onOpen();
+      }
+    }}
+    role="button"
+    tabIndex={0}
+    aria-label={title}
+    className={`${order} ${
+      NARROW
+        ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40 lg:basis-0'
+        : 'lg:border-l lg:border-line lg:hover:flex-[1.12]'
+    } border-t border-line lg:border-t-0 group relative flex-1 min-w-0 flex flex-col p-5 sm:p-7 lg:p-8 xl:p-9 transition-all duration-500 ease-out cursor-pointer overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-bright focus-visible:-outline-offset-4`}
+  >
+    {/* Дэвсгэр зураг */}
+    <div
+      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+      style={{ backgroundImage: `url('${image}')` }}
+    />
+    <div
+      className={`absolute inset-0 bg-gradient-to-b transition-all duration-500 ${
+        featured
+          ? 'from-[#040E20]/80 via-[#06152F]/62 to-[#020813]/88 group-hover:from-[#040E20]/70 group-hover:via-[#092144]/48 group-hover:to-[#020813]/80'
+          : 'from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88'
+      }`}
+    />
+    <div
+      className={`absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] via-transparent to-transparent transition-opacity duration-500 pointer-events-none ${
+        featured ? 'from-sky-500/20' : 'from-sky-500/10 opacity-0 group-hover:opacity-100'
+      }`}
+    />
+
+    {/* Дээд зураас */}
+    <div
+      className={`absolute top-0 left-0 right-0 transition-all duration-300 ${
+        featured ? 'h-1.5 bg-brand-bright group-hover:h-2' : 'h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5'
+      }`}
+    />
+
+    {/*
+      * Текстийн хавтан. Ар дэвсгэрийн зураг дээр цайвар толбо тохиолдвол
+      * саарал текст уншигдахаа больдог тул текстийн доогуур нимгэн бүрхүүл.
+      * Дээд талд нь зургийн хэсэг үлдэнэ.
+      */}
+    <div className="relative z-10 mt-8 sm:mt-10 lg:my-auto flex flex-col items-center text-center py-6 sm:py-7 px-4 sm:px-5 rounded-2xl bg-[#040E20]/60 backdrop-blur-[3px]">
+      <div className="w-11 h-11 rounded-xl border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 flex items-center justify-center transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 mb-3">
+        <Icon className="w-5 h-5 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
+      </div>
+
+      <h2 className="whitespace-nowrap text-[1.45rem] sm:text-[1.65rem] lg:text-[clamp(1.2rem,1.75vw,1.65rem)] leading-tight font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
+        {title}
+      </h2>
+
+      <p className="mt-2 min-h-[2.6em] flex items-center justify-center text-[11px] sm:text-xs font-semibold tracking-wider text-brand-bright uppercase leading-snug">
+        {subtitle}
+      </p>
+
+      <p className="mt-3 text-[13px] sm:text-sm text-ink-muted leading-relaxed max-w-sm lg:min-h-[9.75em] xl:min-h-[6.5em]">
+        {description}
+      </p>
+
+      {/* 2×2 тор — шошго хэдэн үгтэй байсан ч бүх картад ижил өндөртэй */}
+      <div className="mt-5 grid grid-cols-2 gap-2 w-full max-w-sm">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className="min-h-11 flex items-center justify-center text-center py-1.5 px-2 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-[11px] sm:text-xs font-medium leading-tight opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    {/* Товч */}
+    <div className="relative z-10 w-full pt-4">
+      <div
+        className={`w-full py-3.5 px-4 rounded-xl text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 ${
+          featured
+            ? 'bg-brand group-hover:bg-brand-hover border border-sky-300/50 shadow-xl shadow-sky-900/50'
+            : 'bg-brand/50 group-hover:bg-brand border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50'
+        }`}
+      >
+        <span>{cta}</span>
+        <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
+      </div>
+    </div>
+  </section>
+);
+
 interface PortalHomeProps {
   onSelectSection: (section: ActiveSection) => void;
 }
@@ -63,249 +183,48 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           NARROW ? 'lg:max-w-7xl lg:mx-auto lg:gap-5 lg:p-4 lg:py-6' : ''
         }`}
       >
-        {/* Сэлбэг — утсанд ч, дэлгэц дээр ч 1-рт */}
-        <section
+        {/* Дараалал: Сэлбэг → Засвар → Норм дүрэм (утас, дэлгэц хоёуланд) */}
+        <PortalCard
           id="portal-column-parts"
-          onClick={() => onSelectSection('parts')}
-          role="button"
-          tabIndex={0}
-          /*
-           * Гол үйлчилгээ учраас нөгөө хоёроосоо тод байлгана:
-           * дэлгэц дээр 1.3 дахин өргөн, дэвсгэр нь цайвар (зураг илүү
-           * харагдана), дээд зураас нь өтгөн, товч нь дүүрэн өнгөтэй.
-           */
-          className={`lg:order-1 ${
-            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : ''
-          } group relative flex-1 ${
-            // Хоёр карттай үед тэнцүү өргөнтэй; гурвуулаа байхад Сэлбэг давамгай
-            NARROW ? 'lg:basis-0' : 'lg:flex-[1.32] lg:hover:flex-[1.45]'
-          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
-        >
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{
-              // Эх зургийн дээд хэсэгт "DELTA LIFT" самбар харагддаг тул нуусан
-              // үед түүнийг тайрсан хувилбарыг ашиглана
-              backgroundImage: SHOW_DELTA_LIFT
-                ? `url('/images/lift_parts_hero.jpg')`
-                : `url('/images/parts_hero.jpg')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/80 via-[#06152F]/62 to-[#020813]/88 group-hover:from-[#040E20]/70 group-hover:via-[#092144]/48 group-hover:to-[#020813]/80 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/20 via-transparent to-transparent transition-opacity duration-500 pointer-events-none" />
+          order="lg:order-1"
+          featured
+          onOpen={() => onSelectSection('parts')}
+          // Эх зургийн дээд хэсэгт "DELTA LIFT" самбар харагддаг тул нуусан
+          // үед түүнийг тайрсан хувилбарыг ашиглана
+          image={SHOW_DELTA_LIFT ? '/images/lift_parts_hero.jpg' : '/images/parts_hero.jpg'}
+          icon={ShoppingBag}
+          title="СЭЛБЭГ ХЭРЭГСЭЛ"
+          subtitle="ОРИГИНАЛ ЭД АНГИ · ОНЛАЙН ЗАХИАЛГА"
+          description="Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга, суурилуулалт"
+          tags={['Онлайн дэлгүүр', 'Бэлэн нөөц', 'Шуурхай хүргэлт', 'Баталгаат сэлбэг']}
+          cta="Дэлгүүр лүү орох"
+        />
 
-          {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-brand-bright group-hover:h-2 transition-all duration-300" />
-
-          {/* Card Middle: Icon, Titles & Representative Keywords */}
-          {/*
-            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
-            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
-            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
-            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
-            */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
-            {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
-              </div>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-                СЭЛБЭГ ХЭРЭГСЭЛ
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
-              ОРИГИНАЛ ЭД АНГИ · ОНЛАЙН ЗАХИАЛГА
-            </p>
-
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга, суурилуулалт
-            </p>
-
-            {/* Representative Keywords Row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Онлайн дэлгүүр
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Бэлэн нөөц
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Шуурхай хүргэлт
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Баталгаат сэлбэг
-              </span>
-            </div>
-          </div>
-
-          {/* Card Bottom: Button */}
-          <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3.5 sm:py-4 px-4 rounded-xl bg-brand group-hover:bg-brand-hover text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-300/50 shadow-xl shadow-sky-900/50">
-              <span>Дэлгүүр лүү орох</span>
-              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
-            </div>
-          </div>
-        </section>
-
-        {/* Засвар — утсанд ч, дэлгэц дээр ч 2-рт */}
-        <section
+        <PortalCard
           id="portal-column-service"
-          onClick={() => onSelectSection('service')}
-          role="button"
-          tabIndex={0}
-          className={`lg:order-2 border-t border-line lg:border-t-0 ${
-            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : 'lg:border-l lg:border-line'
-          } group relative flex-1 ${
-            NARROW ? 'lg:basis-0' : 'lg:hover:flex-[1.12]'
-          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
-        >
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{
-              backgroundImage: `url('/images/service_hero.jpg')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          order="lg:order-2"
+          onOpen={() => onSelectSection('service')}
+          image="/images/service_hero.jpg"
+          icon={Wrench}
+          title="ЗАСВАР ҮЙЛЧИЛГЭЭ"
+          subtitle="ОНОШИЛГОО · ХУВААРЬТ ҮЗЛЭГ · ТАРИФ"
+          description="Засвар үйлчилгээний онлайн дуудлага өгөх, цаг товлох, СӨХ-ийн гэрээт багц, тариф үнийн жагсаалт болон 24/7 диспетчерийн алба"
+          tags={['24/7 Шуурхай алба', 'СӨХ гэрээт үйлчилгээ', 'Хуваарьт үзлэг оношилгоо', 'Инженерийн баг']}
+          cta="Үйлчилгээ рүү орох"
+        />
 
-          {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
-
-          {/* Card Middle: Icon, Titles & Representative Keywords */}
-          {/*
-            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
-            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
-            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
-            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
-            */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
-            {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <Wrench className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
-              </div>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-                ЗАСВАР ҮЙЛЧИЛГЭЭ
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
-              ОНОШИЛГОО · ХУВААРЬТ ҮЗЛЭГ · ТАРИФ
-            </p>
-
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Засвар үйлчилгээний онлайн дуудлага өгөх, цаг товлох, СӨХ-ийн гэрээт багц, тариф үнийн жагсаалт болон 24/7 диспетчерийн алба
-            </p>
-
-            {/* Representative Keywords Row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                24/7 Шуурхай алба
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                СӨХ гэрээт үйлчилгээ
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Хуваарьт үзлэг оношилгоо
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Инженерийн баг
-              </span>
-            </div>
-          </div>
-
-          {/* Card Bottom: Button */}
-          <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
-              <span>Үйлчилгээ рүү орох</span>
-              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
-            </div>
-          </div>
-        </section>
-
-        {/* Норм дүрэм, техникийн шийдлүүд — 3-рт */}
-        <section
+        <PortalCard
           id="portal-column-standards"
-          onClick={() => onSelectSection('standards')}
-          role="button"
-          tabIndex={0}
-          className={`lg:order-3 border-t border-line lg:border-t-0 ${
-            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : 'lg:border-l lg:border-line'
-          } group relative flex-1 ${
-            NARROW ? 'lg:basis-0' : 'lg:hover:flex-[1.12]'
-          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
-        >
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{
-              backgroundImage: `url('/images/cabins/atlas-gigas-traction-mrl.webp')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-          {/* Top highlight bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
-
-          {/* Card Middle: Icon, Titles & Representative Keywords */}
-          {/*
-            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
-            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
-            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
-            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
-            */}
-          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
-            {/* Header: Icon and Title in ONE row */}
-            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
-              </div>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-                НОРМ ДҮРЭМ
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
-              СТАНДАРТ · ТЕХНИКИЙН ШИЙДЭЛ
-            </p>
-
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
-              Лифт, урсдаг шатны олон улсын стандартууд болон шинэчлэл, эрчим хүч хэмнэлт, аюулгүй байдлын техникийн шийдлүүд
-            </p>
-
-            {/* Representative Keywords Row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                EN 81-20 / 50
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Шинэчлэл
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Эрчим хүч хэмнэлт
-              </span>
-              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
-                Галын аюулгүй байдал
-              </span>
-            </div>
-          </div>
-
-          {/* Card Bottom: Button */}
-          <div className="relative z-10 w-full pt-4">
-            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
-              <span>Дэлгэрэнгүй үзэх</span>
-              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
-            </div>
-          </div>
-        </section>
+          order="lg:order-3"
+          onOpen={() => onSelectSection('standards')}
+          image="/images/cabins/atlas-gigas-traction-mrl.webp"
+          icon={BookOpen}
+          title="НОРМ ДҮРЭМ"
+          subtitle="СТАНДАРТ · ТЕХНИКИЙН ШИЙДЭЛ"
+          description="Лифт, урсдаг шатны олон улсын стандартууд болон шинэчлэл, эрчим хүч хэмнэлт, аюулгүй байдлын техникийн шийдлүүд"
+          tags={['EN 81-20 / 50', 'Шинэчлэл', 'Эрчим хүч хэмнэлт', 'Галын аюулгүй байдал']}
+          cta="Дэлгэрэнгүй үзэх"
+        />
 
         {/* DELTA LIFT — хоёуланд нь 4-рт. Түр нуусан (src/config.ts) */}
         {SHOW_DELTA_LIFT && (
