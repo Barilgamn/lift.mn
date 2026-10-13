@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
-import { SHOW_DELTA_LIFT } from '../config';
+import { CONTACT_EMAIL, SHOW_DELTA_LIFT } from '../config';
 import { CART_BUMP_EVENT } from '../lib/flyToCart';
 
 interface NavbarProps {
@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="hidden lg:flex items-center gap-4 text-ink-dark-muted">
             <span>Даваа - Ням 24 цаг</span>
             <span aria-hidden="true">·</span>
-            <a href="mailto:info@lift.mn" className="hover:text-brand transition">info@lift.mn</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-brand transition">{CONTACT_EMAIL}</a>
             <span aria-hidden="true">·</span>
             <span>Улаанбаатар хот даяар</span>
           </div>

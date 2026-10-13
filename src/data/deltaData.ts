@@ -6,6 +6,8 @@
  * товхимлоос шууд авсан бөгөөд таамаглаж нэмсэн зүйл байхгүй.
  */
 
+import { CONTACT_EMAIL } from '../config';
+
 export interface DeltaProduct {
   id: string;
   title: string;
@@ -33,7 +35,7 @@ export const COMPANY = {
     'Юнион Бюлдинг, Юнеско-ийн гудамж, Нарны зам-62, 1-р хороо, Сүхбаатар дүүрэг, ' +
     'Улаанбаатар хот 14230, Монгол улс',
   phone: '9500-2222',
-  email: 'info@lift.mn',
+  email: CONTACT_EMAIL,
   web: 'www.lift.mn',
 } as const;
 

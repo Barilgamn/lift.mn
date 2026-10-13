@@ -10,7 +10,7 @@ import {
 import { ActiveSection } from '../types';
 import { DeltaLiftsMark } from './DeltaLiftsLogo';
 import { LiftMnLogo } from './LiftMnLogo';
-import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
+import { CONTACT_EMAIL, SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 /**
  * DELTA LIFT нуугдсан үед хоёр л багана үлдэнэ. Бүтэн өргөнөөр сунгавал
@@ -335,9 +335,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
 
           <span className="hidden md:flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5 text-brand" />
-            <a href="mailto:info@lift.mn" className="hover:text-brand transition-colors">info@lift.mn</a>
-            <span className="text-ink-dark-subtle">,</span>
-            <a href="mailto:sales@lift.mn" className="hover:text-brand transition-colors">sales@lift.mn</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-brand transition-colors">{CONTACT_EMAIL}</a>
           </span>
 
           <span className="hidden xl:inline text-ink-dark-subtle" aria-hidden="true">·</span>

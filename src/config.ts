@@ -25,3 +25,6 @@ export const SUPABASE_PUBLIC = {
   url: 'https://smyolifxglszrskoulsg.supabase.co',
   publishableKey: 'sb_publishable_jTBivEfHg_WxXwfPf5-BKQ_HAXz2r-q',
 } as const;
+
+/** Холбоо барих и-мэйл — толгой, нүүр, хөл хэсэг, DELTA LIFT хуудсанд */
+export const CONTACT_EMAIL = 'sales@lift.mn';

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
-import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
+import { CONTACT_EMAIL, SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 interface FooterProps {
   onSelectSection: (section: ActiveSection) => void;
@@ -151,12 +151,8 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
                 <Mail className="w-4 h-4 text-brand shrink-0" />
                 <span>
                   И-мэйл:{' '}
-                  <a href="mailto:info@lift.mn" className="hover:text-brand underline">
-                    info@lift.mn
-                  </a>
-                  ,{' '}
-                  <a href="mailto:sales@lift.mn" className="hover:text-brand underline">
-                    sales@lift.mn
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-brand underline">
+                    {CONTACT_EMAIL}
                   </a>
                 </span>
               </div>
