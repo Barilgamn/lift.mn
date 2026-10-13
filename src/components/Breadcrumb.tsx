@@ -27,7 +27,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section, trail }) => {
           <li>
             <Link
               to={ROUTES.portal.path}
-              className="inline-flex items-center gap-1.5 text-ink-muted hover:text-brand-bright transition-colors"
+              className="inline-flex items-center gap-1.5 py-2.5 -my-2.5 text-ink-muted hover:text-brand-bright transition-colors"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{ROUTES.portal.label}</span>
@@ -40,7 +40,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ section, trail }) => {
             {trail ? (
               <Link
                 to={current.path}
-                className="font-bold text-ink-muted hover:text-brand-bright uppercase tracking-wider transition-colors"
+                className="inline-block py-2.5 -my-2.5 font-bold text-ink-muted hover:text-brand-bright uppercase tracking-wider transition-colors"
               >
                 {current.label}
               </Link>

@@ -192,7 +192,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           <div className="flex items-center rounded-lg bg-surface-2 border border-neutral-700 text-xs">
                             <button
                               onClick={() => onUpdateQuantity(item.part.id, item.quantity - 1)}
-                              className="px-2 py-1 text-ink-muted hover:text-white cursor-pointer"
+                              className="p-2.5 sm:px-2 sm:py-1 text-ink-muted hover:text-white cursor-pointer"
                             >
                               <Minus className="w-3 h-3" />
                             </button>
@@ -201,7 +201,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                             </span>
                             <button
                               onClick={() => onUpdateQuantity(item.part.id, item.quantity + 1)}
-                              className="px-2 py-1 text-ink-muted hover:text-white cursor-pointer"
+                              className="p-2.5 sm:px-2 sm:py-1 text-ink-muted hover:text-white cursor-pointer"
                             >
                               <Plus className="w-3 h-3" />
                             </button>
@@ -209,7 +209,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                           <button 
                             onClick={() => onRemoveItem(item.part.id)}
-                            className="p-1 text-ink-subtle hover:text-danger-soft transition ml-auto cursor-pointer"
+                            className="p-2.5 -m-1.5 sm:p-1 sm:m-0 text-ink-subtle hover:text-danger-soft transition ml-auto cursor-pointer"
                             title="Устгах"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

@@ -105,7 +105,7 @@ export const ProductPage: React.FC<{
       <Shell>
         <Link
           to={ROUTES.parts.path}
-          className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-brand-bright transition-colors mb-5"
+          className="inline-flex items-center gap-1.5 py-2.5 -my-2.5 text-xs text-ink-muted hover:text-brand-bright transition-colors mb-5"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Бүх сэлбэг
         </Link>
@@ -163,7 +163,7 @@ export const ProductPage: React.FC<{
                       type="button"
                       id="pq-open"
                       onClick={() => setQuote({})}
-                      className="font-sans text-xs font-bold underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer"
+                      className="font-sans text-xs font-bold underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer py-2.5 -my-2.5"
                     >
                       {productPriceLabel(part)}
                     </button>
@@ -231,7 +231,7 @@ export const ProductPage: React.FC<{
                           type="button"
                           onClick={() => setQuote({ variantId: v.id })}
                           aria-label={`${v.code} — үнийн санал авах`}
-                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer"
+                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer py-2.5 -my-2.5"
                         >
                           {priceLabel(v.price)}
                         </button>
@@ -309,7 +309,7 @@ export const ProductPage: React.FC<{
       {added && (
         <div
           role="status"
-          className="fixed bottom-6 right-6 z-40 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2"
+          className="fixed bottom-24 right-4 lg:bottom-6 lg:right-6 z-40 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2"
         >
           <CheckCircle2 className="w-4 h-4" />
           <span className="max-w-[60vw] truncate">"{added}" сагсанд нэмэгдлээ</span>

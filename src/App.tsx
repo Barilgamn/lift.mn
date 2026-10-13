@@ -42,7 +42,8 @@ const PageShell: React.FC<{
   cartCount: number;
   children: React.ReactNode;
 }> = ({ section, trail, onSelectSection, onOpenCart, cartCount, children }) => (
-  <div className="flex-1 flex flex-col">
+  // Утас, таблетад доод цэсний (MobileNav) өндрөөр зай авна
+  <div className="flex-1 flex flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] lg:pb-0">
     <Navbar
       activeSection={section}
       onSelectSection={onSelectSection}

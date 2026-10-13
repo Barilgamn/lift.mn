@@ -96,7 +96,7 @@ export const PriceQuoteModal: React.FC<{
             type="button"
             onClick={onClose}
             aria-label="Хаах"
-            className="p-1.5 rounded-lg hover:bg-surface-3 text-ink-muted cursor-pointer shrink-0"
+            className="w-10 h-10 -m-1.5 flex items-center justify-center rounded-lg hover:bg-surface-3 text-ink-muted cursor-pointer shrink-0"
           >
             <X className="w-4 h-4" />
           </button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { BookOpen, Building2, Wrench, ShoppingBag, ShoppingCart, PhoneCall } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
 import { CONTACT_EMAIL, SHOW_DELTA_LIFT } from '../config';
@@ -34,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   return (
+    <>
     <header className="sticky top-0 z-40 w-full bg-paper/95 backdrop-blur-md border-b border-line-light text-ink-dark shadow-sm">
       {/* Top emergency announcement bar */}
       <div className="bg-paper-3 border-b border-line-light py-1.5 px-4 text-xs">
@@ -50,7 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
             <a
               href="tel:+97695002222"
-              className="font-mono font-bold text-brand hover:text-brand-hover transition shrink-0"
+              className="font-mono font-bold text-brand hover:text-brand-hover transition shrink-0 py-1.5 -my-1.5 px-1 -mx-1"
             >
               9500-2222
             </a>
@@ -71,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           type="button"
           onClick={() => onSelectSection('portal')}
-          className="flex items-center shrink-0 cursor-pointer"
+          className="flex items-center shrink-0 cursor-pointer py-3 -my-3"
           title="Үндсэн портал хуудас руу буцах"
           aria-label="Үндсэн портал хуудас руу буцах"
         >
@@ -79,7 +80,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}
-        <nav className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl bg-paper-3 border border-line-light min-w-0 shrink">
+        {/* Дэлгэц дээр л харагдана — утас, таблетад доод цэс (MobileNav) ашиглана */}
+        <nav className="hidden lg:flex items-center gap-2 p-1 rounded-xl bg-paper-3 border border-line-light min-w-0 shrink">
           
           {/* Sub-site 1: DELTA LIFT — түр нуусан (src/config.ts) */}
           {SHOW_DELTA_LIFT && (
@@ -95,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Building2 className="w-4 h-4 shrink-0" />
-            <span className="hidden lg:inline">DELTA LIFT</span>
+            <span>DELTA LIFT</span>
           </button>
           )}
 
@@ -112,7 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <ShoppingBag className="w-4 h-4 shrink-0" />
-            <span className="hidden lg:inline">СЭЛБЭГ ХЭРЭГСЭЛ</span>
+            <span>СЭЛБЭГ ХЭРЭГСЭЛ</span>
           </button>
 
           {/* Sub-site 3: Засвар үйлчилгээ */}
@@ -128,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Wrench className="w-4 h-4 shrink-0" />
-            <span className="hidden lg:inline">ЗАСВАР ҮЙЛЧИЛГЭЭ</span>
+            <span>ЗАСВАР ҮЙЛЧИЛГЭЭ</span>
           </button>
 
           {/* Sub-site 4: Норм дүрэм, техникийн шийдлүүд */}
@@ -144,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <BookOpen className="w-4 h-4 shrink-0" />
-            <span className="hidden lg:inline">НОРМ ДҮРЭМ</span>
+            <span>НОРМ ДҮРЭМ</span>
           </button>
 
         </nav>
@@ -156,13 +158,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-cart-btn"
             onClick={onOpenCart}
-            className={`relative p-2.5 rounded-lg bg-paper-3 hover:bg-paper border text-brand transition hover:border-brand cursor-pointer ${
+            className={`relative p-3 lg:p-2.5 rounded-lg bg-paper-3 hover:bg-paper border text-brand transition hover:border-brand cursor-pointer ${
               bump ? 'border-brand animate-cart-ring' : 'border-line-light'
             }`}
             title="Сэлбэгийн сагс харах"
             aria-label={cartCount > 0 ? `Сэлбэгийн сагс харах (${cartCount} бараа)` : 'Сэлбэгийн сагс харах'}
           >
-            <ShoppingCart className="w-4 h-4" />
+            <ShoppingCart className="w-5 h-5 lg:w-4 lg:h-4" />
             {cartCount > 0 && (
               <span
                 className={`absolute -top-1.5 -right-1.5 bg-danger text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-md ${
@@ -177,5 +179,63 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
     </header>
+
+    {/*
+      * header-ийн гадна: backdrop-blur нь доторх fixed элементийг header-ээр
+      * хязгаарладаг тул доод цэс дэлгэцийн ёроолд биш header дотор гарна.
+      */}
+    <MobileNav activeSection={activeSection} onSelectSection={onSelectSection} />
+    </>
   );
 };
+
+const MOBILE_ITEMS: { section: ActiveSection; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { section: 'parts', label: 'Сэлбэг', icon: ShoppingBag },
+  { section: 'service', label: 'Засвар', icon: Wrench },
+  { section: 'standards', label: 'Норм дүрэм', icon: BookOpen },
+];
+
+/**
+ * Утас, таблетын доод цэс — эрхий хуруугаар хүрэхэд ойр, нэр бүхий товчнууд.
+ * Дээд цэсний жижиг дүрснүүдийг орлоно. Сагс дээд баруун буланд үлдэнэ.
+ */
+const MobileNav: React.FC<{
+  activeSection: ActiveSection;
+  onSelectSection: (section: ActiveSection) => void;
+}> = ({ activeSection, onSelectSection }) => (
+  <nav
+    id="mobile-nav"
+    aria-label="Үндсэн цэс"
+    className="lg:hidden fixed inset-x-0 bottom-0 z-40 bg-paper/95 backdrop-blur-md border-t border-line-light shadow-[0_-4px_16px_rgba(0,0,0,0.08)] pb-[env(safe-area-inset-bottom)]"
+  >
+    <div className="grid grid-cols-4 h-16 max-w-xl mx-auto">
+      {MOBILE_ITEMS.map(({ section, label, icon: Icon }) => {
+        const active = activeSection === section;
+        return (
+          <button
+            key={section}
+            id={`mnav-${section}`}
+            type="button"
+            onClick={() => onSelectSection(section)}
+            aria-current={active ? 'page' : undefined}
+            className={`relative flex flex-col items-center justify-center gap-1 text-[11px] font-bold cursor-pointer transition ${
+              active ? 'text-brand' : 'text-ink-dark-muted hover:text-brand'
+            }`}
+          >
+            {active && <span className="absolute top-0 inset-x-5 h-0.5 rounded-full bg-brand" />}
+            <Icon className="w-5 h-5" />
+            <span>{label}</span>
+          </button>
+        );
+      })}
+      <a
+        id="mnav-call"
+        href="tel:+97695002222"
+        className="flex flex-col items-center justify-center gap-1 text-[11px] font-bold text-red-700"
+      >
+        <PhoneCall className="w-5 h-5" />
+        <span>Залгах</span>
+      </a>
+    </div>
+  </nav>
+);

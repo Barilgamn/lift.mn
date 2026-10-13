@@ -290,7 +290,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
       
       {/* Toast alert */}
       {addedToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-24 right-4 lg:bottom-6 lg:right-6 z-50 bg-brand text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
           <CheckCircle2 className="w-4 h-4 text-neutral-950" />
           <span>{addedToast}</span>
           <button 
@@ -356,7 +356,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
             <Search className="absolute left-3.5 top-3 w-4 h-4 text-ink-subtle" />
             <input 
               type="text"
-              placeholder="Сэлбэгийн нэр эсвэл кодоор хайх (Жишээ: NICE, AT120, 10mm)..."
+              placeholder="Нэр эсвэл кодоор хайх (NICE, AT120…)"
+              aria-label="Сэлбэгийн нэр эсвэл кодоор хайх"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-3 border border-line text-ink text-xs placeholder:text-ink-subtle focus:border-brand-bright focus:outline-none"
@@ -475,7 +476,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                         <button
                           type="button"
                           onClick={() => setQuotePart(part)}
-                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer text-right"
+                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer text-right py-2.5 -my-2.5"
                         >
                           {productPriceLabel(part)}
                         </button>

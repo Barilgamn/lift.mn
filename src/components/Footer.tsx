@@ -18,7 +18,7 @@ interface FooterProps {
 
 /** Хөл хэсгийн холбоосуудад нэг загвар */
 const linkClass =
-  'flex items-center gap-1.5 text-left cursor-pointer text-ink-dark-muted hover:text-brand transition-colors';
+  'flex items-center gap-1.5 py-1.5 lg:py-0.5 text-left cursor-pointer text-ink-dark-muted hover:text-brand transition-colors';
 
 /** Баганын гарчиг */
 const ColumnTitle: React.FC<{ accent?: 'brand' | 'danger'; children: React.ReactNode }> = ({
@@ -149,7 +149,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
 
               <div className="flex items-center gap-2">
                 <PhoneCall className="w-4 h-4 text-brand shrink-0" />
-                <a href="tel:+97695002222" className="hover:text-brand transition-colors font-mono">
+                <a href="tel:+97695002222" className="py-2 -my-2 hover:text-brand transition-colors font-mono">
                   Утас: (+976) 9500-2222
                 </a>
               </div>
@@ -186,14 +186,13 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
             <span className="text-brand font-semibold">{SITE_NAME}</span>. Бүх эрх хуулиар
             хамгаалагдсан.
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-ink-dark-muted hover:text-brand cursor-pointer transition-colors">Нууцлалын бодлого</span>
-            <span aria-hidden="true">·</span>
-            <span className="text-ink-dark-muted hover:text-brand cursor-pointer transition-colors">Үйлчилгээний нөхцөл</span>
-            <span aria-hidden="true">·</span>
-            <span className="text-ink-dark-muted hover:text-brand cursor-pointer transition-colors">
-              Аюулгүй ажиллагааны зааварчилгаа
-            </span>
+          {/* Хуудас нь хараахан бэлэн биш тул холбоос биш, энгийн бичвэр */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-dark-muted">
+            <span>Нууцлалын бодлого</span>
+            <span aria-hidden="true" className="hidden sm:inline">·</span>
+            <span>Үйлчилгээний нөхцөл</span>
+            <span aria-hidden="true" className="hidden sm:inline">·</span>
+            <span>Аюулгүй ажиллагааны зааварчилгаа</span>
           </div>
         </div>
       </div>
