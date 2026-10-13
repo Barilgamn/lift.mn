@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           title="Үндсэн портал хуудас руу буцах"
           aria-label="Үндсэн портал хуудас руу буцах"
         >
-          <LiftMnLogo className="h-5 sm:h-6 lg:h-7" />
+          <LiftMnLogo className="h-5 sm:h-6 lg:h-7" beta="sm" />
         </button>
 
         {/* Center: The 3 Core Sub-Sites Switcher */}

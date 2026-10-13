@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
           {/* 1. Компани */}
           <div>
             <div className="mb-4">
-              <LiftMnLogo className="h-8" />
+              <LiftMnLogo className="h-8" beta="sm" />
             </div>
             <p className="text-xs leading-relaxed mb-4">
               {SHOW_DELTA_LIFT

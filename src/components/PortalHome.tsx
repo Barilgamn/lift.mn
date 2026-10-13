@@ -37,7 +37,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 border-b border-line-light bg-paper shrink-0 shadow-sm"
       >
         <div className="flex items-center gap-3 sm:gap-4">
-          <LiftMnLogo className="h-7 sm:h-9" />
+          <LiftMnLogo className="h-7 sm:h-9" beta="lg" />
           <div className="hidden md:block h-7 w-px bg-line-light" />
           <span className="hidden md:inline text-xs lg:text-sm font-bold tracking-widest text-ink-dark-muted uppercase">
             МОНГОЛЫН ЛИФТ, ЭСКАЛАТОРЫН НЭГДСЭН ЦАХИМ ТАЛБАР
@@ -75,7 +75,10 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
            */
           className={`md:order-2 ${
             NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : 'md:border-l md:border-line'
-          } group relative flex-1 md:flex-[1.32] flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.45]`}
+          } group relative flex-1 ${
+            // Хоёр карттай үед тэнцүү өргөнтэй; гурвуулаа байхад Сэлбэг давамгай
+            NARROW ? 'md:basis-0' : 'md:flex-[1.32] md:hover:flex-[1.45]'
+          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
         >
           {/* Background Image */}
           <div 
@@ -155,7 +158,9 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           tabIndex={0}
           className={`md:order-1 border-t border-line md:border-t-0 ${
             NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : ''
-          } group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]`}
+          } group relative flex-1 ${
+            NARROW ? 'md:basis-0' : 'md:hover:flex-[1.12]'
+          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
         >
           {/* Background Image */}
           <div 

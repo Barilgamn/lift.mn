@@ -28,3 +28,6 @@ export const SUPABASE_PUBLIC = {
 
 /** Холбоо барих и-мэйл — толгой, нүүр, хөл хэсэг, DELTA LIFT хуудсанд */
 export const CONTACT_EMAIL = 'sales@lift.mn';
+
+/** Логоны ард "BETA" тэмдэг харуулах эсэх — албан ёсоор нээхэд `false` болгоно */
+export const SHOW_BETA = true;
