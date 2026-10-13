@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { submitForm } from '../lib/submitForm';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { ProductImage } from './ProductImage';
-import { productPriceLabel } from '../lib/variants';
+import { hasPrice, productPriceLabel } from '../lib/variants';
+import { PriceQuoteModal } from './PriceQuoteModal';
 import { flyToCart } from '../lib/flyToCart';
 import {
   ShoppingBag,
@@ -46,6 +47,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
   const [sourceSending, setSourceSending] = useState(false);
   const [sourceError, setSourceError] = useState('');
   const [addedToast, setAddedToast] = useState<string | null>(null);
+  /** Үнийн санал хүсэх цонх нээгдсэн бараа */
+  const [quotePart, setQuotePart] = useState<SparePart | null>(null);
 
   const categories = [
     { key: 'all', label: 'Бүх ангилал' },
@@ -478,9 +481,19 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       <span className="text-xs text-ink-subtle shrink-0">
                         {part.variants?.length ? `${part.variants.length} загвар` : 'Үнэ:'}
                       </span>
-                      <span className="text-sm font-black text-accent-ink font-mono text-right">
-                        {productPriceLabel(part)}
-                      </span>
+                      {hasPrice(part) ? (
+                        <span className="text-sm font-black text-accent-ink font-mono text-right">
+                          {productPriceLabel(part)}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setQuotePart(part)}
+                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer text-right"
+                        >
+                          {productPriceLabel(part)}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -529,7 +542,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
         </div>
       </section>
 
-
+      {quotePart && <PriceQuoteModal part={quotePart} onClose={() => setQuotePart(null)} />}
     </div>
   );
 };

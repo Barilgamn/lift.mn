@@ -26,6 +26,7 @@ const AdminSubmissions = lazy(() => import('./components/admin/AdminSubmissions'
 const AdminMap = lazy(() => import('./components/admin/AdminMap'));
 const AdminElevators = lazy(() => import('./components/admin/AdminElevators'));
 const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
+const AdminQuotes = lazy(() => import('./components/admin/AdminQuotes'));
 import { CartDrawer } from './components/CartDrawer';
 import { ProductPage } from './components/ProductPage';
 
@@ -216,6 +217,7 @@ export default function App() {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="submissions" element={<AdminSubmissions />} />
+          <Route path="quotes" element={<AdminQuotes />} />
           <Route path="map" element={<AdminMap />} />
           <Route path="elevators" element={<AdminElevators />} />
           <Route path="products" element={<AdminProducts />} />

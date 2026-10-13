@@ -5,7 +5,8 @@ import { SparePart } from '../types';
 import { useProducts } from '../lib/useProducts';
 import { ProductImage } from './ProductImage';
 import { ImageZoom, ZoomableImage } from './ImageZoom';
-import { priceLabel, productPriceLabel, variantAsPart } from '../lib/variants';
+import { hasPrice, priceLabel, productPriceLabel, variantAsPart } from '../lib/variants';
+import { PriceQuoteModal } from './PriceQuoteModal';
 import { ROUTES, productPath } from '../routes';
 import { flyToCart } from '../lib/flyToCart';
 
@@ -38,6 +39,8 @@ export const ProductPage: React.FC<{
   const { products, loading } = useProducts();
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const [added, setAdded] = useState<string | null>(null);
+  /** Үнийн санал хүсэх цонх — загвараас дарсан бол тэр загварын дугаар */
+  const [quote, setQuote] = useState<{ variantId?: string } | null>(null);
 
   const part = useMemo(() => products.find((p) => p.id === productId), [products, productId]);
   const suggestions = useMemo(
@@ -153,7 +156,18 @@ export const ProductPage: React.FC<{
                   {variants.length ? 'Үнийн хязгаар' : 'Нэгжийн үнэ'}
                 </dt>
                 <dd className="font-black text-accent-ink font-mono text-right">
-                  {productPriceLabel(part)}
+                  {hasPrice(part) ? (
+                    productPriceLabel(part)
+                  ) : (
+                    <button
+                      type="button"
+                      id="pq-open"
+                      onClick={() => setQuote({})}
+                      className="font-sans text-xs font-bold underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer"
+                    >
+                      {productPriceLabel(part)}
+                    </button>
+                  )}
                 </dd>
               </div>
             </dl>
@@ -208,9 +222,20 @@ export const ProductPage: React.FC<{
                     </div>
                     <div className="text-[11px] text-ink-muted line-clamp-2">{v.name}</div>
                     <div className="mt-1 flex items-baseline gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-accent-ink font-mono">
-                        {priceLabel(v.price)}
-                      </span>
+                      {v.price > 0 ? (
+                        <span className="text-xs font-bold text-accent-ink font-mono">
+                          {priceLabel(v.price)}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setQuote({ variantId: v.id })}
+                          aria-label={`${v.code} — үнийн санал авах`}
+                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer"
+                        >
+                          {priceLabel(v.price)}
+                        </button>
+                      )}
                       {v.stockCount > 0 ? (
                         <span className="text-[10px] text-success">Бэлэн ({v.stockCount})</span>
                       ) : (
@@ -238,8 +263,9 @@ export const ProductPage: React.FC<{
             </ul>
 
             <p className="mt-3 text-[11px] text-ink-subtle leading-relaxed">
-              Зураг дээр дарвал томроно. "Үнэ тохиролцоно" гэсэн загварыг сагсанд нэмээд
-              захиалга илгээвэл менежер үнийн санал буцаан илгээнэ.
+              Зураг дээр дарвал томроно. Үнэ тавигдаагүй загвар дээр "Үнийн санал авах"
+              дарж хүсэлт үлдээвэл менежер үнийг тогтоогоод тантай холбогдоно. Олон загварыг
+              сагсанд хамт нэмж захиалж бас болно.
             </p>
           </section>
         )}
@@ -291,6 +317,9 @@ export const ProductPage: React.FC<{
       )}
 
       {zoom && <ImageZoom src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
+      {quote && part && (
+        <PriceQuoteModal part={part} variantId={quote.variantId} onClose={() => setQuote(null)} />
+      )}
     </>
   );
 };

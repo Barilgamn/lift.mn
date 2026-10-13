@@ -3,6 +3,8 @@ import { Search, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { Submission, SubmissionKind, SubmissionStatus } from '../../types';
 import { Badge, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './adminUi';
+import { Link } from 'react-router-dom';
+import { isPriceQuote, isPublicDetailKey } from '../../lib/priceQuote';
 
 const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
   { value: 'all', label: 'Бүгд' },
@@ -36,7 +38,8 @@ export const AdminSubmissions: React.FC = () => {
   // Хавсаргасан зургийг (data: угтвартай) текст талбаруудаас салгана —
   // эс бөгөөс base64 мөр нь дэлгэрэнгүй цонхыг дүүргэнэ.
   const [textDetails, photoDetails] = useMemo(() => {
-    const entries = Object.entries(open?.details ?? {});
+    // `_`-ээр эхэлсэн нь программын дотоод талбар (жишээ нь админы үнэ) — нууна
+    const entries = Object.entries(open?.details ?? {}).filter(([k]) => isPublicDetailKey(k));
     return [
       entries.filter(([, v]) => !String(v).startsWith('data:image/')),
       entries.filter(([, v]) => String(v).startsWith('data:image/')),
@@ -195,6 +198,14 @@ export const AdminSubmissions: React.FC = () => {
 
             <div className="px-5 py-4">
               <p className="text-sm font-semibold text-ink-dark">{open.summary}</p>
+              {isPriceQuote(open) && (
+                <Link
+                  to="/admin/quotes"
+                  className="mt-2 inline-flex items-center h-8 px-3 rounded-lg bg-brand text-white text-xs font-bold hover:bg-brand-hover"
+                >
+                  "Үнийн санал" хэсэгт нээж үнэ өгөх →
+                </Link>
+              )}
               <p className="mt-1 text-xs text-ink-dark-muted">
                 {open.contactName} · <a href={`tel:${open.phone.replace(/\D/g, '')}`} className="font-mono hover:text-brand">{open.phone}</a> · {open.createdAt}
               </p>

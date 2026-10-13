@@ -40,6 +40,14 @@ interface AdminStore {
   products: SparePart[];
 
   setSubmissionStatus: (id: string, status: SubmissionStatus) => Promise<string | null>;
+  /**
+   * Хүсэлтийн details-д талбар нэмж/шинэчилж, хүсвэл төлөвийг нь солино.
+   * Үнийн саналд админы тогтоосон үнэ, тэмдэглэлийг хадгалахад ашиглана.
+   */
+  updateSubmission: (
+    id: string,
+    patch: { details?: Record<string, string>; status?: SubmissionStatus }
+  ) => Promise<string | null>;
   addServiceRecord: (record: Omit<ServiceRecord, 'id'> & { id?: string }) => Promise<string | null>;
   addElevator: (elevator: Omit<Elevator, 'id'> & { id?: string }) => Promise<string | null>;
   updateElevator: (id: string, patch: Partial<Elevator>) => Promise<string | null>;
@@ -172,6 +180,26 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return null;
   }, []);
 
+  const updateSubmission = useCallback(async (
+    id: string,
+    patch: { details?: Record<string, string>; status?: SubmissionStatus }
+  ) => {
+    const current = submissions.find((x) => x.id === id);
+    if (!current) return 'Хүсэлт олдсонгүй';
+    // details нь jsonb — хэрэглэгчийн бөглөсөн талбаруудыг хадгалж,
+    // админы талбаруудыг дээр нь нэмнэ
+    const details = { ...current.details, ...(patch.details ?? {}) };
+    const row: Record<string, unknown> = { details };
+    if (patch.status) row.status = patch.status;
+    const sb = await getSupabase();
+    const { error } = await sb.from('submissions').update(row).eq('id', id);
+    if (error) return friendlyError(error);
+    setSubmissions((prev) =>
+      prev.map((x) => (x.id === id ? { ...x, details, status: patch.status ?? x.status } : x))
+    );
+    return null;
+  }, [submissions]);
+
   const addServiceRecord = useCallback(async (record: Omit<ServiceRecord, 'id'> & { id?: string }) => {
     const sb = await getSupabase();
     const { data, error } = await sb.from('service_records').insert(recordToRow(record)).select().single();
@@ -233,9 +261,11 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     status, user, notConfigured: !isSupabaseConfigured, loadError,
     login, logout,
     elevators, serviceRecords, submissions, products,
-    setSubmissionStatus, addServiceRecord, addElevator, updateElevator, saveProduct, deleteProduct,
+    setSubmissionStatus, updateSubmission, addServiceRecord, addElevator, updateElevator,
+    saveProduct, deleteProduct,
   }), [status, user, loadError, login, logout, elevators, serviceRecords, submissions, products,
-       setSubmissionStatus, addServiceRecord, addElevator, updateElevator, saveProduct, deleteProduct]);
+       setSubmissionStatus, updateSubmission, addServiceRecord, addElevator, updateElevator,
+       saveProduct, deleteProduct]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };

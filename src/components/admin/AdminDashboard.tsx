@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowUpDown, ClipboardList, Package, Wrench } from 'lucide-react';
+import { AlertTriangle, ArrowUpDown, ClipboardList, Package, Tag, Wrench } from 'lucide-react';
+import { isPriceQuote } from '../../lib/priceQuote';
 import { useAdminStore } from '../../store/adminStore';
 import { Badge, ELEVATOR_STATUS, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './adminUi';
 
@@ -30,6 +31,7 @@ export const AdminDashboard: React.FC = () => {
   const { submissions, elevators, serviceRecords, products } = useAdminStore();
 
   const newCount = submissions.filter((s) => s.status === 'new').length;
+  const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
   const faults = elevators.filter((e) => e.status === 'fault' || e.status === 'offline');
   const lowStock = products.filter((p) => p.stockCount > 0 && p.stockCount <= 5);
   const outOfStock = products.filter((p) => p.stockCount === 0);
@@ -43,6 +45,22 @@ export const AdminDashboard: React.FC = () => {
         title="Хяналтын самбар"
         lead="Шинэ хүсэлт, анхаарал шаардсан тоноглол, нөөцийн байдал."
       />
+
+      {openQuotes > 0 && (
+        <Link
+          id="dash-quotes"
+          to="/admin/quotes"
+          className="mb-4 flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 hover:border-amber-400 transition-colors"
+        >
+          <span className="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
+            <Tag className="w-4 h-4" />
+          </span>
+          <span className="flex-1 text-sm text-amber-900">
+            <strong>{openQuotes}</strong> хариулаагүй үнийн санал байна — үнэ тогтоогоод хэрэглэгч рүү залгана уу.
+          </span>
+          <span className="text-xs font-bold text-amber-900 shrink-0">Нээх →</span>
+        </Link>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard to="/admin/submissions" icon={ClipboardList} value={newCount}

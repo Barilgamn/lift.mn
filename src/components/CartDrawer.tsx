@@ -49,6 +49,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const subtotal = cartItems.reduce((sum, item) => sum + item.part.price * item.quantity, 0);
   const vat = Math.round(subtotal * 0.1);
   const total = subtotal + vat;
+  /** Үнэ тавигдаагүй бараа — дүнд ороогүй, менежер үнийн санал өгнө */
+  const unpriced = cartItems.filter((item) => item.part.price <= 0).length;
 
   const PAYMENT_LABELS: Record<string, string> = {
     invoice: 'Нэхэмжлэхээр',
@@ -67,7 +69,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
     // Захиалгын мөр бүрийг админд уншигдахаар бичнэ
     const lines = cartItems
-      .map((item) => `${item.part.name} × ${item.quantity} = ${(item.part.price * item.quantity).toLocaleString()}₮`)
+      .map((item) =>
+        item.part.price > 0
+          ? `${item.part.name} × ${item.quantity} = ${(item.part.price * item.quantity).toLocaleString()}₮`
+          : `${item.part.name} × ${item.quantity} = үнийн санал хүлээж буй`
+      )
       .join('\n');
 
     const result = await submitForm('order', {
@@ -85,6 +91,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         'Дүн (НӨАТ-гүй)': `${subtotal.toLocaleString()}₮`,
         'НӨАТ': `${vat.toLocaleString()}₮`,
         'Нийт': `${total.toLocaleString()}₮`,
+        'Үнийн санал хүлээж буй': unpriced ? `${unpriced} бараа` : undefined,
       },
     });
 
@@ -165,7 +172,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           Код: {item.part.oemCode}
                         </div>
                         <div className="text-xs font-bold text-neutral-200 mt-1">
-                          {item.part.price.toLocaleString()} ₮
+                          {item.part.price > 0 ? (
+                            `${item.part.price.toLocaleString()} ₮`
+                          ) : (
+                            <span className="text-accent-ink">Үнийн санал</span>
+                          )}
                         </div>
 
                         {/* Quantity selector */}
@@ -424,6 +435,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <span>Нийт төлөх:</span>
                 <span className="text-accent-ink font-mono text-base">{total.toLocaleString()} ₮</span>
               </div>
+              {unpriced > 0 && (
+                <p id="cart-unpriced-note" className="pt-1 text-[11px] text-ink-subtle leading-relaxed">
+                  {unpriced} барааны үнэ дүнд ороогүй — захиалга илгээсний дараа менежер
+                  үнийн санал өгнө.
+                </p>
+              )}
             </div>
 
             <button

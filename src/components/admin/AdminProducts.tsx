@@ -32,7 +32,7 @@ const emptyProduct = (): SparePart => ({
  * Бүтээгдэхүүний доторх загваруудыг засах хэсэг.
  *
  * Загвар бүрийн код, нэр, брэнд, үнэ, нөөц, зургийг тусад нь тохируулна.
- * Үнийг 0 орхивол сайт дээр "үнэ тохиролцоно" гэж харагдана.
+ * Үнийг 0 орхивол сайт дээр "Үнийн санал авах" товч харагдана.
  */
 const VariantEditor: React.FC<{
   variants: ProductVariant[];
@@ -135,7 +135,7 @@ const VariantEditor: React.FC<{
                     </span>
                     <input type="number" min={0} value={v.price}
                       onChange={(e) => patch(v.id, { price: Number(e.target.value) })}
-                      placeholder="0 = тохиролцоно" aria-label={`${i + 1}-р загварын үнэ`}
+                      placeholder="0 = үнийн санал" aria-label={`${i + 1}-р загварын үнэ`}
                       className={`${cell} font-mono w-full`} />
                   </label>
                   <label className="block">
@@ -170,7 +170,7 @@ const VariantEditor: React.FC<{
 
       {variants.length > 0 && (
         <p className="mt-2 text-[11px] text-ink-dark-subtle leading-relaxed">
-          Үнийг 0 орхивол сайт дээр "Үнэ тохиролцоно" гэж харагдана. Нөөц 0 бол
+          Үнийг 0 орхивол сайт дээр "Үнийн санал авах" товч гарч, хүсэлт нь "Үнийн санал" хэсэгт ирнэ. Нөөц 0 бол
           "Захиалгаар" гэж тэмдэглэгдэнэ.
         </p>
       )}

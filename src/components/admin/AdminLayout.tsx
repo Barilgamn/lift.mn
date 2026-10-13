@@ -9,7 +9,9 @@ import {
   LogOut,
   Map as MapIcon,
   Package,
+  Tag,
 } from 'lucide-react';
+import { isPriceQuote } from '../../lib/priceQuote';
 import { AdminStoreProvider, useAdminStore } from '../../store/adminStore';
 import { LiftMnLogo } from '../LiftMnLogo';
 import { AdminLogin } from './AdminLogin';
@@ -17,13 +19,16 @@ import { AdminLogin } from './AdminLogin';
 export const ADMIN_NAV = [
   { to: '/admin', end: true, label: 'Хяналтын самбар', icon: LayoutDashboard },
   { to: '/admin/submissions', label: 'Бүртгэлүүд', icon: ClipboardList },
+  { to: '/admin/quotes', label: 'Үнийн санал', icon: Tag, badge: 'quotes' as const },
   { to: '/admin/map', label: 'Газрын зураг', icon: MapIcon },
   { to: '/admin/elevators', label: 'Лифтүүд', icon: ArrowUpDown },
   { to: '/admin/products', label: 'Бүтээгдэхүүн', icon: Package },
 ];
 
 const AdminChrome: React.FC = () => {
-  const { user, logout, loadError } = useAdminStore();
+  const { user, logout, loadError, submissions } = useAdminStore();
+  /** Хариулаагүй үнийн саналын тоо — цэсэн дээр тэмдэглэгээ болно */
+  const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
 
   return (
     <div className="theme-light min-h-dvh bg-surface-2 text-ink flex flex-col">
@@ -64,7 +69,7 @@ const AdminChrome: React.FC = () => {
 
         <nav className="px-2 sm:px-4 border-t border-line-light overflow-x-auto">
           <ul className="flex items-center gap-1 min-w-max">
-            {ADMIN_NAV.map(({ to, end, label, icon: Icon }) => (
+            {ADMIN_NAV.map(({ to, end, label, icon: Icon, badge }) => (
               <li key={to}>
                 <NavLink
                   to={to}
@@ -79,6 +84,15 @@ const AdminChrome: React.FC = () => {
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   {label}
+                  {badge === 'quotes' && openQuotes > 0 && (
+                    <span
+                      id="nav-quotes-badge"
+                      aria-label={`${openQuotes} хариулаагүй`}
+                      className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black tabular-nums"
+                    >
+                      {openQuotes}
+                    </span>
+                  )}
                 </NavLink>
               </li>
             ))}

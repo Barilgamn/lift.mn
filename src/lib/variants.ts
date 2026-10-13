@@ -1,4 +1,5 @@
 import type { ProductVariant, SparePart } from '../types';
+import { QUOTE_LABEL } from './priceQuote';
 
 /**
  * Хувилбарыг сагсанд нэмэхэд бэлтгэх.
@@ -31,16 +32,21 @@ export function priceRange(variants?: ProductVariant[]): { min: number; max: num
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
 
-/** Үнийг харуулах бичиг. 0 бол тохиролцоно. */
+/** Үнийг харуулах бичиг. 0 бол үнийн санал авах товч гарна. */
 export function priceLabel(price: number): string {
-  return price > 0 ? `${price.toLocaleString()} ₮` : 'Үнэ тохиролцоно';
+  return price > 0 ? `${price.toLocaleString()} ₮` : QUOTE_LABEL;
+}
+
+/** Үнэ тавигдсан эсэх — үгүй бол "Үнийн санал авах" товч харуулна */
+export function hasPrice(part: SparePart): boolean {
+  return part.variants?.length ? priceRange(part.variants) !== null : part.price > 0;
 }
 
 /** Карт дээр харуулах үнийн бичиг — хувилбартай бол хязгаараар */
 export function productPriceLabel(part: SparePart): string {
   if (part.variants?.length) {
     const r = priceRange(part.variants);
-    if (!r) return 'Үнэ тохиролцоно';
+    if (!r) return QUOTE_LABEL;
     return r.min === r.max
       ? priceLabel(r.min)
       : `${r.min.toLocaleString()} – ${r.max.toLocaleString()} ₮`;

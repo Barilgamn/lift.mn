@@ -23,7 +23,7 @@ export interface ProductVariant {
   code: string;
   name: string;
   brand: string;
-  /** 0 бол "үнэ тохиролцоно" гэж харуулна */
+  /** 0 бол "Үнийн санал авах" товч харуулна */
   price: number;
   stockCount: number;
   image: string;
