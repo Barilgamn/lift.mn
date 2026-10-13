@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { SERVICE_BRANDS } from '../data/brands';
 import { submitForm, HOTLINE } from '../lib/submitForm';
 import { SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
@@ -140,7 +141,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
   const [phone, setPhone] = useState('');
   const [district, setDistrict] = useState('Хан-Уул дүүрэг');
   const [address, setAddress] = useState('');
-  const [brand, setBrand] = useState('OTIS');
+  const [brand, setBrand] = useState(SERVICE_BRANDS[0].value);
   const [issueType, setIssueType] = useState('Хаалга гацах / Нээгдэхгүй байх');
   const [urgency, setUrgency] = useState<'low' | 'medium' | 'high'>('high');
   const [details, setDetails] = useState('');
@@ -572,11 +573,9 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                         onChange={(e) => setBrand(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                       >
-                        <option value="OTIS">OTIS Elevator</option>
-                        <option value="Mitsubishi">Mitsubishi Electric</option>
-                        <option value="Hyundai">Hyundai Elevator</option>
-                        <option value="Sigma">Sigma / LG</option>
-                        <option value="Delta">Delta Line / Бусад</option>
+                        {SERVICE_BRANDS.map((b) => (
+                          <option key={b.value} value={b.value}>{b.label}</option>
+                        ))}
                       </select>
                     </div>
                     <div>

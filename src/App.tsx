@@ -13,6 +13,7 @@ import { Breadcrumb } from './components/Breadcrumb';
 import { Footer } from './components/Footer';
 import { DeltaLiftView } from './components/DeltaLiftView';
 import { ServiceView } from './components/ServiceView';
+import { StandardsView } from './components/StandardsView';
 import { PartsView } from './components/PartsView';
 import { EmergencyModal } from './components/EmergencyModal';
 
@@ -202,6 +203,20 @@ export default function App() {
               cartCount={totalCartCount}
             >
               <ServiceView onOpenEmergency={() => setIsEmergencyOpen(true)} />
+            </PageShell>
+          }
+        />
+
+        <Route
+          path={ROUTES.standards.path}
+          element={
+            <PageShell
+              section="standards"
+              onSelectSection={handleSelectSection}
+              onOpenCart={() => setIsCartOpen(true)}
+              cartCount={totalCartCount}
+            >
+              <StandardsView />
             </PageShell>
           }
         />

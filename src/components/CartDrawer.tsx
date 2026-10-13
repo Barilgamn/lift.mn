@@ -14,6 +14,10 @@ import {
   CreditCard 
 } from 'lucide-react';
 import { CartItem } from '../types';
+import { SHOW_PRICES } from '../config';
+
+/** Сагсанд өмнө нь үнэтэй хадгалагдсан бараа ч SHOW_PRICES унтраалттай үед үнэгүй тооцогдоно */
+const priceOf = (item: CartItem) => (SHOW_PRICES ? item.part.price : 0);
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -46,11 +50,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.part.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + priceOf(item) * item.quantity, 0);
   const vat = Math.round(subtotal * 0.1);
   const total = subtotal + vat;
   /** Үнэ тавигдаагүй бараа — дүнд ороогүй, менежер үнийн санал өгнө */
-  const unpriced = cartItems.filter((item) => item.part.price <= 0).length;
+  const unpriced = cartItems.filter((item) => priceOf(item) <= 0).length;
+  /** Бүх бараа үнэгүй — сагс нь үнийн санал хүсэх жагсаалт болно (дүн, төлбөр харуулахгүй) */
+  const quoteOnly = cartItems.length > 0 ? unpriced === cartItems.length : !SHOW_PRICES;
 
   const PAYMENT_LABELS: Record<string, string> = {
     invoice: 'Нэхэмжлэхээр',
@@ -70,8 +76,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     // Захиалгын мөр бүрийг админд уншигдахаар бичнэ
     const lines = cartItems
       .map((item) =>
-        item.part.price > 0
-          ? `${item.part.name} × ${item.quantity} = ${(item.part.price * item.quantity).toLocaleString()}₮`
+        priceOf(item) > 0
+          ? `${item.part.name} × ${item.quantity} = ${(priceOf(item) * item.quantity).toLocaleString()}₮`
           : `${item.part.name} × ${item.quantity} = үнийн санал хүлээж буй`
       )
       .join('\n');
@@ -80,17 +86,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       contactName: clientType === 'company' ? companyName : '',
       phone,
       photos: orderPhotos.map((p) => p.dataUrl),
-      summary: `${cartItems.length} нэр төрөл · ${total.toLocaleString()}₮`,
+      summary: quoteOnly
+        ? `${cartItems.length} нэр төрөл · үнийн санал хүсэв`
+        : `${cartItems.length} нэр төрөл · ${total.toLocaleString()}₮`,
       details: {
         'Харилцагчийн төрөл': clientType === 'company' ? 'Байгууллага' : 'Хувь хүн',
         'Байгууллагын нэр': companyName,
         'Регистр': registerNo,
         'Хүргэлтийн хаяг': deliveryAddress,
-        'Төлбөрийн хэлбэр': PAYMENT_LABELS[paymentMethod] ?? paymentMethod,
+        'Төлбөрийн хэлбэр': quoteOnly ? undefined : PAYMENT_LABELS[paymentMethod] ?? paymentMethod,
         'Захиалга': lines,
-        'Дүн (НӨАТ-гүй)': `${subtotal.toLocaleString()}₮`,
-        'НӨАТ': `${vat.toLocaleString()}₮`,
-        'Нийт': `${total.toLocaleString()}₮`,
+        'Дүн (НӨАТ-гүй)': quoteOnly ? undefined : `${subtotal.toLocaleString()}₮`,
+        'НӨАТ': quoteOnly ? undefined : `${vat.toLocaleString()}₮`,
+        'Нийт': quoteOnly ? undefined : `${total.toLocaleString()}₮`,
         'Үнийн санал хүлээж буй': unpriced ? `${unpriced} бараа` : undefined,
       },
     });
@@ -127,8 +135,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <ShoppingBag className="w-5 h-5 text-accent-ink" />
             <h2 className="text-base font-bold tracking-tight">
               {step === 'cart' && `Таны Сэлбэгийн Сагс (${cartItems.length})`}
-              {step === 'checkout' && 'Захиалга Баталгаажуулах'}
-              {step === 'success' && 'Захиалга Баталгаажлаа'}
+              {step === 'checkout' && (quoteOnly ? 'Үнийн санал хүсэх' : 'Захиалга Баталгаажуулах')}
+              {step === 'success' && (quoteOnly ? 'Хүсэлт илгээгдлээ' : 'Захиалга Баталгаажлаа')}
             </h2>
           </div>
           <button 
@@ -172,8 +180,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           Код: {item.part.oemCode}
                         </div>
                         <div className="text-xs font-bold text-neutral-200 mt-1">
-                          {item.part.price > 0 ? (
-                            `${item.part.price.toLocaleString()} ₮`
+                          {priceOf(item) > 0 ? (
+                            `${priceOf(item).toLocaleString()} ₮`
                           ) : (
                             <span className="text-accent-ink">Үнийн санал</span>
                           )}
@@ -313,6 +321,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 hint="Одоо ашиглаж байгаа сэлбэг, пайз дээрх код эсвэл суурилуулах хэсгийн зураг хавсаргавал зөв загварыг баталгаажуулахад тусална."
               />
 
+              {!quoteOnly && (
               <div>
                 <label className="block font-semibold text-ink-muted mb-1">
                   Төлбөрийн хэлбэр
@@ -352,6 +361,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   </label>
                 </div>
               </div>
+              )}
 
               {orderError && (
                 <p role="alert" className="text-[11px] text-danger-soft leading-relaxed">
@@ -368,7 +378,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <span>
                     {orderSending
                       ? 'Илгээж байна…'
-                      : `Захиалга баталгаажуулах (${total.toLocaleString()} ₮)`}
+                      : quoteOnly
+                        ? 'Үнийн санал хүсэх'
+                        : `Захиалга баталгаажуулах (${total.toLocaleString()} ₮)`}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -386,11 +398,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   {orderNumber}
                 </span>
                 <h3 className="text-xl font-black text-white mt-1">
-                  Захиалга амжилттай бүртгэгдлээ!
+                  {quoteOnly ? 'Үнийн санал хүсэлт илгээгдлээ!' : 'Захиалга амжилттай бүртгэгдлээ!'}
                 </h3>
               </div>
               <p className="text-xs text-ink-muted leading-relaxed max-w-sm mx-auto">
-                Таны захиалгыг манай сэлбэгийн менежер хүлээн авлаа. Таны <strong className="text-accent-ink">{phone}</strong> дугаар луу нэхэмжлэх болон хүргэлтийн товч мэдээллийг 15 минутын дотор илгээх болно.
+                {quoteOnly ? (
+                  <>Манай сэлбэгийн менежер барааны үнэ, нөөц, хүргэлтийн хугацааг тодруулаад таны <strong className="text-accent-ink">{phone}</strong> дугаарт холбогдож үнийн санал өгнө.</>
+                ) : (
+                  <>Таны захиалгыг манай сэлбэгийн менежер хүлээн авлаа. Таны <strong className="text-accent-ink">{phone}</strong> дугаар луу нэхэмжлэх болон хүргэлтийн товч мэдээллийг 15 минутын дотор илгээх болно.</>
+                )}
               </p>
 
               <div className="p-3.5 rounded-xl bg-surface-3 border border-neutral-700 text-left text-xs space-y-1 text-ink-muted">
@@ -398,14 +414,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <span className="text-ink-muted">Захиалгын дугаар:</span>
                   <span className="font-mono font-bold text-white">{orderNumber}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-ink-muted">Төлбөрийн хэлбэр:</span>
-                  <span className="text-accent-ink font-semibold">{paymentMethod.toUpperCase()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-ink-muted">Нийт дүн (НӨАТ орсон):</span>
-                  <span className="font-bold text-success">{total.toLocaleString()} ₮</span>
-                </div>
+                {!quoteOnly && (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-ink-muted">Төлбөрийн хэлбэр:</span>
+                      <span className="text-accent-ink font-semibold">{paymentMethod.toUpperCase()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-ink-muted">Нийт дүн (НӨАТ орсон):</span>
+                      <span className="font-bold text-success">{total.toLocaleString()} ₮</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               <button
@@ -422,6 +442,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         {/* Drawer Footer (Subtotal & Proceed button) */}
         {step === 'cart' && cartItems.length > 0 && (
           <div className="p-4 sm:p-5 border-t border-line bg-surface-0 space-y-3">
+            {quoteOnly ? (
+              <p id="cart-quote-note" className="text-[11px] text-ink-muted leading-relaxed">
+                Сонгосон {cartItems.length} нэр төрлийн барааны үнэ, нөөц, хүргэлтийн хугацааг
+                менежер тодруулж, таны утсанд үнийн санал илгээнэ.
+              </p>
+            ) : (
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between text-ink-muted">
                 <span>Барааны дүн:</span>
@@ -442,12 +468,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </p>
               )}
             </div>
+            )}
 
             <button
               onClick={() => setStep('checkout')}
               className="w-full py-3 px-4 rounded-xl bg-accent hover:bg-amber-300 text-neutral-950 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-400/20"
             >
-              <span>Худалдан авах / Захиалах</span>
+              <span>{quoteOnly ? 'Үнийн санал хүсэх' : 'Худалдан авах / Захиалах'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

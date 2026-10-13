@@ -18,6 +18,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { productPath } from '../routes';
 import { useProducts } from '../lib/useProducts';
+import { PARTS_FILTER_BRANDS, PARTS_ORDER_BRANDS } from '../data/brands';
 import { SparePart } from '../types';
 
 interface PartsViewProps {
@@ -36,7 +37,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   
   // Custom Sourcing Form state
-  const [sourceBrand, setSourceBrand] = useState('OTIS');
+  const [sourceBrand, setSourceBrand] = useState(PARTS_ORDER_BRANDS[0].value);
   const [sourcePartName, setSourcePartName] = useState('');
   const [sourceYear, setSourceYear] = useState('2018');
   const [sourcePhone, setSourcePhone] = useState('');
@@ -62,17 +63,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
     { key: 'oil', label: 'Бусад эд анги' }
   ];
 
-  const brands = [
-    'all',
-    'OTIS',
-    'Mitsubishi',
-    'Monarch',
-    'CEDES',
-    'STEP Tech',
-    'Fermator',
-    'TorinDrive',
-    'Dynatech'
-  ];
+  const brands = ['all', ...PARTS_FILTER_BRANDS];
 
   const filteredParts = SPARE_PARTS.filter(part => {
     const matchesCategory = selectedCategory === 'all' || part.category === selectedCategory;
@@ -186,14 +177,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       onChange={(e) => setSourceBrand(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-xl bg-surface-3 border border-line text-ink focus:border-brand-bright focus:outline-none"
                     >
-                      <option value="OTIS">OTIS</option>
-                      <option value="Mitsubishi">Mitsubishi</option>
-                      <option value="Hyundai">Hyundai</option>
-                      <option value="Sigma">Sigma (LG)</option>
-                      <option value="Schindler">Schindler</option>
-                      <option value="KONE">KONE</option>
-                      <option value="Monarch">Monarch</option>
-                      <option value="Other">Бусад / Тодорхойгүй</option>
+                      {PARTS_ORDER_BRANDS.map((b) => (
+                        <option key={b.value} value={b.value}>{b.label}</option>
+                      ))}
                     </select>
                   </div>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { BookOpen, Building2, Wrench, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
 import { CONTACT_EMAIL, SHOW_DELTA_LIFT } from '../config';
@@ -129,6 +129,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Wrench className="w-4 h-4 shrink-0" />
             <span className="hidden lg:inline">ЗАСВАР ҮЙЛЧИЛГЭЭ</span>
+          </button>
+
+          {/* Sub-site 4: Норм дүрэм, техникийн шийдлүүд */}
+          <button
+            id="nav-tab-standards"
+            title="Норм дүрэм, техникийн шийдлүүд"
+            aria-label="Норм дүрэм, техникийн шийдлүүд"
+            onClick={() => onSelectSection('standards')}
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
+              activeSection === 'standards'
+                ? 'bg-brand text-white shadow-sm border border-transparent'
+                : 'text-ink-dark-muted hover:text-brand hover:bg-paper border border-transparent'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 shrink-0" />
+            <span className="hidden lg:inline">НОРМ ДҮРЭМ</span>
           </button>
 
         </nav>

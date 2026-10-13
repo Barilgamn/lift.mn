@@ -3,6 +3,17 @@ import { SparePart } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import { rowToProduct } from './mappers';
 import { CATALOG_PRODUCTS } from '../data/catalogData';
+import { SHOW_PRICES } from '../config';
+
+/** SHOW_PRICES унтраалттай үед үнийг тэглэнэ — бүх газар "Үнийн санал авах" гарна */
+const withoutPrices = (list: SparePart[]): SparePart[] =>
+  SHOW_PRICES
+    ? list
+    : list.map((p) => ({
+        ...p,
+        price: 0,
+        variants: p.variants?.map((v) => ({ ...v, price: 0 })),
+      }));
 
 /**
  * Дэлгүүрийн бүтээгдэхүүн.
@@ -31,7 +42,7 @@ const TIMEOUT_MS = 6000;
 export function useProducts(): { products: SparePart[]; loading: boolean } {
   // Supabase-тэй үед ачаалал дуустал хоосон — жишээ бараа анивчихгүй
   const [products, setProducts] = useState<SparePart[]>(
-    isSupabaseConfigured ? [] : CATALOG_PRODUCTS
+    isSupabaseConfigured ? [] : withoutPrices(CATALOG_PRODUCTS)
   );
   const [loading, setLoading] = useState(isSupabaseConfigured);
 
@@ -47,17 +58,17 @@ export function useProducts(): { products: SparePart[]; loading: boolean } {
         if (!alive) return;
         if (error) {
           console.error('Бүтээгдэхүүн уншиж чадсангүй:', error.message);
-          setProducts(CATALOG_PRODUCTS);
+          setProducts(withoutPrices(CATALOG_PRODUCTS));
         } else {
           // data нь хоосон массив байж БОЛНО — тэр нь бодит хариу
-          setProducts((data ?? []).map(rowToProduct));
+          setProducts(withoutPrices((data ?? []).map(rowToProduct)));
         }
         setLoading(false);
       })
       .catch((e) => {
         if (!alive) return;
         console.error('Бүтээгдэхүүн уншиж чадсангүй:', e);
-        setProducts(CATALOG_PRODUCTS);
+        setProducts(withoutPrices(CATALOG_PRODUCTS));
         setLoading(false);
       });
 

@@ -5,7 +5,8 @@ import {
   ArrowRight, 
   PhoneCall,
   Mail,
-  MapPin
+  MapPin,
+  BookOpen
 } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { DeltaLiftsMark } from './DeltaLiftsLogo';
@@ -13,9 +14,9 @@ import { LiftMnLogo } from './LiftMnLogo';
 import { CONTACT_EMAIL, SHOW_DELTA_LIFT, SITE_NAME } from '../config';
 
 /**
- * DELTA LIFT нуугдсан үед хоёр л багана үлдэнэ. Бүтэн өргөнөөр сунгавал
- * өргөн дэлгэц дээр хоосон, сунжирсан харагддаг тул голд нь нарийн
- * хүрээнд хоёр карт болгон байрлуулна.
+ * DELTA LIFT нуугдсан үед гурван багана (Сэлбэг, Засвар, Норм дүрэм)
+ * үлдэнэ. Бүтэн өргөнөөр сунгавал өргөн дэлгэц дээр сунжирсан харагддаг
+ * тул голд нь хүрээтэй, ижил өргөнтэй карт болгон байрлуулна.
  */
 const NARROW = !SHOW_DELTA_LIFT;
 
@@ -29,7 +30,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
   return (
     <div 
       id="portal-container"
-      className="relative min-h-dvh md:h-dvh w-full flex flex-col justify-between overflow-x-hidden md:overflow-hidden bg-surface-0 text-white"
+      className="relative min-h-dvh lg:h-dvh w-full flex flex-col justify-between overflow-x-hidden lg:overflow-hidden bg-surface-0 text-white"
     >
       {/* Дээд мөр: голлосон LIFT.MN лого */}
       <header 
@@ -50,7 +51,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         id="portal-tri-split"
         /*
          * Дараалал: гар утсанд Сэлбэг → Засвар → Delta (DOM дараалал),
-         * дэлгэц дээр Засвар → Сэлбэг → Delta (md:order-*).
+         * дэлгэц дээр Засвар → Сэлбэг → Delta (lg:order-*).
          * Гар утасны дарааллыг DOM-д тавьсан учир нь Tab товчны дараалал
          * DOM-ыг дагадаг — зочны дийлэнх нь утаснаас ордог.
          *
@@ -58,11 +59,11 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
          * зурдаг тул order-оор байр сольсны дараа буруу талд гарна.
          * Оронд нь хэсэг бүрд харагдах байрлалынх нь дагуу хүрээ өгөв.
          */
-        className={`relative z-10 flex-1 w-full flex flex-col md:flex-row ${
-          NARROW ? 'md:max-w-5xl md:mx-auto md:gap-4 md:p-4 lg:gap-5 lg:py-6' : ''
+        className={`relative z-10 flex-1 w-full flex flex-col lg:flex-row ${
+          NARROW ? 'lg:max-w-7xl lg:mx-auto lg:gap-5 lg:p-4 lg:py-6' : ''
         }`}
       >
-        {/* Сэлбэг — утсанд 1-рт, дэлгэц дээр 2-рт */}
+        {/* Сэлбэг — утсанд ч, дэлгэц дээр ч 1-рт */}
         <section
           id="portal-column-parts"
           onClick={() => onSelectSection('parts')}
@@ -73,11 +74,11 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
            * дэлгэц дээр 1.3 дахин өргөн, дэвсгэр нь цайвар (зураг илүү
            * харагдана), дээд зураас нь өтгөн, товч нь дүүрэн өнгөтэй.
            */
-          className={`md:order-2 ${
-            NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : 'md:border-l md:border-line'
+          className={`lg:order-1 ${
+            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : ''
           } group relative flex-1 ${
             // Хоёр карттай үед тэнцүү өргөнтэй; гурвуулаа байхад Сэлбэг давамгай
-            NARROW ? 'md:basis-0' : 'md:flex-[1.32] md:hover:flex-[1.45]'
+            NARROW ? 'lg:basis-0' : 'lg:flex-[1.32] lg:hover:flex-[1.45]'
           } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
         >
           {/* Background Image */}
@@ -150,16 +151,16 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           </div>
         </section>
 
-        {/* Засвар — утсанд 2-рт, дэлгэц дээр 1-рт */}
+        {/* Засвар — утсанд ч, дэлгэц дээр ч 2-рт */}
         <section
           id="portal-column-service"
           onClick={() => onSelectSection('service')}
           role="button"
           tabIndex={0}
-          className={`md:order-1 border-t border-line md:border-t-0 ${
-            NARROW ? 'md:rounded-2xl md:border md:border-line md:shadow-2xl md:shadow-black/40' : ''
+          className={`lg:order-2 border-t border-line lg:border-t-0 ${
+            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : 'lg:border-l lg:border-line'
           } group relative flex-1 ${
-            NARROW ? 'md:basis-0' : 'md:hover:flex-[1.12]'
+            NARROW ? 'lg:basis-0' : 'lg:hover:flex-[1.12]'
           } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
         >
           {/* Background Image */}
@@ -228,14 +229,92 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           </div>
         </section>
 
-        {/* DELTA LIFT — хоёуланд нь 3-рт. Түр нуусан (src/config.ts) */}
+        {/* Норм дүрэм, техникийн шийдлүүд — 3-рт */}
+        <section
+          id="portal-column-standards"
+          onClick={() => onSelectSection('standards')}
+          role="button"
+          tabIndex={0}
+          className={`lg:order-3 border-t border-line lg:border-t-0 ${
+            NARROW ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40' : 'lg:border-l lg:border-line'
+          } group relative flex-1 ${
+            NARROW ? 'lg:basis-0' : 'lg:hover:flex-[1.12]'
+          } flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden`}
+        >
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{
+              backgroundImage: `url('/images/cabins/atlas-gigas-traction-mrl.webp')`
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#040E20]/92 via-[#06152F]/82 to-[#020813]/95 group-hover:from-[#040E20]/80 group-hover:via-[#092144]/65 group-hover:to-[#020813]/88 transition-all duration-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+          {/* Top highlight bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-brand group-hover:bg-[#38BDF8] group-hover:h-1.5 transition-all duration-300" />
+
+          {/* Card Middle: Icon, Titles & Representative Keywords */}
+          {/*
+            * Текстийн ард нимгэн бүрхүүл. Ар дэвсгэрийн зураг дээр цайвар
+            * толбо тохиолдвол саарал текст уншигдахаа больдог (хэмжихэд
+            * 2:1 орчим байсан, хэрэгтэй нь 4.5:1). Бүрхүүл нь зургийг
+            * бүрэн дарахгүй, зөвхөн текстийн доогуур л ордог.
+            */}
+          <div className="relative z-10 my-auto py-6 sm:py-8 px-4 sm:px-5 rounded-2xl bg-[#040E20]/55 backdrop-blur-[3px] flex flex-col items-center text-center">
+            {/* Header: Icon and Title in ONE row */}
+            <div className="flex items-center justify-center gap-3 sm:gap-3.5 mb-2.5">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 backdrop-blur-md flex items-center justify-center p-1.5 transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 shrink-0">
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
+              </div>
+
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
+                НОРМ ДҮРЭМ
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm font-semibold tracking-wider text-brand-bright uppercase mb-4">
+              СТАНДАРТ · ТЕХНИКИЙН ШИЙДЭЛ
+            </p>
+
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mb-6 min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
+              Лифт, урсдаг шатны олон улсын стандартууд болон шинэчлэл, эрчим хүч хэмнэлт, аюулгүй байдлын техникийн шийдлүүд
+            </p>
+
+            {/* Representative Keywords Row */}
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-md pt-1">
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                EN 81-20 / 50
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Шинэчлэл
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Эрчим хүч хэмнэлт
+              </span>
+              <span className="inline-flex items-center h-7 px-3 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all">
+                Галын аюулгүй байдал
+              </span>
+            </div>
+          </div>
+
+          {/* Card Bottom: Button */}
+          <div className="relative z-10 w-full pt-4">
+            <div className="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-brand/50 group-hover:bg-brand text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50">
+              <span>Дэлгэрэнгүй үзэх</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition duration-300" />
+            </div>
+          </div>
+        </section>
+
+        {/* DELTA LIFT — хоёуланд нь 4-рт. Түр нуусан (src/config.ts) */}
         {SHOW_DELTA_LIFT && (
         <section
           id="portal-column-delta"
           onClick={() => onSelectSection('delta-lift')}
           role="button"
           tabIndex={0}
-          className="md:order-3 border-t border-line md:border-t-0 md:border-l md:border-line group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden md:hover:flex-[1.12]"
+          className="lg:order-4 border-t border-line lg:border-t-0 lg:border-l lg:border-line group relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10 transition-all duration-500 ease-out cursor-pointer overflow-hidden lg:hover:flex-[1.12]"
         >
           {/* Background Image with Dark Navy Gradient */}
           <div 

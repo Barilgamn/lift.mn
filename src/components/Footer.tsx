@@ -72,15 +72,21 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
                 </li>
               )}
               <li>
+                <button onClick={() => onSelectSection('parts')} className={linkClass}>
+                  <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
+                  <span>Сэлбэг хэрэгсэл (Онлайн дэлгүүр, Захиалга)</span>
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onSelectSection('service')} className={linkClass}>
                   <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
                   <span>Засвар үйлчилгээ (Хүсэлт, Цаг захиалга, Тариф)</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => onSelectSection('parts')} className={linkClass}>
+                <button onClick={() => onSelectSection('standards')} className={linkClass}>
                   <ChevronRight className="w-3.5 h-3.5 text-brand shrink-0" />
-                  <span>Сэлбэг хэрэгсэл (Онлайн дэлгүүр, Захиалга)</span>
+                  <span>Норм дүрэм, техникийн шийдлүүд</span>
                 </button>
               </li>
               <li>

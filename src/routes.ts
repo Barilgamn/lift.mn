@@ -22,6 +22,11 @@ export const ROUTES: Record<ActiveSection, { path: string; title: string; label:
     title: 'Засвар үйлчилгээ — 24/7 дуудлага | LIFT.MN',
     label: 'Засвар үйлчилгээ',
   },
+  standards: {
+    path: '/standards',
+    title: 'Норм дүрэм, техникийн шийдлүүд | LIFT.MN',
+    label: 'Норм дүрэм',
+  },
 };
 
 /** Барааны дэлгэрэнгүй хуудасны зам */
