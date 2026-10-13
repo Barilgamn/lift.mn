@@ -22,21 +22,72 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  */
 function filled(value?: string): string | undefined {
   if (!value) return undefined;
-  const v = value.trim();
+  let v = value.trim();
+  // Vercel/.env-д "НЭР=утга" бүтнээр нь, эсвэл хашилттай буулгасан тохиолдол
+  v = v.replace(/^[A-Z][A-Z0-9_]*\s*=\s*/, '').replace(/^['"`]+|['"`]+$/g, '').trim();
   if (!v || /x{8,}/i.test(v) || v.endsWith('...')) return undefined;
   return v;
 }
 
-const url = filled(import.meta.env.VITE_SUPABASE_URL);
+const looksLikeKey = (v?: string) => !!v && /^(sb_publishable_|sb_secret_|eyJ)/.test(v);
+const looksLikeUrl = (v?: string) => !!v && /^https?:\/\/|\.supabase\.co/i.test(v);
+
+/**
+ * Төслийн хаягийг https://<ref>.supabase.co хэлбэрт оруулна.
+ * `https://` дутуу, ард нь `/` эсвэл `/rest/v1` үлдсэн, эсвэл зөвхөн
+ * төслийн ref (20 тэмдэгт) бичсэн тохиолдлыг засна.
+ */
+function normalizeUrl(v?: string): string | undefined {
+  if (!v) return undefined;
+  let u = v;
+  if (/^[a-z0-9]{20}$/.test(u)) u = `${u}.supabase.co`;
+  if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+  u = u.replace(/\/(rest|auth)\/v1\/?.*$/i, '').replace(/\/+$/, '');
+  try {
+    const parsed = new URL(u);
+    if (!/^https?:$/.test(parsed.protocol) || !parsed.hostname.includes('.')) return undefined;
+    return parsed.origin;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Алдааны мессежид утгыг бүтнээр нь гаргахгүй */
+const preview = (v: string) => (v.length > 14 ? `${v.slice(0, 14)}… (${v.length} тэмдэгт)` : v);
+
+let rawUrl = filled(import.meta.env.VITE_SUPABASE_URL);
 
 // Supabase-ийн шинэ түлхүүр (sb_publishable_...), эсвэл хуучин anon JWT.
 // Хоёулаа ажиллана — хуучин төслүүд эвдрэхгүйн тулд аль алиныг нь дэмжив.
-const publishableKey =
+let publishableKey =
   filled(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) ||
   filled(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
+// Хоёр утгыг сольж бөглөсөн бол буцааж солино
+if (looksLikeKey(rawUrl) && looksLikeUrl(publishableKey)) {
+  [rawUrl, publishableKey] = [publishableKey, rawUrl];
+}
+
+const url = normalizeUrl(rawUrl);
+
+/**
+ * Тохиргоо яг юундаа буруу байгааг монголоор тайлбарлана (байхгүй бол null).
+ * Нууц түлхүүрийг хөтөч рүү оруулсан бол ч энд барина.
+ */
+export const supabaseConfigProblem: string | null = (() => {
+  if (looksLikeKey(publishableKey) && publishableKey!.startsWith('sb_secret_'))
+    return 'VITE_SUPABASE_PUBLISHABLE_KEY-д нууц (sb_secret_…) түлхүүр орсон байна. ' +
+      'Үүнийг даруй устгаж, оронд нь sb_publishable_… түлхүүрийг тавина уу.';
+  if (rawUrl && !url)
+    return `VITE_SUPABASE_URL-ийн утга буруу байна: "${preview(rawUrl)}". ` +
+      'https://xxxx.supabase.co хэлбэртэй байх ёстой.';
+  if (!rawUrl) return 'VITE_SUPABASE_URL бөглөгдөөгүй байна.';
+  if (!publishableKey) return 'VITE_SUPABASE_PUBLISHABLE_KEY бөглөгдөөгүй байна.';
+  return null;
+})();
+
 /** Тохиргоо хийгдсэн эсэх. Энэ шалгалт supabase-js-ийг татахгүй. */
-export const isSupabaseConfigured = Boolean(url && publishableKey);
+export const isSupabaseConfigured = supabaseConfigProblem === null;
 
 let clientPromise: Promise<SupabaseClient> | null = null;
 

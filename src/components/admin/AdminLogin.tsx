@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AlertTriangle, Loader2, Lock, ShieldOff } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { LiftMnLogo } from '../LiftMnLogo';
+import { supabaseConfigProblem } from '../../lib/supabase';
 
 const field =
   'w-full h-11 px-3 rounded-lg bg-paper-2 border border-line-light text-sm text-ink-dark ' +
@@ -34,9 +35,14 @@ export const AdminLogin: React.FC = () => {
           <AlertTriangle className="w-4 h-4" />
           Supabase тохируулагдаагүй
         </div>
+        {supabaseConfigProblem && (
+          <p id="config-problem" className="mb-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900">
+            {supabaseConfigProblem}
+          </p>
+        )}
         <p className="text-xs text-ink-dark-muted mb-3">
-          Төслийн үндсэн хавтсанд <code className="font-mono">.env</code> файл үүсгэж,
-          Supabase төслийн түлхүүрээ бөглөнө үү:
+          Vercel → Settings → Environment Variables (эсвэл компьютер дээрх{' '}
+          <code className="font-mono">.env</code> файл) дотор яг ингэж бөглөнө:
         </p>
         <pre className="p-3 rounded-lg bg-paper-3 border border-line-light text-[11px] font-mono overflow-x-auto text-ink-dark">
 {`VITE_SUPABASE_URL=https://xxxx.supabase.co
@@ -44,8 +50,8 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...`}
         </pre>
         <p className="mt-3 text-[11px] text-ink-dark-subtle">
           Түлхүүрийг Supabase Dashboard → Project Settings → API Keys →
-          Publishable key хэсгээс авна. Дараа нь{' '}
-          <code className="font-mono">npm run dev</code>-ээ дахин асаана.
+          Publishable key хэсгээс авна. Өөрчилсний дараа сайтыг дахин build хийнэ
+          (Vercel-д Redeploy, компьютер дээр <code className="font-mono">npm run dev</code>).
         </p>
       </Shell>
     );
