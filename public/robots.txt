@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://lift.mn/sitemap.xml
+Sitemap: https://www.lift.mn/sitemap.xml
