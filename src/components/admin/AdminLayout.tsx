@@ -10,8 +10,10 @@ import {
   Map as MapIcon,
   Package,
   Tag,
+  Trophy,
 } from 'lucide-react';
 import { isPriceQuote } from '../../lib/priceQuote';
+import { isNaadamEntry } from '../../data/naadamData';
 import { AdminStoreProvider, useAdminStore } from '../../store/adminStore';
 import { LiftMnLogo } from '../LiftMnLogo';
 import { AdminLogin } from './AdminLogin';
@@ -20,6 +22,7 @@ export const ADMIN_NAV = [
   { to: '/admin', end: true, label: 'Хяналтын самбар', icon: LayoutDashboard },
   { to: '/admin/submissions', label: 'Бүртгэлүүд', icon: ClipboardList },
   { to: '/admin/quotes', label: 'Үнийн санал', icon: Tag, badge: 'quotes' as const },
+  { to: '/admin/naadam', label: 'Спортын наадам', icon: Trophy, badge: 'naadam' as const },
   { to: '/admin/map', label: 'Газрын зураг', icon: MapIcon },
   { to: '/admin/elevators', label: 'Лифтүүд', icon: ArrowUpDown },
   { to: '/admin/products', label: 'Бүтээгдэхүүн', icon: Package },
@@ -29,6 +32,7 @@ const AdminChrome: React.FC = () => {
   const { user, logout, loadError, submissions } = useAdminStore();
   /** Хариулаагүй үнийн саналын тоо — цэсэн дээр тэмдэглэгээ болно */
   const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
+  const newNaadam = submissions.filter((s) => isNaadamEntry(s) && s.status === 'new').length;
 
   return (
     <div className="theme-light min-h-dvh bg-surface-2 text-ink flex flex-col">
@@ -91,6 +95,15 @@ const AdminChrome: React.FC = () => {
                       className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black tabular-nums"
                     >
                       {openQuotes}
+                    </span>
+                  )}
+                  {badge === 'naadam' && newNaadam > 0 && (
+                    <span
+                      id="nav-naadam-badge"
+                      aria-label={`${newNaadam} шинэ бүртгэл`}
+                      className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-emerald-600 text-white text-[10px] font-black tabular-nums"
+                    >
+                      {newNaadam}
                     </span>
                   )}
                 </NavLink>

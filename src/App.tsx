@@ -22,12 +22,14 @@ import { EmergencyModal } from './components/EmergencyModal';
  * болон газрын зургийн сангийн жинг татахгүй.
  */
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
+const SportNaadamPage = lazy(() => import('./components/SportNaadamPage'));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
 const AdminSubmissions = lazy(() => import('./components/admin/AdminSubmissions'));
 const AdminMap = lazy(() => import('./components/admin/AdminMap'));
 const AdminElevators = lazy(() => import('./components/admin/AdminElevators'));
 const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 const AdminQuotes = lazy(() => import('./components/admin/AdminQuotes'));
+const AdminNaadam = lazy(() => import('./components/admin/AdminNaadam'));
 import { CartDrawer } from './components/CartDrawer';
 import { ProductPage } from './components/ProductPage';
 
@@ -89,14 +91,18 @@ export default function App() {
   }, [cartItems]);
 
   const isAdmin = location.pathname.startsWith('/admin');
+  /** Тусдаа арга хэмжээний хуудас — гарчгаа өөрөө тохируулна */
+  const isStandalone = location.pathname.startsWith('/sportnaadam');
 
   // Хуудас солигдох бүрд гарчгийг шинэчилж, дээш нь гүйлгэнэ
   useEffect(() => {
-    document.title = isAdmin
-      ? 'Удирдлагын хэсэг | LIFT.MN'
-      : ROUTES[activeSection].title;
+    if (!isStandalone) {
+      document.title = isAdmin
+        ? 'Удирдлагын хэсэг | LIFT.MN'
+        : ROUTES[activeSection].title;
+    }
     window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [activeSection, isAdmin, location.pathname]);
+  }, [activeSection, isAdmin, isStandalone, location.pathname]);
 
   const handleSelectSection = (section: ActiveSection) => {
     navigate(ROUTES[section].path);
@@ -222,6 +228,16 @@ export default function App() {
           }
         />
 
+        {/* Спортын их наадам 2026 — бүртгэлийн хуудас (өөрийн толгой, хөлтэй) */}
+        <Route
+          path="/sportnaadam"
+          element={
+            <Suspense fallback={<div className="min-h-dvh bg-[#030B1A]" />}>
+              <SportNaadamPage />
+            </Suspense>
+          }
+        />
+
         {/* Удирдлагын хэсэг — өөрийн бүрхүүлтэй, нийтийн цэс, хөл хэсэггүй */}
         <Route
           path="/admin"
@@ -234,6 +250,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="quotes" element={<AdminQuotes />} />
+          <Route path="naadam" element={<AdminNaadam />} />
           <Route path="map" element={<AdminMap />} />
           <Route path="elevators" element={<AdminElevators />} />
           <Route path="products" element={<AdminProducts />} />

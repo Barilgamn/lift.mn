@@ -1,5 +1,6 @@
 import type { SubmissionKind } from '../types';
 import { getSupabase, isSupabaseConfigured, friendlyError } from './supabase';
+import { ATTACHMENT_PREFIX, isDocumentEntry, type Attachment } from './attachments';
 
 /**
  * Сайтын маягтуудыг `submissions` хүснэгт рүү илгээнэ.
@@ -35,6 +36,11 @@ export interface SubmitInput {
    * болгон харуулна.
    */
   photos?: string[];
+  /**
+   * Хавсаргасан баримт (Word, PDF) — `src/lib/attachments.ts`-ийн
+   * `readDocument`-оор уншсан. `details` дотор "Файл: <нэр>" түлхүүрээр орно.
+   */
+  attachments?: Attachment[];
 }
 
 /**
@@ -87,6 +93,15 @@ function withPhotos(details: Record<string, string>, photos?: string[]): Record<
   return details;
 }
 
+/** Баримтуудыг details дотор нэрээр нь байрлуулна. Зураг биш data URL л нэвтэрнэ. */
+function withAttachments(details: Record<string, string>, files?: Attachment[]): Record<string, string> {
+  for (const f of files ?? []) {
+    if (!isDocumentEntry(f.dataUrl)) continue;
+    details[`${ATTACHMENT_PREFIX}${f.name.slice(0, 100)}`] = f.dataUrl;
+  }
+  return details;
+}
+
 const clamp = (value: string, max: number) => value.trim().slice(0, max);
 
 /**
@@ -118,7 +133,7 @@ export async function submitForm(kind: SubmissionKind, input: SubmitInput): Prom
       contact_name: clamp(input.contactName ?? '', LIMITS.contactName),
       summary: clamp(input.summary ?? '', LIMITS.summary),
       status: 'new',
-      details: withPhotos(cleanDetails(input.details), input.photos),
+      details: withAttachments(withPhotos(cleanDetails(input.details), input.photos), input.attachments),
     });
 
     if (error) {

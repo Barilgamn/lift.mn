@@ -5,6 +5,8 @@ import { Submission, SubmissionKind, SubmissionStatus } from '../../types';
 import { Badge, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './adminUi';
 import { Link } from 'react-router-dom';
 import { isPriceQuote, isPublicDetailKey } from '../../lib/priceQuote';
+import { isNaadamEntry } from '../../data/naadamData';
+import { attachmentName, downloadDataUrl, isDocumentEntry } from '../../lib/attachments';
 
 const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
   { value: 'all', label: 'Бүгд' },
@@ -37,12 +39,13 @@ export const AdminSubmissions: React.FC = () => {
 
   // Хавсаргасан зургийг (data: угтвартай) текст талбаруудаас салгана —
   // эс бөгөөс base64 мөр нь дэлгэрэнгүй цонхыг дүүргэнэ.
-  const [textDetails, photoDetails] = useMemo(() => {
+  const [textDetails, photoDetails, fileDetails] = useMemo(() => {
     // `_`-ээр эхэлсэн нь программын дотоод талбар (жишээ нь админы үнэ) — нууна
     const entries = Object.entries(open?.details ?? {}).filter(([k]) => isPublicDetailKey(k));
     return [
-      entries.filter(([, v]) => !String(v).startsWith('data:image/')),
+      entries.filter(([, v]) => !String(v).startsWith('data:')),
       entries.filter(([, v]) => String(v).startsWith('data:image/')),
+      entries.filter(([, v]) => isDocumentEntry(v)),
     ];
   }, [open]);
 
@@ -206,6 +209,14 @@ export const AdminSubmissions: React.FC = () => {
                   "Үнийн санал" хэсэгт нээж үнэ өгөх →
                 </Link>
               )}
+              {isNaadamEntry(open) && (
+                <Link
+                  to="/admin/naadam"
+                  className="mt-2 inline-flex items-center h-8 px-3 rounded-lg bg-brand text-white text-xs font-bold hover:bg-brand-hover"
+                >
+                  "Спортын наадам" хэсэгт харах →
+                </Link>
+              )}
               <p className="mt-1 text-xs text-ink-dark-muted">
                 {open.contactName} · <a href={`tel:${open.phone.replace(/\D/g, '')}`} className="font-mono hover:text-brand">{open.phone}</a> · {open.createdAt}
               </p>
@@ -235,6 +246,28 @@ export const AdminSubmissions: React.FC = () => {
                             className="w-28 h-28 object-cover rounded-xl border border-line-light hover:border-brand transition-colors"
                           />
                         </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {fileDetails.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted mb-2">
+                    Хавсаргасан файл ({fileDetails.length})
+                  </div>
+                  <ul className="space-y-2">
+                    {fileDetails.map(([k, src]) => (
+                      <li key={k}>
+                        <button
+                          type="button"
+                          onClick={() => void downloadDataUrl(String(src), attachmentName(k))}
+                          className="w-full flex items-center gap-2 h-10 px-3 rounded-lg border border-line-light hover:border-brand text-xs font-semibold text-ink-dark cursor-pointer"
+                        >
+                          <span className="truncate">{attachmentName(k)}</span>
+                          <span className="ml-auto text-brand shrink-0">Татах ↓</span>
+                        </button>
                       </li>
                     ))}
                   </ul>
