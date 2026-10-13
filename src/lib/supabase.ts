@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { SUPABASE_PUBLIC } from '../config';
 
 /**
  * Supabase клиент — шаардлагатай үед нь ачаална.
@@ -52,9 +53,6 @@ function normalizeUrl(v?: string): string | undefined {
   }
 }
 
-/** Алдааны мессежид утгыг бүтнээр нь гаргахгүй */
-const preview = (v: string) => (v.length > 14 ? `${v.slice(0, 14)}… (${v.length} тэмдэгт)` : v);
-
 let rawUrl = filled(import.meta.env.VITE_SUPABASE_URL);
 
 // Supabase-ийн шинэ түлхүүр (sb_publishable_...), эсвэл хуучин anon JWT.
@@ -68,23 +66,25 @@ if (looksLikeKey(rawUrl) && looksLikeUrl(publishableKey)) {
   [rawUrl, publishableKey] = [publishableKey, rawUrl];
 }
 
-const url = normalizeUrl(rawUrl);
+const validKey = (v?: string) =>
+  !!v && /^(sb_publishable_[\w-]{10,}|eyJ[\w-]+\.[\w-]+\.[\w-]+)$/.test(v);
 
-/**
- * Тохиргоо яг юундаа буруу байгааг монголоор тайлбарлана (байхгүй бол null).
- * Нууц түлхүүрийг хөтөч рүү оруулсан бол ч энд барина.
- */
-export const supabaseConfigProblem: string | null = (() => {
-  if (looksLikeKey(publishableKey) && publishableKey!.startsWith('sb_secret_'))
-    return 'VITE_SUPABASE_PUBLISHABLE_KEY-д нууц (sb_secret_…) түлхүүр орсон байна. ' +
-      'Үүнийг даруй устгаж, оронд нь sb_publishable_… түлхүүрийг тавина уу.';
-  if (rawUrl && !url)
-    return `VITE_SUPABASE_URL-ийн утга буруу байна: "${preview(rawUrl)}". ` +
-      'https://xxxx.supabase.co хэлбэртэй байх ёстой.';
-  if (!rawUrl) return 'VITE_SUPABASE_URL бөглөгдөөгүй байна.';
-  if (!publishableKey) return 'VITE_SUPABASE_PUBLISHABLE_KEY бөглөгдөөгүй байна.';
-  return null;
-})();
+/** Нууц түлхүүрийг хөтөч рүү оруулсан эсэх — энэ үед ажиллуулахгүй */
+const secretInBrowser = [rawUrl, publishableKey].some((v) => v?.startsWith('sb_secret_'));
+
+// env-ийн хоёр утга хоёулаа зөв бол түүнийг, үгүй бол төслийн нийтийн
+// тохиргоог ашиглана. Хоёрыг холихгүй — өөр төслийн хаяг, түлхүүр нийлж
+// болзошгүй.
+const envUrl = normalizeUrl(rawUrl);
+const useEnv = Boolean(envUrl && validKey(publishableKey));
+const url = useEnv ? envUrl : SUPABASE_PUBLIC.url;
+if (!useEnv) publishableKey = SUPABASE_PUBLIC.publishableKey;
+
+/** Тохиргоо яг юундаа буруу байгааг монголоор тайлбарлана (байхгүй бол null) */
+export const supabaseConfigProblem: string | null = secretInBrowser
+  ? 'Хөтчийн тохиргоонд нууц (sb_secret_…) түлхүүр орсон байна. Vercel/.env-ээс ' +
+    'даруй устгаж, оронд нь sb_publishable_… түлхүүрийг тавина уу.'
+  : null;
 
 /** Тохиргоо хийгдсэн эсэх. Энэ шалгалт supabase-js-ийг татахгүй. */
 export const isSupabaseConfigured = supabaseConfigProblem === null;
