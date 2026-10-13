@@ -50,10 +50,13 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
                 ? '"DELTA LIFT" ХХК нь Монгол Улсын барилгын салбарт найдвартай ажиллагаатай лифт, эскалатор нийлүүлэлт, угсралт, 24/7 засвар үйлчилгээ болон сэлбэг хангамжийн чиглэлээр тэргүүлэгч байгууллага юм.'
                 : `${SITE_NAME} нь лифт, эскалаторын 24/7 засвар үйлчилгээ болон сэлбэг хэрэгслийн хангамжийн нэгдсэн цахим портал юм.`}
             </p>
-            <div className="flex items-center gap-2 text-xs text-brand font-semibold">
-              <ShieldCheck className="w-4 h-4 shrink-0" />
-              <span>Тусгай зөвшөөрөл № БХБЯ-ЛЗ-2018/044</span>
-            </div>
+            {/* Тусгай зөвшөөрөл нь DELTA LIFT компанийнх тул түүнтэй хамт нуусан */}
+            {SHOW_DELTA_LIFT && (
+              <div className="flex items-center gap-2 text-xs text-brand font-semibold">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <span>Тусгай зөвшөөрөл № БХБЯ-ЛЗ-2018/044</span>
+              </div>
+            )}
           </div>
 
           {/* 2. Үндсэн цэсүүд */}
