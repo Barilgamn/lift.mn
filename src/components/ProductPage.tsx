@@ -19,7 +19,8 @@ function recommend(current: SparePart, all: SparePart[], count = 4): SparePart[]
 }
 
 const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="w-full bg-surface-1 text-ink min-h-[60dvh]">
+  // Сэлбэгийн жагсаалттай ижил цайвар дэвсгэр
+  <div className="theme-light w-full bg-surface-2 text-ink min-h-[60dvh]">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">{children}</div>
   </div>
 );
