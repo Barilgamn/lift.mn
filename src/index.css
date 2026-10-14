@@ -328,3 +328,99 @@ html.is-translated body {
   background: none !important;
   box-shadow: none !important;
 }
+
+/* ---------------------------------------------------------------------------
+ * Нүүр хуудасны гараар зурсан дүрсүүд (src/components/PortalIcons.tsx)
+ * Байнгын зөөлөн хөдөлгөөн; карт дээр хулгана авчрахад хурдасна.
+ * ------------------------------------------------------------------------- */
+.pi * { transform-box: fill-box; transform-origin: center; }
+
+/* Сэлбэг — араа эргэнэ (жижиг нь шүдний харьцаагаар хурдан, эсрэг) */
+.pi-gear-big { animation: pi-spin 9s linear infinite; }
+.pi-gear-small { animation: pi-spin 7.2s linear infinite reverse; }
+.pi-box { animation: pi-box 3.2s ease-in-out infinite; transform-origin: center bottom; }
+.pi-spark { animation: pi-twinkle 2.4s ease-in-out infinite; }
+.group:hover .pi-gear-big { animation-duration: 2.6s; }
+.group:hover .pi-gear-small { animation-duration: 2.08s; }
+
+@keyframes pi-spin { to { transform: rotate(360deg); } }
+@keyframes pi-box {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(0.6px) scaleY(0.985); }
+}
+@keyframes pi-twinkle {
+  0%, 100% { transform: scale(0.4) rotate(0deg); opacity: 0; }
+  40%, 60% { transform: scale(1) rotate(45deg); opacity: 1; }
+}
+
+/* Засвар — лифтний хаалга нээгдэж хаагдана, түлхүүр сэгсрэнэ */
+.pi-door-l { animation: pi-door-l 4.8s cubic-bezier(.65,0,.35,1) infinite; }
+.pi-door-r { animation: pi-door-r 4.8s cubic-bezier(.65,0,.35,1) infinite; }
+.pi-rider { animation: pi-rider 4.8s ease-in-out infinite; }
+.pi-arrow { animation: pi-blink 1.2s steps(2, jump-none) infinite; }
+.pi-wrench { animation: pi-wrench 2.4s ease-in-out infinite; transform-origin: 30% 80%; }
+.group:hover .pi-door-l, .group:hover .pi-door-r, .group:hover .pi-rider { animation-duration: 2.6s; }
+.group:hover .pi-wrench { animation-duration: 0.9s; }
+
+@keyframes pi-door-l {
+  0%, 18%, 82%, 100% { transform: translateX(0); }
+  36%, 64% { transform: translateX(-88%); }
+}
+@keyframes pi-door-r {
+  0%, 18%, 82%, 100% { transform: translateX(0); }
+  36%, 64% { transform: translateX(88%); }
+}
+@keyframes pi-rider {
+  0%, 30%, 70%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-1.5px); }
+  55% { transform: translateY(0); }
+}
+@keyframes pi-blink { 0% { opacity: 1; } 100% { opacity: 0.25; } }
+@keyframes pi-wrench {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-16deg); }
+  60% { transform: rotate(10deg); }
+}
+
+/* Норм дүрэм — мөрүүд бичигдэж, тэмдэг дарагдана */
+.pi-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pi-write 4.8s ease-out infinite; }
+.pi-line-2 { animation-delay: 0.35s; }
+.pi-line-3 { animation-delay: 0.7s; }
+.pi-check { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pi-check 4.8s ease-out infinite; }
+.pi-seal { animation: pi-stamp 4.8s cubic-bezier(.34,1.56,.64,1) infinite; }
+.pi-page-back { animation: pi-page 4.8s ease-in-out infinite; transform-origin: 30% 100%; }
+.group:hover .pi-line, .group:hover .pi-check, .group:hover .pi-seal, .group:hover .pi-page-back { animation-duration: 2.8s; }
+
+@keyframes pi-write {
+  0%, 8% { stroke-dashoffset: 1; opacity: 1; }
+  32%, 88% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes pi-check {
+  0%, 46% { stroke-dashoffset: 1; }
+  62%, 90% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 1; }
+}
+@keyframes pi-stamp {
+  0%, 36% { transform: scale(0.55) rotate(-25deg); opacity: 0; }
+  48% { transform: scale(1.12) rotate(4deg); opacity: 1; }
+  56%, 92% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0.55) rotate(-25deg); opacity: 0; }
+}
+@keyframes pi-page {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* Дүрсний хавтан хөвөх */
+.pi-tile { animation: pi-float 5s ease-in-out infinite; }
+@keyframes pi-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pi *, .pi-tile { animation: none !important; }
+  .pi-line, .pi-check { stroke-dashoffset: 0; }
+  .pi-seal { opacity: 1; }
+}

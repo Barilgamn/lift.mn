@@ -1,13 +1,6 @@
 import React from 'react';
-import { 
-  Wrench, 
-  ShoppingBag, 
-  ArrowRight, 
-  PhoneCall,
-  Mail,
-  MapPin,
-  BookOpen
-} from 'lucide-react';
+import { ArrowRight, PhoneCall, Mail, MapPin } from 'lucide-react';
+import { PartsIcon, ServiceIcon, StandardsIcon } from './PortalIcons';
 import { ActiveSection } from '../types';
 import { DeltaLiftsMark } from './DeltaLiftsLogo';
 import { LiftMnLogo } from './LiftMnLogo';
@@ -31,7 +24,8 @@ interface PortalCardProps {
   order: string;
   onOpen: () => void;
   image: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  /** Гараар зурсан хөдөлгөөнтэй дүрс (PortalIcons) */
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   subtitle: string;
   description: string;
@@ -65,7 +59,7 @@ const PortalCard: React.FC<PortalCardProps> = ({
     aria-label={title}
     className={`${order} ${
       NARROW
-        ? 'lg:rounded-2xl lg:border lg:border-line lg:shadow-2xl lg:shadow-black/40 lg:basis-0'
+        ? 'lg:rounded-2xl lg:border lg:border-white/70 lg:shadow-xl lg:shadow-slate-900/20 lg:hover:shadow-2xl lg:hover:shadow-sky-900/30 lg:hover:-translate-y-1 lg:basis-0'
         : 'lg:border-l lg:border-line lg:hover:flex-[1.12]'
     } border-t border-line lg:border-t-0 group relative flex-1 min-w-0 flex flex-col p-5 sm:p-7 lg:p-8 xl:p-9 transition-all duration-500 ease-out cursor-pointer overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-bright focus-visible:-outline-offset-4`}
   >
@@ -100,8 +94,11 @@ const PortalCard: React.FC<PortalCardProps> = ({
       * Дээд талд нь зургийн хэсэг үлдэнэ.
       */}
     <div className="relative z-10 mt-8 sm:mt-10 lg:my-auto flex flex-col items-center text-center py-6 sm:py-7 px-4 sm:px-5 rounded-2xl bg-[#040E20]/60 backdrop-blur-[3px]">
-      <div className="w-11 h-11 rounded-xl border border-sky-500/30 group-hover:border-brand-bright bg-surface-3 group-hover:bg-brand/40 flex items-center justify-center transition-all duration-300 shadow-lg group-hover:shadow-sky-500/20 mb-3">
-        <Icon className="w-5 h-5 text-brand-soft group-hover:text-white transition duration-300" strokeWidth={1.75} />
+      {/* Гадна давхарга — hover-оор томорно; дотор нь хөвөх хөдөлгөөн (transform давхцахгүй) */}
+      <div className="mb-4 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3">
+        <div className="pi-tile w-[76px] h-[76px] sm:w-[84px] sm:h-[84px] rounded-[24px] bg-gradient-to-br from-white via-white to-sky-100 ring-1 ring-white/80 shadow-xl shadow-sky-950/50 flex items-center justify-center">
+          <Icon className="w-[58px] h-[58px] sm:w-16 sm:h-16" />
+        </div>
       </div>
 
       <h2 className="whitespace-nowrap text-[1.45rem] sm:text-[1.65rem] lg:text-[clamp(1.2rem,1.75vw,1.65rem)] leading-tight font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
@@ -155,8 +152,11 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
   return (
     <div 
       id="portal-container"
-      className="relative min-h-dvh lg:h-dvh w-full flex flex-col justify-between overflow-x-hidden lg:overflow-hidden bg-surface-0 text-white"
+      className="relative min-h-dvh lg:h-dvh w-full flex flex-col justify-between overflow-x-hidden lg:overflow-hidden bg-[#EEF3F9] text-white"
     >
+      {/* Цайвар дэвсгэр — картуудын хоёр тал: зөөлөн цэнхэр туяа, нарийн цэгэн тор */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_35%,rgba(56,189,248,0.16),transparent_55%),radial-gradient(ellipse_at_85%_70%,rgba(247,198,0,0.10),transparent_50%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-60 bg-[radial-gradient(rgba(14,93,168,0.13)_1px,transparent_1px)] [background-size:22px_22px]" />
       {/* Дээд мөр: голлосон LIFT.MN лого */}
       <header 
         id="portal-header" 
@@ -230,7 +230,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           // Эх зургийн дээд хэсэгт "DELTA LIFT" самбар харагддаг тул нуусан
           // үед түүнийг тайрсан хувилбарыг ашиглана
           image={SHOW_DELTA_LIFT ? '/images/lift_parts_hero.jpg' : '/images/parts_hero.jpg'}
-          icon={ShoppingBag}
+          icon={PartsIcon}
           title="СЭЛБЭГ ХЭРЭГСЭЛ"
           subtitle="ОРИГИНАЛ ЭД АНГИ · ОНЛАЙН ЗАХИАЛГА"
           description="Бүх төрлийн лифт, эскалаторын оригинал сэлбэгийн онлайн каталоги, шууд худалдан авалт, агуулахын үлдэгдэл болон тусгай захиалга, суурилуулалт"
@@ -243,7 +243,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           order="lg:order-2"
           onOpen={() => onSelectSection('service')}
           image="/images/service_hero.jpg"
-          icon={Wrench}
+          icon={ServiceIcon}
           title="ЗАСВАР ҮЙЛЧИЛГЭЭ"
           subtitle="ОНОШИЛГОО · ХУВААРЬТ ҮЗЛЭГ · ТАРИФ"
           description="Засвар үйлчилгээний онлайн дуудлага өгөх, цаг товлох, СӨХ-ийн гэрээт багц, тариф үнийн жагсаалт болон 24/7 диспетчерийн алба"
@@ -256,7 +256,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
           order="lg:order-3"
           onOpen={() => onSelectSection('standards')}
           image="/images/cabins/atlas-gigas-traction-mrl.webp"
-          icon={BookOpen}
+          icon={StandardsIcon}
           title="НОРМ ДҮРЭМ"
           subtitle="СТАНДАРТ · ТЕХНИКИЙН ШИЙДЭЛ"
           description="Лифт, урсдаг шатны олон улсын стандартууд болон шинэчлэл, эрчим хүч хэмнэлт, аюулгүй байдлын техникийн шийдлүүд"
