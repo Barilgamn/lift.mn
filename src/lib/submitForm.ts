@@ -1,6 +1,6 @@
 import type { SubmissionKind } from '../types';
 import { getSupabase, isSupabaseConfigured, friendlyError } from './supabase';
-import { ATTACHMENT_PREFIX, isDocumentEntry, type Attachment } from './attachments';
+import { attachmentKey, isDocumentEntry, type Attachment } from './attachments';
 
 /**
  * Сайтын маягтуудыг `submissions` хүснэгт рүү илгээнэ.
@@ -24,6 +24,8 @@ const LIMITS = { phone: 40, contactName: 120, summary: 300 } as const;
 export const HOTLINE = '7723-2222';
 
 export interface SubmitInput {
+  /** Бүртгэлийн дугаарын угтвар (жишээ нь 'NAADAM'). Өгөхгүй бол төрлөөр нь (SRV, BKG ...) */
+  reference?: string;
   contactName?: string;
   phone: string;
   summary: string;
@@ -52,8 +54,8 @@ export type SubmitResult =
   | { status: 'failed'; message: string };
 
 /** Бүртгэлийн дугаар: SRV-260918-4821 */
-function reference(kind: SubmissionKind): string {
-  const prefix = {
+function reference(kind: SubmissionKind, custom?: string): string {
+  const prefix = custom || {
     'service-ticket': 'SRV',
     emergency: 'SOS',
     booking: 'BKG',
@@ -97,7 +99,7 @@ function withPhotos(details: Record<string, string>, photos?: string[]): Record<
 function withAttachments(details: Record<string, string>, files?: Attachment[]): Record<string, string> {
   for (const f of files ?? []) {
     if (!isDocumentEntry(f.value)) continue;
-    details[`${ATTACHMENT_PREFIX}${f.name.slice(0, 100)}`] = f.value;
+    details[attachmentKey(f.name)] = f.value;
   }
   return details;
 }
@@ -122,7 +124,7 @@ export async function submitForm(kind: SubmissionKind, input: SubmitInput): Prom
     };
   }
 
-  const id = reference(kind);
+  const id = reference(kind, input.reference);
 
   try {
     const sb = await getSupabase();

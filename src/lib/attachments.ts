@@ -93,6 +93,9 @@ export const isDocumentEntry = (value: unknown): boolean =>
   typeof value === 'string' &&
   (value.startsWith(STORAGE_PREFIX) || (value.startsWith('data:') && !value.startsWith('data:image/')));
 
+/** `cs2.docx` → `Файл: cs2.docx` (details-ийн түлхүүр, submitForm-тэй ижил тайралт) */
+export const attachmentKey = (name: string): string => `${ATTACHMENT_PREFIX}${name.slice(0, 100)}`;
+
 /** `Файл: cs2.docx` → `cs2.docx` */
 export const attachmentName = (key: string): string =>
   key.startsWith(ATTACHMENT_PREFIX) ? key.slice(ATTACHMENT_PREFIX.length) : key;

@@ -19,7 +19,7 @@ import '@fontsource/oswald/600.css';
 import '@fontsource/oswald/700.css';
 import { Reveal } from './Reveal';
 import { submitForm } from '../lib/submitForm';
-import { DOCUMENT_ACCEPT, checkDocument, storeDocument, type Attachment } from '../lib/attachments';
+import { DOCUMENT_ACCEPT, attachmentKey, checkDocument, storeDocument, type Attachment } from '../lib/attachments';
 import {
   FORM_SPORT_ORDER,
   NAADAM,
@@ -253,9 +253,11 @@ export const SportNaadamPage: React.FC = () => {
   );
 };
 
-/** Бүртгэлийн маягт */
-const MAX_FILES = 7;
+/** Файлын хэмжээг уншихад хялбар болгоно */
+const fileSize = (n: number) =>
+  n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} КБ` : `${(n / 1024 / 1024).toFixed(1)} МБ`;
 
+/** Бүртгэлийн маягт. Төрөл бүр (баг) өөрийн мэдүүлэгтэй. */
 const RegistrationForm: React.FC = () => {
   const [org, setOrg] = useState('');
   const [name, setName] = useState('');
@@ -263,29 +265,26 @@ const RegistrationForm: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [picked, setPicked] = useState<string[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
+  /** Төрлийн id → тухайн багийн мэдүүлэг */
+  const [files, setFiles] = useState<Record<string, File>>({});
   const [fileError, setFileError] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [doneId, setDoneId] = useState('');
 
   const formSports = useMemo(() => FORM_SPORT_ORDER.map((id) => sportById(id)!).filter(Boolean), []);
+  /** Сонгосон төрлүүд — маягтын дарааллаар */
+  const pickedSports = formSports.filter((s) => picked.includes(s.id));
 
   const toggle = (id: string) =>
     setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const addFiles = (list: FileList | null) => {
+  const setFile = (sportId: string, file?: File) => {
     setFileError('');
-    const incoming = Array.from(list ?? []);
-    for (const f of incoming) {
-      const problem = checkDocument(f);
-      if (problem) return setFileError(problem);
-    }
-    setFiles((prev) => {
-      const merged = [...prev, ...incoming.filter((f) => !prev.some((p) => p.name === f.name && p.size === f.size))];
-      if (merged.length > MAX_FILES) setFileError(`${MAX_FILES}-аас олон файл хавсаргах боломжгүй.`);
-      return merged.slice(0, MAX_FILES);
-    });
+    if (!file) return;
+    const problem = checkDocument(file);
+    if (problem) return setFileError(problem);
+    setFiles((prev) => ({ ...prev, [sportId]: file }));
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -293,19 +292,29 @@ const RegistrationForm: React.FC = () => {
     setError('');
     if (picked.length === 0) return setError('Оролцох дор хаяж нэг төрлийг сонгоно уу.');
     if (phone.replace(/\D/g, '').length < 8) return setError('Утасны дугаараа бүрэн оруулна уу.');
-    if (files.length === 0) return setError('Бөглөсөн багийн мэдүүлгээ хавсаргана уу.');
+    const missing = pickedSports.filter((s) => !files[s.id]);
+    if (missing.length) {
+      return setError(`${missing.map((s) => s.label).join(', ')} — багийн мэдүүлгээ хавсаргана уу.`);
+    }
 
-    const sportLabels = picked.map((id) => sportById(id)?.label ?? id);
+    const sportLabels = pickedSports.map((s) => s.label);
     setSending(true);
-    let attachments: Attachment[];
+    const attachments: Attachment[] = [];
+    /** Төрөл → details дахь файлын түлхүүр (админ баг тус бүрийн файлыг олоход) */
+    const fileMap: Record<string, string> = {};
     try {
-      attachments = [];
-      for (const f of files) attachments.push(await storeDocument(f, NAADAM_BUCKET, NAADAM.email));
+      for (const s of pickedSports) {
+        const stored = await storeDocument(files[s.id], NAADAM_BUCKET, NAADAM.email);
+        const named = { ...stored, name: `${s.label} — ${stored.name}` };
+        attachments.push(named);
+        fileMap[s.id] = attachmentKey(named.name);
+      }
     } catch (err) {
       setSending(false);
       return setError((err as Error).message);
     }
     const result = await submitForm('booking', {
+      reference: 'NAADAM',
       contactName: name,
       phone,
       summary: `${NAADAM_TYPE}: ${org} — ${sportLabels.join(', ')}`,
@@ -317,7 +326,8 @@ const RegistrationForm: React.FC = () => {
         [NK.phone]: phone,
         [NK.email]: email,
         [NK.sports]: sportLabels.join(', '),
-        [NK.sportIds]: picked.join(','),
+        [NK.sportIds]: pickedSports.map((s) => s.id).join(','),
+        [NK.files]: JSON.stringify(fileMap),
       },
       attachments,
     });
@@ -407,7 +417,7 @@ const RegistrationForm: React.FC = () => {
           <ol className="mt-2 space-y-1 text-sm text-slate-700 list-decimal list-inside">
             <li>Мэдүүлгийн загварыг татаж авна.</li>
             <li>Баг тус бүрийн тоглогчдын мэдээлэл, зургийг бөглөнө.</li>
-            <li>Бөглөсөн мэдүүлгээ доор хавсаргана — олон багтай бол бүгдийг нь.</li>
+            <li>Сонгосон төрөл бүрийн мэдүүлгийг доор хавсаргана.</li>
           </ol>
         </div>
         <a
@@ -421,45 +431,59 @@ const RegistrationForm: React.FC = () => {
           <span className="ml-auto text-xs font-semibold text-sky-100">.docx</span>
         </a>
 
-        {files.length > 0 && (
+        {pickedSports.length === 0 ? (
+          <p className="text-sm text-slate-500">Дээрээс оролцох төрлөө сонгоход баг тус бүрийн мэдүүлэг хавсаргах мөр гарна.</p>
+        ) : (
           <ul id="nf-files" className="space-y-2">
-            {files.map((f) => (
-              <li key={f.name + f.size} className="flex items-center gap-3 h-12 px-4 rounded-xl bg-emerald-50 border border-emerald-300 text-sm text-emerald-900">
-                <FileText className="w-5 h-5 text-emerald-600 shrink-0" />
-                <span className="truncate font-semibold">{f.name}</span>
-                <span className="ml-auto text-xs text-emerald-700 shrink-0">{f.size < 1024 * 1024 ? `${Math.max(1, Math.round(f.size / 1024))} КБ` : `${(f.size / 1024 / 1024).toFixed(1)} МБ`}</span>
-                <button
-                  type="button"
-                  onClick={() => setFiles((p) => p.filter((x) => x !== f))}
-                  aria-label={`${f.name} хасах`}
-                  className="w-10 h-10 -mr-2 flex items-center justify-center rounded-lg hover:bg-emerald-100 cursor-pointer shrink-0"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </li>
-            ))}
+            {pickedSports.map((s) => {
+              const f = files[s.id];
+              return (
+                <li key={s.id} id={`nf-slot-${s.id}`} className={`flex items-center gap-3 min-h-14 pl-3 pr-2 rounded-xl border-2 bg-white ${f ? 'border-emerald-300' : 'border-dashed border-sky-300'}`}>
+                  <img src={s.icon} alt="" className="w-10 h-8 object-contain shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div style={display} className="font-semibold uppercase tracking-wide text-slate-800 leading-tight">{s.label}</div>
+                    {f ? (
+                      <div className="flex items-center gap-1.5 text-xs text-emerald-700 min-w-0">
+                        <FileText className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{f.name}</span>
+                        <span className="shrink-0">· {fileSize(f.size)}</span>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-slate-500">Мэдүүлэг хавсаргаагүй</div>
+                    )}
+                  </div>
+                  {f ? (
+                    <button
+                      type="button"
+                      onClick={() => setFiles((p) => { const n = { ...p }; delete n[s.id]; return n; })}
+                      aria-label={`${s.label} мэдүүлгийг хасах`}
+                      className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <label
+                      htmlFor={`nf-file-${s.id}`}
+                      className="inline-flex items-center justify-center gap-1.5 h-11 w-11 sm:w-auto sm:h-10 sm:px-3 rounded-lg bg-[#0E5DA8] hover:bg-[#0B3F78] text-white text-xs font-bold cursor-pointer shrink-0 transition"
+                    >
+                      <Upload className="w-4 h-4" />
+                      <span className="sr-only sm:not-sr-only">Хавсаргах</span>
+                      <input
+                        id={`nf-file-${s.id}`}
+                        type="file"
+                        accept={DOCUMENT_ACCEPT}
+                        onChange={(e) => {
+                          setFile(s.id, e.target.files?.[0]);
+                          e.target.value = '';
+                        }}
+                        className="sr-only"
+                      />
+                    </label>
+                  )}
+                </li>
+              );
+            })}
           </ul>
-        )}
-
-        {files.length < MAX_FILES && (
-          <label
-            htmlFor="nf-file"
-            className="flex items-center justify-center gap-2 min-h-14 px-4 rounded-xl border-2 border-dashed border-sky-300 bg-white hover:border-[#0E5DA8] text-sm font-bold text-[#0B3F78] cursor-pointer transition"
-          >
-            <Upload className="w-5 h-5 text-[#0E5DA8]" />
-            {files.length ? 'Өөр багийн мэдүүлэг нэмэх' : 'Бөглөсөн мэдүүлгээ хавсаргах'}
-            <input
-              id="nf-file"
-              type="file"
-              multiple
-              accept={DOCUMENT_ACCEPT}
-              onChange={(e) => {
-                addFiles(e.target.files);
-                e.target.value = '';
-              }}
-              className="sr-only"
-            />
-          </label>
         )}
         <p className="text-[11px] text-slate-500">Word (.docx, .doc) эсвэл PDF, файл бүр 20 МБ хүртэл.</p>
         {fileError && <p role="alert" className="text-xs font-semibold text-red-600">{fileError}</p>}
