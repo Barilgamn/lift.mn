@@ -165,7 +165,8 @@ export const SportNaadamPage: React.FC = () => {
           <SectionTitle>Тэмцээний төрлүүд</SectionTitle>
         </Reveal>
         <ul id="naadam-sports" className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          {SPORTS.map((s, i) => (
+          {/* Өргөн карт (олс таталт) сүүлд — гар утсанд 2 баганад цоорхой үлдэхгүй */}
+          {[...SPORTS.filter((x) => !x.wide), ...SPORTS.filter((x) => x.wide)].map((s, i) => (
             <Reveal key={s.id} as="li" delay={i * 50} className={s.wide ? 'col-span-2' : ''}>
               <div className="group h-full min-h-40 flex flex-col items-center justify-center gap-4 p-5 rounded-2xl bg-white/90 border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#0E5DA8]/40 hover:-translate-y-1 transition-all duration-300">
                 <img
