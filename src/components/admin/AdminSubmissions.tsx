@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, Trash2 } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { Submission, SubmissionKind, SubmissionStatus } from '../../types';
 import { Badge, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './adminUi';
@@ -21,7 +21,7 @@ const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
 const STATUS_ORDER: SubmissionStatus[] = ['new', 'in-progress', 'done'];
 
 export const AdminSubmissions: React.FC = () => {
-  const { submissions, setSubmissionStatus } = useAdminStore();
+  const { submissions, setSubmissionStatus, deleteSubmission } = useAdminStore();
   const [kind, setKind] = useState<SubmissionKind | 'all'>('all');
   const [status, setStatus] = useState<SubmissionStatus | 'all'>('all');
   const [query, setQuery] = useState('');
@@ -299,6 +299,24 @@ export const AdminSubmissions: React.FC = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div className="mt-5 pt-4 border-t border-line-light flex justify-end">
+                <button
+                  id="submission-delete"
+                  type="button"
+                  onClick={() => {
+                    if (!window.confirm('Энэ бүртгэлийг хавсаргасан файлуудтай нь устгах уу? Буцаах боломжгүй.')) return;
+                    void deleteSubmission(open.id).then((err) => {
+                      if (err) alert(err);
+                      else setOpen(null);
+                    });
+                  }}
+                  className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-bold text-red-600 border border-red-200 hover:bg-red-50 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Устгах
+                </button>
               </div>
             </div>
           </div>

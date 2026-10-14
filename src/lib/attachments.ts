@@ -93,6 +93,18 @@ export const isDocumentEntry = (value: unknown): boolean =>
   typeof value === 'string' &&
   (value.startsWith(STORAGE_PREFIX) || (value.startsWith('data:') && !value.startsWith('data:image/')));
 
+/** details доторх Storage-ийн файлуудыг сангаар нь бүлэглэнэ (устгахад) */
+export function storageRefs(details: Record<string, string>): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const v of Object.values(details)) {
+    if (typeof v !== 'string' || !v.startsWith(STORAGE_PREFIX)) continue;
+    const ref = v.slice(STORAGE_PREFIX.length);
+    const bucket = ref.slice(0, ref.indexOf('/'));
+    (out[bucket] ??= []).push(ref.slice(bucket.length + 1));
+  }
+  return out;
+}
+
 /** `cs2.docx` → `Файл: cs2.docx` (details-ийн түлхүүр, submitForm-тэй ижил тайралт) */
 export const attachmentKey = (name: string): string => `${ATTACHMENT_PREFIX}${name.slice(0, 100)}`;
 

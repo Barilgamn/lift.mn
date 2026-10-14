@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import type { Session } from '@supabase/supabase-js';
 import { Elevator, ServiceRecord, SparePart, Submission, SubmissionStatus } from '../types';
 import { friendlyError, getSupabase, isSupabaseConfigured } from '../lib/supabase';
+import { storageRefs } from '../lib/attachments';
 import {
   elevatorToRow, productToRow, recordToRow,
   rowToElevator, rowToProduct, rowToRecord, rowToSubmission,
@@ -48,6 +49,8 @@ interface AdminStore {
     id: string,
     patch: { details?: Record<string, string>; status?: SubmissionStatus }
   ) => Promise<string | null>;
+  /** Хүсэлтийг устгана — Storage-д хавсаргасан файлуудтай нь хамт */
+  deleteSubmission: (id: string) => Promise<string | null>;
   addServiceRecord: (record: Omit<ServiceRecord, 'id'> & { id?: string }) => Promise<string | null>;
   addElevator: (elevator: Omit<Elevator, 'id'> & { id?: string }) => Promise<string | null>;
   updateElevator: (id: string, patch: Partial<Elevator>) => Promise<string | null>;
@@ -200,6 +203,23 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return null;
   }, [submissions]);
 
+  const deleteSubmission = useCallback(async (id: string) => {
+    const current = submissions.find((x) => x.id === id);
+    if (!current) return 'Хүсэлт олдсонгүй';
+    const sb = await getSupabase();
+    // Эхлээд хавсаргасан файлууд — эс бөгөөс эзэнгүй файл Storage-д үлдэнэ
+    for (const [bucket, paths] of Object.entries(storageRefs(current.details))) {
+      const { error } = await sb.storage.from(bucket).remove(paths);
+      if (error) return `Файлыг устгаж чадсангүй: ${friendlyError(error)}`;
+    }
+    // RLS хаасан үед алдаа өгөхгүй, 0 мөр устгадаг — тоолж шалгана
+    const { data, error } = await sb.from('submissions').delete().eq('id', id).select('id');
+    if (error) return friendlyError(error);
+    if (!data?.length) return 'Устгах эрх алга эсвэл бүртгэл аль хэдийн устсан байна';
+    setSubmissions((prev) => prev.filter((x) => x.id !== id));
+    return null;
+  }, [submissions]);
+
   const addServiceRecord = useCallback(async (record: Omit<ServiceRecord, 'id'> & { id?: string }) => {
     const sb = await getSupabase();
     const { data, error } = await sb.from('service_records').insert(recordToRow(record)).select().single();
@@ -261,10 +281,10 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     status, user, notConfigured: !isSupabaseConfigured, loadError,
     login, logout,
     elevators, serviceRecords, submissions, products,
-    setSubmissionStatus, updateSubmission, addServiceRecord, addElevator, updateElevator,
+    setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
     saveProduct, deleteProduct,
   }), [status, user, loadError, login, logout, elevators, serviceRecords, submissions, products,
-       setSubmissionStatus, updateSubmission, addServiceRecord, addElevator, updateElevator,
+       setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
        saveProduct, deleteProduct]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

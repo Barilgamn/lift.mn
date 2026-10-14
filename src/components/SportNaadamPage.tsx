@@ -346,7 +346,6 @@ const RegistrationForm: React.FC = () => {
           <strong className="text-slate-900">{org}</strong>-ийн бүртгэлийг хүлээн авлаа. Зохион байгуулагчид{' '}
           <strong className="text-slate-900">{phone}</strong> дугаарт холбогдоно.
         </p>
-        <p className="mt-4 inline-block px-4 py-2 rounded-xl bg-slate-100 font-mono font-bold text-slate-800">{doneId}</p>
         <p className="mt-4 text-xs text-slate-500">
           Лавлах: {NAADAM.phones.join(', ')} · {NAADAM.email}
         </p>

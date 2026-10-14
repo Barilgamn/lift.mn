@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Download, FileText, Mail, Phone, Search, Sheet } from 'lucide-react';
+import { Download, FileText, Loader2, Mail, Phone, Search, Sheet, Trash2 } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { attachmentName, downloadAttachment, isDocumentEntry } from '../../lib/attachments';
 import { NK, NAADAM, SPORTS, isNaadamEntry, sportById } from '../../data/naadamData';
@@ -58,8 +58,23 @@ function exportCsv(rows: Team[]) {
 
 /** Спортын их наадмын бүртгэлүүд — баг тус бүрээр */
 export const AdminNaadam: React.FC = () => {
-  const { submissions } = useAdminStore();
+  const { submissions, deleteSubmission } = useAdminStore();
   const [sport, setSport] = useState<string>('all');
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  /** Байгууллагын бүртгэлийг (бүх баг, мэдүүлэгтэй нь) устгана */
+  const remove = async (s: Submission) => {
+    const labels = sportIdsOf(s).map((id) => sportById(id)?.label ?? id);
+    const ok = window.confirm(
+      `"${s.details[NK.org] ?? s.contactName}" байгууллагын бүртгэлийг устгах уу?\n\n` +
+        `${labels.length} баг (${labels.join(', ')}) болон хавсаргасан мэдүүлгүүд бүгд устна. Буцаах боломжгүй.`
+    );
+    if (!ok) return;
+    setDeleting(s.id);
+    const err = await deleteSubmission(s.id);
+    setDeleting(null);
+    if (err) window.alert(err);
+  };
   const [query, setQuery] = useState('');
 
   const all = useMemo(() => submissions.filter(isNaadamEntry), [submissions]);
@@ -196,8 +211,18 @@ export const AdminNaadam: React.FC = () => {
                   )}
 
                   <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-dark-subtle">
-                    <span className="font-mono">{s.id} · {s.createdAt}</span>
+                    <span>{s.createdAt}</span>
                     {others.length > 0 && <span>Мөн: {others.join(', ')}</span>}
+                    <button
+                      type="button"
+                      onClick={() => void remove(s)}
+                      disabled={deleting === s.id}
+                      aria-label={`${s.details[NK.org] ?? ''} бүртгэлийг устгах`}
+                      className="ml-auto inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-red-600 hover:bg-red-50 font-bold cursor-pointer disabled:opacity-50"
+                    >
+                      {deleting === s.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                      Устгах
+                    </button>
                   </div>
                 </Panel>
               </li>
