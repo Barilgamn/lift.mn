@@ -35,7 +35,8 @@ const AdminChrome: React.FC = () => {
   const newNaadam = submissions.filter((s) => isNaadamEntry(s) && s.status === 'new').length;
 
   return (
-    <div className="theme-light min-h-dvh bg-surface-2 text-ink flex flex-col">
+    // Админ хэсэг Google орчуулгад өртөхгүй (маягтын утга эвдэрнэ)
+    <div translate="no" className="notranslate theme-light min-h-dvh bg-surface-2 text-ink flex flex-col">
       <header className="sticky top-0 z-30 bg-paper border-b border-line-light">
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 h-16">
           <div className="flex items-center gap-3 min-w-0">

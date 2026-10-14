@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BookOpen, Building2, Wrench, ShoppingBag, ShoppingCart, PhoneCall } from 'lucide-react';
 import { ActiveSection } from '../types';
 import { LiftMnLogo } from './LiftMnLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { SHOW_DELTA_LIFT } from '../config';
 import { CART_BUMP_EVENT } from '../lib/flyToCart';
 
@@ -60,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="DELTA LIFT"
             aria-label="DELTA LIFT"
             onClick={() => onSelectSection('delta-lift')}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 xl:px-4 py-2 rounded-lg text-xs xl:text-sm font-bold tracking-wide whitespace-nowrap transition cursor-pointer ${
               activeSection === 'delta-lift'
                 ? 'bg-brand text-white shadow-sm border border-transparent'
                 : 'text-ink-dark-muted hover:text-brand hover:bg-paper border border-transparent'
@@ -77,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Сэлбэг хэрэгсэл"
             aria-label="Сэлбэг хэрэгсэл"
             onClick={() => onSelectSection('parts')}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 xl:px-4 py-2 rounded-lg text-xs xl:text-sm font-bold tracking-wide whitespace-nowrap transition cursor-pointer ${
               activeSection === 'parts'
                 ? 'bg-brand text-white shadow-sm border border-transparent'
                 : 'text-ink-dark-muted hover:text-brand hover:bg-paper border border-transparent'
@@ -93,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Засвар үйлчилгээ"
             aria-label="Засвар үйлчилгээ"
             onClick={() => onSelectSection('service')}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 xl:px-4 py-2 rounded-lg text-xs xl:text-sm font-bold tracking-wide whitespace-nowrap transition cursor-pointer ${
               activeSection === 'service'
                 ? 'bg-brand text-white shadow-sm border border-transparent'
                 : 'text-ink-dark-muted hover:text-brand hover:bg-paper border border-transparent'
@@ -109,7 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Норм дүрэм, техникийн шийдлүүд"
             aria-label="Норм дүрэм, техникийн шийдлүүд"
             onClick={() => onSelectSection('standards')}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 xl:px-4 py-2 rounded-lg text-xs xl:text-sm font-bold tracking-wide whitespace-nowrap transition cursor-pointer ${
               activeSection === 'standards'
                 ? 'bg-brand text-white shadow-sm border border-transparent'
                 : 'text-ink-dark-muted hover:text-brand hover:bg-paper border border-transparent'
@@ -121,8 +122,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         </nav>
 
-        {/* Баруун талын үйлдэл: сагс */}
+        {/* Баруун талын үйлдэл: хэл, сагс */}
         <div className="flex items-center gap-2 sm:gap-3">
+          <LanguageSwitcher />
           
           {/* Cart button */}
           <button
@@ -201,6 +203,7 @@ const MobileNav: React.FC<{
       <a
         id="mnav-call"
         href="tel:+97677232222"
+        translate="no"
         className="flex flex-col items-center justify-center gap-1 text-[11px] font-bold text-red-700"
       >
         <PhoneCall className="w-5 h-5" />

@@ -442,7 +442,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
                   {/* Part Info */}
                   <div className="p-4">
-                    <div className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
+                    <div translate="no" className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
                       {part.oemCode}
                     </div>
                     <h3 className="mb-2">

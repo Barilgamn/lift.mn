@@ -309,3 +309,22 @@ body {
     transition: none;
   }
 }
+
+/* Google автомат орчуулга (src/lib/translate.ts) — дээд туузыг нууж, хуудсыг доош түлхэхгүй */
+.goog-te-banner-frame,
+.skiptranslate > iframe,
+iframe.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf {
+  display: none !important;
+}
+html.is-translated body {
+  top: 0 !important;
+  position: static !important;
+}
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}

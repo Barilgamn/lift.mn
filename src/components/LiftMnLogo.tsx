@@ -28,11 +28,12 @@ export const LiftMnLogo: React.FC<{ className?: string; beta?: keyof typeof BETA
       height={127}
       className={`w-auto select-none ${className}`}
       draggable={false}
+      translate="no"
     />
   );
   if (!beta || !SHOW_BETA) return img;
   return (
-    <span className="inline-flex items-start gap-1.5 sm:gap-2 shrink-0">
+    <span translate="no" className="notranslate inline-flex items-start gap-1.5 sm:gap-2 shrink-0">
       {img}
       <span
         data-beta-badge

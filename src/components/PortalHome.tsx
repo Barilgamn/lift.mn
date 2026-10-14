@@ -11,6 +11,7 @@ import {
 import { ActiveSection } from '../types';
 import { DeltaLiftsMark } from './DeltaLiftsLogo';
 import { LiftMnLogo } from './LiftMnLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { ROUTES } from '../routes';
 import { NAADAM, SPORTS } from '../data/naadamData';
 // Баннерын гарчгийн фонт (наадмын хуудастай ижил)
@@ -159,15 +160,16 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
       {/* Дээд мөр: голлосон LIFT.MN лого */}
       <header 
         id="portal-header" 
-        className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 border-b border-line-light bg-paper shrink-0 shadow-sm"
+        className="relative z-30 w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between sm:justify-center gap-2 sm:gap-4 border-b border-line-light bg-paper shrink-0 shadow-sm"
       >
         <div className="flex items-center gap-3 sm:gap-4">
           <LiftMnLogo className="h-7 sm:h-9" beta="lg" />
-          <div className="hidden md:block h-7 w-px bg-line-light" />
-          <span className="hidden md:inline text-xs lg:text-sm font-bold tracking-widest text-ink-dark-muted uppercase">
+          <div className="hidden xl:block h-7 w-px bg-line-light" />
+          <span className="hidden xl:inline text-sm font-bold tracking-widest text-ink-dark-muted uppercase">
             МОНГОЛЫН ЛИФТ, ЭСКАЛАТОРЫН НЭГДСЭН ЦАХИМ ТАЛБАР
           </span>
         </div>
+        <LanguageSwitcher className="sm:absolute sm:right-6 lg:right-8" />
       </header>
 
       {/* Спортын их наадам 2026 — нарийхан баннер (постерын өнгө төрхтэй) */}
@@ -363,7 +365,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         {/* Хөл хэсгийн холбоо барих мэдээлэл */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
           <a 
-            href="tel:+97677232222"
+            href="tel:+97677232222" translate="no"
             className="flex items-center gap-1.5 hover:text-brand transition-colors"
           >
             <PhoneCall className="w-3.5 h-3.5 text-brand" />

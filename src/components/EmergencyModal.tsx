@@ -155,7 +155,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a 
-                  href="tel:+97677232222" 
+                  href="tel:+97677232222" translate="no" 
                   className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm flex items-center justify-center gap-2"
                 >
                   <PhoneCall className="w-4 h-4" />
@@ -179,7 +179,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
                   <span>Шууд ярих шаардлагатай бол:</span>
                 </div>
                 <a 
-                  href="tel:+97677232222" 
+                  href="tel:+97677232222" translate="no" 
                   className="font-mono font-bold text-sm text-warn hover:underline px-2 py-1 rounded bg-red-900/60"
                 >
                   (+976) 7723-2222

@@ -131,7 +131,7 @@ export const ProductPage: React.FC<{
           </ZoomableImage>
 
           <div className="min-w-0">
-            <span className="text-[11px] font-mono text-brand-bright font-bold uppercase tracking-wider">
+            <span translate="no" className="text-[11px] font-mono text-brand-bright font-bold uppercase tracking-wider">
               {part.brand} · {part.oemCode}
             </span>
             <h1 className="mt-1 text-2xl sm:text-3xl font-black tracking-tight leading-tight">
@@ -218,7 +218,7 @@ export const ProductPage: React.FC<{
                   </ZoomableImage>
 
                   <div className="min-w-0 flex-1">
-                    <div className="font-mono text-xs font-bold text-brand-bright break-words">
+                    <div translate="no" className="font-mono text-xs font-bold text-brand-bright break-words">
                       {v.code}
                     </div>
                     <div className="text-[11px] text-ink-muted line-clamp-2">{v.name}</div>

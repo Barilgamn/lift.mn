@@ -133,7 +133,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
                 * Дугаар нь хэвээрээ — утаснаас шууд залгаж болно.
                 */}
               <a
-                href="tel:+97677232222"
+                href="tel:+97677232222" translate="no"
                 className="block p-3 rounded-xl bg-paper-3 border border-line-light hover:border-brand transition-colors"
               >
                 <div className="text-[11px] font-bold text-ink-dark-muted uppercase tracking-wide">
@@ -149,7 +149,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectSection }) => {
 
               <div className="flex items-center gap-2">
                 <PhoneCall className="w-4 h-4 text-brand shrink-0" />
-                <a href="tel:+97677232222" className="py-2 -my-2 hover:text-brand transition-colors font-mono">
+                <a href="tel:+97677232222" translate="no" className="py-2 -my-2 hover:text-brand transition-colors font-mono">
                   Утас: (+976) 7723-2222
                 </a>
               </div>
