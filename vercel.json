@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/sportnaadam", "destination": "/sportnaadam.html" },
+    { "source": "/parts", "destination": "/parts.html" },
+    { "source": "/parts/:id", "destination": "/parts-item.html" },
+    { "source": "/service", "destination": "/service.html" },
+    { "source": "/standards", "destination": "/standards.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

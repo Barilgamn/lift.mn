@@ -15,7 +15,52 @@ import {defineConfig, type Plugin} from 'vite';
  * ажиллана.
  */
 const SITE = 'https://www.lift.mn';
-const SOCIAL_PAGES: {file: string; path: string; title: string; description: string; image: string; imageAlt: string}[] = [
+const SOCIAL_PAGES: {
+  file: string;
+  /** og:url — дэд хуудсанд (жишээ нь бараа бүр) тавихгүй, хуваалцсан хаяг нь өөрөө үлдэнэ */
+  path?: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}[] = [
+  {
+    file: 'parts.html',
+    path: '/parts',
+    title: 'Лифт, эскалаторын сэлбэг хэрэгсэл',
+    description:
+      'Thyssenkrupp, Fujitec, Kleemann, Hyundai болон бусад брэндийн лифт, эскалаторын сэлбэг. ' +
+      'Сагсандаа нэмээд үнийн санал аваарай. Лавлах: 7723-2222',
+    image: '/og-parts.jpg',
+    imageAlt: 'LIFT.MN — лифт, эскалаторын сэлбэг хэрэгсэл',
+  },
+  {
+    file: 'parts-item.html',
+    title: 'Лифт, эскалаторын сэлбэг хэрэгсэл',
+    description: 'Барааны дэлгэрэнгүй, үнийн санал авах. LIFT.MN — лифт, эскалаторын сэлбэг. Лавлах: 7723-2222',
+    image: '/og-parts.jpg',
+    imageAlt: 'LIFT.MN — лифт, эскалаторын сэлбэг хэрэгсэл',
+  },
+  {
+    file: 'service.html',
+    path: '/service',
+    title: 'Лифтний засвар үйлчилгээ — 24/7 дуудлага',
+    description:
+      'Лифт, эскалаторын засвар, оношилгоо, тогтмол үйлчилгээ. 24/7 диспетчер — засварын хүсэлтээ ' +
+      'онлайнаар илгээгээрэй. Лавлах: 7723-2222',
+    image: '/og-service.jpg',
+    imageAlt: 'LIFT.MN — лифтний засвар үйлчилгээ, 24/7 дуудлага',
+  },
+  {
+    file: 'standards.html',
+    path: '/standards',
+    title: 'Норм дүрэм, техникийн шийдлүүд',
+    description:
+      'Лифт, урсдаг шатны олон улсын стандарт (EN 81-20/50 г.м), аюулгүй байдал, ' +
+      'барилгад тохирох техникийн шийдлүүд. Инженерийн зөвлөгөө авах.',
+    image: '/og-standards.jpg',
+    imageAlt: 'LIFT.MN — норм дүрэм, техникийн шийдлүүд',
+  },
   {
     file: 'sportnaadam.html',
     path: '/sportnaadam',
@@ -48,10 +93,10 @@ function socialPages(): Plugin {
         };
         let html = base.replace(/<title>[^<]*<\/title>/, `<title>${escapeAttr(page.title)} | LIFT.MN</title>`);
         for (const apply of [
+          ...(page.path ? [meta('property', 'og:url', SITE + page.path)] : []),
           meta('name', 'description', page.description),
           meta('property', 'og:title', page.title),
           meta('property', 'og:description', page.description),
-          meta('property', 'og:url', SITE + page.path),
           meta('property', 'og:image', SITE + page.image),
           meta('property', 'og:image:alt', page.imageAlt),
           meta('name', 'twitter:image', SITE + page.image),
