@@ -118,9 +118,9 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
   // Тусгай захиалгын маягтаас өмнө яг ХОЁР МӨР бараа харуулна.
   // Баганын тоо нь доорх сүлжээний ангиллаас хамаарна:
-  //   grid-cols-1 sm:grid-cols-2 xl:grid-cols-3
+  //   grid-cols-2 xl:grid-cols-3 (гар утсанд ч 2 багана)
   // Тэр ангиллыг өөрчилвөл энд ч гэсэн тааруулна.
-  const columnsAt = (width: number) => (width >= 1280 ? 3 : width >= 640 ? 2 : 1);
+  const columnsAt = (width: number) => (width >= 1280 ? 3 : 2);
   const [columns, setColumns] = useState(() =>
     typeof window === 'undefined' ? 4 : columnsAt(window.innerWidth)
   );
@@ -445,20 +445,20 @@ export const PartsView: React.FC<PartsViewProps> = ({
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
             {filteredParts.map((part, index) => (
               <React.Fragment key={part.id}>
               <div 
-                className="group rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
+                className="group min-w-0 rounded-xl sm:rounded-2xl bg-surface-2 border border-line hover:border-brand transition-all duration-300 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10"
               >
                 <div>
                   {/* Зураг — дэлгэрэнгүй хуудас руу хөтөлнө */}
-                  <div className="relative h-48 overflow-hidden bg-surface-1">
+                  <div className="relative h-36 sm:h-48 overflow-hidden bg-surface-1">
                     <Link
                       to={productPath(part.id)}
                       tabIndex={-1}
                       aria-hidden="true"
-                      className="absolute inset-0 p-4 flex items-center justify-center"
+                      className="absolute inset-0 p-3 pt-7 sm:p-4 flex items-center justify-center"
                     >
                       <ProductImage
                         src={part.image}
@@ -470,17 +470,17 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       />
                     </Link>
 
-                    <div className="pointer-events-none absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-surface-2/90 text-[10px] font-mono text-ink-muted border border-white/10">
+                    <div className="pointer-events-none absolute top-2 left-2 sm:top-2.5 sm:left-2.5 max-w-[45%] truncate px-1.5 sm:px-2 py-0.5 rounded bg-surface-2/90 text-[9px] sm:text-[10px] font-mono text-ink-muted border border-white/10">
                       {part.brand}
                     </div>
 
-                    <div className="pointer-events-none absolute top-2.5 right-2.5">
+                    <div className="pointer-events-none absolute top-2 right-2 sm:top-2.5 sm:right-2.5 text-[9px] sm:text-[10px]">
                       {part.inStock ? (
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 text-[10px] font-bold">
+                        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-emerald-500/10 text-success border border-emerald-500/40 font-bold whitespace-nowrap">
                           Бэлэн ({part.stockCount})
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-warn border border-amber-500/40 text-[10px] font-bold">
+                        <span className="px-1.5 sm:px-2 py-0.5 rounded bg-amber-500/10 text-warn border border-amber-500/40 font-bold whitespace-nowrap">
                           Захиалгаар
                         </span>
                       )}
@@ -488,8 +488,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
                   </div>
 
                   {/* Part Info */}
-                  <div className="p-4">
-                    <div translate="no" className="text-[11px] font-mono text-brand-bright font-semibold mb-1">
+                  <div className="p-3 sm:p-4">
+                    <div translate="no" className="text-[10px] sm:text-[11px] font-mono text-brand-bright font-semibold mb-1 truncate">
                       {part.oemCode}
                     </div>
                     <h3 className="mb-2">
@@ -500,28 +500,29 @@ export const PartsView: React.FC<PartsViewProps> = ({
                         {part.name}
                       </Link>
                     </h3>
-                    <div className="text-[11px] text-ink-muted line-clamp-2 mb-3">
+                    {/* Гар утсанд карт нарийн — тайлбарыг дэлгэрэнгүй хуудсанд үлдээнэ */}
+                    <div className="hidden sm:block text-[11px] text-ink-muted line-clamp-2 mb-3">
                       {part.description}
                     </div>
 
-                    <div className="text-[10px] text-ink-subtle mb-3 flex items-center gap-1">
+                    <div className="text-[10px] text-ink-subtle mb-2 sm:mb-3 flex items-center gap-1">
                       <Truck className="w-3 h-3 text-brand-bright" />
                       <span>{part.deliveryDays}</span>
                     </div>
 
-                    <div className="pt-2 border-t border-line flex items-baseline justify-between gap-2">
-                      <span className="text-xs text-ink-subtle shrink-0">
+                    <div className="pt-2 border-t border-line flex flex-col items-start sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-2">
+                      <span className={`text-[11px] sm:text-xs text-ink-subtle shrink-0 ${part.variants?.length ? '' : 'hidden sm:inline'}`}>
                         {part.variants?.length ? `${part.variants.length} загвар` : 'Үнэ:'}
                       </span>
                       {hasPrice(part) ? (
-                        <span className="text-sm font-black text-accent-ink font-mono text-right">
+                        <span className="text-xs sm:text-sm font-black text-accent-ink font-mono sm:text-right">
                           {productPriceLabel(part)}
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => setQuotePart(part)}
-                          className="text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer text-right py-2.5 -my-2.5"
+                          className="text-[11px] sm:text-xs font-bold text-accent-ink underline decoration-dotted underline-offset-4 hover:text-accent-hover cursor-pointer text-left sm:text-right py-2.5 -my-2.5"
                         >
                           {productPriceLabel(part)}
                         </button>
@@ -531,10 +532,11 @@ export const PartsView: React.FC<PartsViewProps> = ({
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 pt-0 grid grid-cols-2 gap-2">
+                <div className="p-3 pt-0 sm:p-4 sm:pt-0 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Гар утсанд зураг, нэр нь дэлгэрэнгүй рүү хөтөлдөг тул зөвхөн гол товч */}
                   <Link
                     to={productPath(part.id)}
-                    className="py-2 px-3 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1"
+                    className="hidden sm:flex py-2 px-3 rounded-lg bg-surface-3 hover:bg-neutral-700 text-ink-muted text-xs font-semibold transition cursor-pointer items-center justify-center gap-1"
                   >
                     <Info className="w-3.5 h-3.5" />
                     <span>Үзүүлэлт</span>
@@ -549,7 +551,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                             e.currentTarget.closest('.group')?.querySelector('img')
                           )
                     }
-                    className="py-2 px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30"
+                    className="min-h-10 py-2 px-2 sm:px-3 rounded-lg bg-brand hover:bg-brand-hover text-white font-bold text-[11px] sm:text-xs uppercase sm:tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-md shadow-brand/30 whitespace-nowrap"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>{part.variants?.length ? 'Загвар сонгох' : 'Сагслах'}</span>
