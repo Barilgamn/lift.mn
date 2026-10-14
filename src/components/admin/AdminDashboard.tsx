@@ -28,7 +28,10 @@ const StatCard: React.FC<{
 };
 
 export const AdminDashboard: React.FC = () => {
-  const { submissions, elevators, serviceRecords, products } = useAdminStore();
+  const { submissions, elevators, serviceRecords, products, can } = useAdminStore();
+  const seesSubmissions = can('requests') || can('quotes') || can('naadam');
+  // Хүсэлтийн жагсаалт руу очих холбоос — эрхтэй хэсэг рүү
+  const submissionsLink = can('requests') ? '/admin/submissions' : can('quotes') ? '/admin/quotes' : '/admin/naadam';
 
   const newCount = submissions.filter((s) => s.status === 'new').length;
   const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
@@ -46,7 +49,7 @@ export const AdminDashboard: React.FC = () => {
         lead="Шинэ хүсэлт, анхаарал шаардсан тоноглол, нөөцийн байдал."
       />
 
-      {openQuotes > 0 && (
+      {can('quotes') && openQuotes > 0 && (
         <Link
           id="dash-quotes"
           to="/admin/quotes"
@@ -63,22 +66,31 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard to="/admin/submissions" icon={ClipboardList} value={newCount}
-          label="Шинэ хүсэлт" tone={newCount ? 'warn' : 'brand'} />
-        <StatCard to="/admin/elevators" icon={AlertTriangle} value={faults.length}
-          label="Анхаарал шаардсан лифт" tone={faults.length ? 'danger' : 'brand'} />
-        <StatCard to="/admin/elevators" icon={ArrowUpDown} value={elevators.length}
-          label="Үйлчилгээнд буй лифт" />
-        <StatCard to="/admin/products" icon={Package} value={outOfStock.length + lowStock.length}
-          label="Нөөц дуусаж буй сэлбэг" tone={outOfStock.length ? 'danger' : lowStock.length ? 'warn' : 'brand'} />
+        {seesSubmissions && (
+          <StatCard to={submissionsLink} icon={ClipboardList} value={newCount}
+            label="Шинэ хүсэлт" tone={newCount ? 'warn' : 'brand'} />
+        )}
+        {can('elevators') && (
+          <>
+            <StatCard to="/admin/elevators" icon={AlertTriangle} value={faults.length}
+              label="Анхаарал шаардсан лифт" tone={faults.length ? 'danger' : 'brand'} />
+            <StatCard to="/admin/elevators" icon={ArrowUpDown} value={elevators.length}
+              label="Үйлчилгээнд буй лифт" />
+          </>
+        )}
+        {can('products') && (
+          <StatCard to="/admin/products" icon={Package} value={outOfStock.length + lowStock.length}
+            label="Нөөц дуусаж буй сэлбэг" tone={outOfStock.length ? 'danger' : lowStock.length ? 'warn' : 'brand'} />
+        )}
       </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Сүүлийн хүсэлтүүд */}
+        {seesSubmissions && (
         <Panel className="overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-line-light">
             <h2 className="text-sm font-bold text-ink-dark">Сүүлийн хүсэлтүүд</h2>
-            <Link to="/admin/submissions" className="text-xs font-semibold text-brand hover:underline">
+            <Link to={submissionsLink} className="text-xs font-semibold text-brand hover:underline">
               Бүгдийг харах
             </Link>
           </div>
@@ -101,7 +113,9 @@ export const AdminDashboard: React.FC = () => {
             ))}
           </ul>
         </Panel>
+        )}
 
+        {can('elevators') && (
         <div className="space-y-5">
           {/* Анхаарал шаардсан */}
           <Panel className="overflow-hidden">
@@ -150,6 +164,7 @@ export const AdminDashboard: React.FC = () => {
             </ul>
           </Panel>
         </div>
+        )}
       </div>
     </div>
   );

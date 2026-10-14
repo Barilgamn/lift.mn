@@ -30,6 +30,7 @@ const AdminElevators = lazy(() => import('./components/admin/AdminElevators'));
 const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 const AdminQuotes = lazy(() => import('./components/admin/AdminQuotes'));
 const AdminNaadam = lazy(() => import('./components/admin/AdminNaadam'));
+const AdminUsers = lazy(() => import('./components/admin/AdminUsers'));
 import { CartDrawer } from './components/CartDrawer';
 import { ProductPage } from './components/ProductPage';
 
@@ -257,6 +258,7 @@ export default function App() {
           <Route path="map" element={<AdminMap />} />
           <Route path="elevators" element={<AdminElevators />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
 
         {/* Танихгүй зам — портал руу буцаана */}

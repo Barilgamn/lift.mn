@@ -4,6 +4,7 @@ import { Elevator, ServiceRecord, SparePart, Submission, SubmissionStatus } from
 import { friendlyError, getSupabase, isSupabaseConfigured } from '../lib/supabase';
 import { storageRefs } from '../lib/attachments';
 import { PRODUCT_BUCKET, storedImagePaths } from '../lib/productImages';
+import { ALL_PERMS, normalizePerms, type Perm } from '../lib/permissions';
 import {
   elevatorToRow, productToRow, recordToRow,
   rowToElevator, rowToProduct, rowToRecord, rowToSubmission,
@@ -22,6 +23,8 @@ export interface AdminUser {
   email: string;
   name: string;
   role: string;
+  /** Админы хэсэгт хүрэх эрхүүд (supabase/admin-users.sql) */
+  permissions: Perm[];
 }
 
 type Status = 'loading' | 'anonymous' | 'unauthorized' | 'authenticated';
@@ -32,6 +35,9 @@ interface AdminStore {
   /** .env дэх түлхүүр бөглөгдөөгүй */
   notConfigured: boolean;
   loadError: string | null;
+
+  /** Одоогийн хэрэглэгч тухайн эрхтэй эсэх */
+  can: (perm: Perm) => boolean;
 
   login: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
@@ -91,23 +97,36 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   /** Нэвтэрсэн хэрэглэгчийн профайлыг уншиж, админ эсэхийг шалгана */
   const loadProfile = useCallback(async (session: Session): Promise<AdminUser | null> => {
     const sb = await getSupabase();
-    const { data, error } = await sb
-      .from('profiles')
-      .select('id, email, name, role')
-      .eq('id', session.user.id)
-      .maybeSingle();
+    const query = (cols: string) => sb.from('profiles').select(cols).eq('id', session.user.id).maybeSingle();
+    let { data, error } = await query('id, email, name, role, permissions');
+    // admin-users.sql ажиллуулаагүй (permissions багана алга) — админ бүх эрхтэй
+    const legacy = !!error && /permissions/.test(error.message);
+    if (legacy) ({ data, error } = await query('id, email, name, role'));
     if (error) { setLoadError(friendlyError(error)); return null; }
     if (!data) return null;
-    return { id: data.id, email: data.email, name: data.name || data.email, role: data.role };
+    const row = data as unknown as { id: string; email: string; name: string; role: string; permissions?: unknown };
+    return {
+      id: row.id,
+      email: row.email,
+      name: row.name || row.email,
+      role: row.role,
+      // Багана алга (хуучин бүтэц) бол админ бүх эрхтэй — жинхэнэ хяналтыг RLS хийнэ
+      permissions: row.role !== 'admin' ? [] : legacy || row.permissions === undefined ? [...ALL_PERMS] : normalizePerms(row.permissions),
+    };
   }, []);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (perms: Perm[]) => {
     const sb = await getSupabase();
+    const has = (p: Perm) => perms.includes(p);
+    const none = Promise.resolve({ data: [], error: null });
+    // Эрхгүй хүснэгтийг татахгүй — RLS ч гэсэн хоосон буцаана
     const [el, rec, sub, prod] = await Promise.all([
-      sb.from('elevators').select('*').order('building'),
-      sb.from('service_records').select('*').order('date', { ascending: false }),
-      sb.from('submissions').select('*').order('created_at', { ascending: false }),
-      sb.from('products').select('*').order('name'),
+      has('elevators') ? sb.from('elevators').select('*').order('building') : none,
+      has('elevators') ? sb.from('service_records').select('*').order('date', { ascending: false }) : none,
+      has('requests') || has('quotes') || has('naadam')
+        ? sb.from('submissions').select('*').order('created_at', { ascending: false })
+        : none,
+      has('products') ? sb.from('products').select('*').order('name') : none,
     ]);
     const firstError = el.error || rec.error || sub.error || prod.error;
     if (firstError) { setLoadError(friendlyError(firstError)); return; }
@@ -122,7 +141,7 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const applySession = useCallback(async (session: Session | null) => {
     if (!session) { setUser(null); setStatus('anonymous'); clearData(); return; }
     const profile = await loadProfile(session);
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || profile.role !== 'admin' || profile.permissions.length === 0) {
       // Нэвтэрсэн ч эрх нь хүрэхгүй — өгөгдөл татахгүй
       setUser(profile);
       setStatus('unauthorized');
@@ -131,7 +150,7 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
     setUser(profile);
     setStatus('authenticated');
-    await loadData();
+    await loadData(profile.permissions);
   }, [loadProfile, loadData]);
 
   useEffect(() => {
@@ -154,6 +173,8 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     return () => { alive = false; unsubscribe?.(); };
   }, [applySession]);
+
+  const can = useCallback((perm: Perm) => !!user?.permissions.includes(perm), [user]);
 
   const login = useCallback(async (email: string, password: string) => {
     if (!isSupabaseConfigured) return 'Supabase тохируулагдаагүй байна';
@@ -289,11 +310,11 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const value = useMemo<AdminStore>(() => ({
     status, user, notConfigured: !isSupabaseConfigured, loadError,
-    login, logout,
+    can, login, logout,
     elevators, serviceRecords, submissions, products,
     setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
     saveProduct, deleteProduct,
-  }), [status, user, loadError, login, logout, elevators, serviceRecords, submissions, products,
+  }), [status, user, loadError, can, login, logout, elevators, serviceRecords, submissions, products,
        setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
        saveProduct, deleteProduct]);
 

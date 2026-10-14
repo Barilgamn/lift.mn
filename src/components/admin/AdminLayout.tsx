@@ -1,35 +1,63 @@
-import React from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowUpDown,
   ClipboardList,
+  KeyRound,
   LayoutDashboard,
   Loader2,
   LogOut,
   Map as MapIcon,
   Package,
+  ShieldOff,
   Tag,
   Trophy,
+  Users,
 } from 'lucide-react';
+import type { Perm } from '../../lib/permissions';
 import { isPriceQuote } from '../../lib/priceQuote';
 import { isNaadamEntry } from '../../data/naadamData';
 import { AdminStoreProvider, useAdminStore } from '../../store/adminStore';
 import { LiftMnLogo } from '../LiftMnLogo';
 import { AdminLogin } from './AdminLogin';
+import { PasswordDialog } from './AdminUsers';
 
-export const ADMIN_NAV = [
+/** Цэс — `perm` байхгүй бол бүх эрхтэй хэрэглэгчид харагдана */
+export const ADMIN_NAV: {
+  to: string; end?: boolean; label: string; icon: React.ComponentType<{ className?: string }>;
+  badge?: 'quotes' | 'naadam'; perm?: Perm;
+}[] = [
   { to: '/admin', end: true, label: 'Хяналтын самбар', icon: LayoutDashboard },
-  { to: '/admin/submissions', label: 'Бүртгэлүүд', icon: ClipboardList },
-  { to: '/admin/quotes', label: 'Үнийн санал', icon: Tag, badge: 'quotes' as const },
-  { to: '/admin/naadam', label: 'Спортын наадам', icon: Trophy, badge: 'naadam' as const },
-  { to: '/admin/map', label: 'Газрын зураг', icon: MapIcon },
-  { to: '/admin/elevators', label: 'Лифтүүд', icon: ArrowUpDown },
-  { to: '/admin/products', label: 'Бүтээгдэхүүн', icon: Package },
+  { to: '/admin/submissions', label: 'Бүртгэлүүд', icon: ClipboardList, perm: 'requests' },
+  { to: '/admin/quotes', label: 'Үнийн санал', icon: Tag, badge: 'quotes', perm: 'quotes' },
+  { to: '/admin/naadam', label: 'Спортын наадам', icon: Trophy, badge: 'naadam', perm: 'naadam' },
+  { to: '/admin/map', label: 'Газрын зураг', icon: MapIcon, perm: 'elevators' },
+  { to: '/admin/elevators', label: 'Лифтүүд', icon: ArrowUpDown, perm: 'elevators' },
+  { to: '/admin/products', label: 'Бүтээгдэхүүн', icon: Package, perm: 'products' },
+  { to: '/admin/users', label: 'Хэрэглэгчид', icon: Users, perm: 'users' },
 ];
 
+/** Эрхгүй хуудсыг шууд хаягаар нээсэн үед */
+export const RequirePerm: React.FC<{ perm: Perm; children: React.ReactNode }> = ({ perm, children }) => {
+  const { can } = useAdminStore();
+  if (can(perm)) return <>{children}</>;
+  return (
+    <div id="no-perm" className="rounded-xl bg-paper border border-line-light p-8 text-center">
+      <ShieldOff className="w-6 h-6 mx-auto text-red-700" />
+      <p className="mt-3 text-sm font-bold text-ink-dark">Энэ хэсэгт хандах эрх алга</p>
+      <p className="mt-1 text-xs text-ink-dark-muted">Эрх хэрэгтэй бол хэрэглэгч удирдах эрхтэй админд хандана уу.</p>
+      <Link to="/admin" className="mt-4 inline-flex text-xs font-bold text-brand hover:underline">Хяналтын самбар руу</Link>
+    </div>
+  );
+};
+
 const AdminChrome: React.FC = () => {
-  const { user, logout, loadError, submissions } = useAdminStore();
+  const { user, logout, loadError, submissions, can } = useAdminStore();
+  const [pwOpen, setPwOpen] = useState(false);
+  const { pathname } = useLocation();
+  // Эрхгүй хэсгийг шууд хаягаар нээвэл — RLS өгөгдлийг хаасан ч ойлгомжтой мессеж
+  const section = ADMIN_NAV.find((n) => n.perm && (pathname === n.to || pathname.startsWith(`${n.to}/`)));
   /** Хариулаагүй үнийн саналын тоо — цэсэн дээр тэмдэглэгээ болно */
   const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
   const newNaadam = submissions.filter((s) => isNaadamEntry(s) && s.status === 'new').length;
@@ -54,6 +82,16 @@ const AdminChrome: React.FC = () => {
               <span className="block text-xs font-bold text-ink-dark leading-tight">{user?.name}</span>
               <span className="block text-[11px] text-ink-dark-muted leading-tight">{user?.email}</span>
             </span>
+            <button
+              id="my-password"
+              type="button"
+              onClick={() => setPwOpen(true)}
+              title="Нууц үг солих"
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-semibold cursor-pointer transition-colors"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Нууц үг</span>
+            </button>
             <Link
               to="/"
               className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-semibold transition-colors"
@@ -74,7 +112,7 @@ const AdminChrome: React.FC = () => {
 
         <nav className="px-2 sm:px-4 border-t border-line-light overflow-x-auto">
           <ul className="flex items-center gap-1 min-w-max">
-            {ADMIN_NAV.map(({ to, end, label, icon: Icon, badge }) => (
+            {ADMIN_NAV.filter((n) => !n.perm || can(n.perm)).map(({ to, end, label, icon: Icon, badge }) => (
               <li key={to}>
                 <NavLink
                   to={to}
@@ -120,9 +158,11 @@ const AdminChrome: React.FC = () => {
         </p>
       )}
 
+      {pwOpen && user && <PasswordDialog target={user} self onClose={() => setPwOpen(false)} />}
+
       <main className="flex-1 px-4 sm:px-6 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto">
-          <Outlet />
+          {section?.perm && !can(section.perm) ? <RequirePerm perm={section.perm}>{null}</RequirePerm> : <Outlet />}
         </div>
       </main>
     </div>
