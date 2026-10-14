@@ -14,6 +14,8 @@ import {
   Send,
   CheckCircle2,
   Sparkles,
+  PackagePlus,
+  ArrowRight,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { productPath } from '../routes';
@@ -45,6 +47,8 @@ export const PartsView: React.FC<PartsViewProps> = ({
   const [sourceOrg, setSourceOrg] = useState('');
   const [sourcePhotos, setSourcePhotos] = useState<Photo[]>([]);
   const [sourceSuccess, setSourceSuccess] = useState(false);
+  /** "Сэлбэг захиалга" товчоор ирэхэд маягтыг түр тодруулна */
+  const [orderFocus, setOrderFocus] = useState(false);
   const [sourceSending, setSourceSending] = useState(false);
   const [sourceError, setSourceError] = useState('');
   const [addedToast, setAddedToast] = useState<string | null>(null);
@@ -130,12 +134,37 @@ export const PartsView: React.FC<PartsViewProps> = ({
 
   const FEATURED_COUNT = columns * 2;
 
+  /**
+   * Тусгай захиалгын маягт руу очих — ангиллын доорх "Сэлбэг захиалга"
+   * товч. Хаягт #zahialga тавьдаг тул холбоосыг хуваалцаж болно.
+   */
+  const goToOrder = () => {
+    const el = document.getElementById('source-section');
+    if (!el) return;
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#zahialga`);
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    setOrderFocus(true);
+    window.setTimeout(() => {
+      el.querySelector<HTMLElement>('select, input, textarea')?.focus({ preventScroll: true });
+    }, reduce ? 0 : 600);
+    window.setTimeout(() => setOrderFocus(false), 2200);
+  };
+
+  // /parts#zahialga хаягаар орж ирвэл бараа ачаалагдсаны дараа маягт руу очно
+  useEffect(() => {
+    if (!productsLoading && window.location.hash === '#zahialga') goToOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsLoading]);
+
   /** Тусгай захиалгын хэсэг — сүлжээний дунд бүтэн өргөнөөр орно */
   const sourcingSection = (
     <div id="source-section" className="col-span-full scroll-mt-24 my-2">
         <div className="max-w-3xl mx-auto">
           
-          <div className="p-8 md:p-10 rounded-2xl bg-surface-2 border border-line shadow-2xl">
+          <div className={`p-8 md:p-10 rounded-2xl bg-surface-2 border shadow-2xl transition-all duration-500 ${
+            orderFocus ? 'border-brand ring-4 ring-brand/25' : 'border-line'
+          }`}>
             <div className="text-center max-w-xl mx-auto mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/15 text-brand-bright text-xs font-bold uppercase tracking-wider mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -344,6 +373,23 @@ export const PartsView: React.FC<PartsViewProps> = ({
               );
             })}
           </nav>
+
+          {/* Олдохгүй байгаа сэлбэг — тусгай захиалгын маягт руу */}
+          <button
+            id="parts-order-cta"
+            type="button"
+            onClick={goToOrder}
+            className="group/cta mt-3 lg:mt-5 w-full flex items-center gap-3 p-3 lg:p-3.5 rounded-xl bg-gradient-to-br from-[#FFD43B] to-[#F7B500] text-[#0B3F78] text-left shadow-md shadow-amber-500/25 hover:shadow-lg hover:shadow-amber-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
+          >
+            <span className="w-10 h-10 rounded-lg bg-white/70 flex items-center justify-center shrink-0">
+              <PackagePlus className="w-5 h-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block whitespace-nowrap text-sm lg:text-[13px] font-black uppercase">Сэлбэг захиалга</span>
+              <span className="block text-[11px] font-semibold leading-snug text-[#0B3F78]/80">Олдохгүй байгаа сэлбэгийг үйлдвэрээс</span>
+            </span>
+            <ArrowRight className="w-4 h-4 shrink-0 group-hover/cta:translate-x-1 transition-transform" />
+          </button>
         </aside>
 
         {/* Баруун багана */}
@@ -519,7 +565,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
         )}
 
         {/* Бараа хоёр мөрөөс цөөн бол маягтыг жагсаалтын дараа тавина */}
-        {!productsLoading && filteredParts.length <= FEATURED_COUNT && (
+        {!productsLoading && filteredParts.length < FEATURED_COUNT && (
           <div className="grid grid-cols-1 mt-6">{sourcingSection}</div>
         )}
 
