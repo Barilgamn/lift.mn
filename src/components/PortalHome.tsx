@@ -61,7 +61,7 @@ const PortalCard: React.FC<PortalCardProps> = ({
       NARROW
         ? 'lg:rounded-2xl lg:border lg:border-white/70 lg:shadow-xl lg:shadow-slate-900/20 lg:hover:shadow-2xl lg:hover:shadow-sky-900/30 lg:hover:-translate-y-1 lg:basis-0'
         : 'lg:border-l lg:border-line lg:hover:flex-[1.12]'
-    } border-t border-line lg:border-t-0 group relative flex-1 min-w-0 flex flex-col p-5 sm:p-7 lg:p-8 xl:p-9 transition-all duration-500 ease-out cursor-pointer overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-bright focus-visible:-outline-offset-4`}
+    } max-lg:rounded-2xl max-lg:border max-lg:border-white/70 max-lg:shadow-lg max-lg:shadow-slate-900/20 group relative flex-1 min-w-0 flex flex-col p-2.5 sm:p-3 lg:p-8 xl:p-9 transition-all duration-500 ease-out cursor-pointer overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-bright focus-visible:-outline-offset-4`}
   >
     {/* Дэвсгэр зураг */}
     <div
@@ -91,45 +91,56 @@ const PortalCard: React.FC<PortalCardProps> = ({
     {/*
       * Текстийн хавтан. Ар дэвсгэрийн зураг дээр цайвар толбо тохиолдвол
       * саарал текст уншигдахаа больдог тул текстийн доогуур нимгэн бүрхүүл.
-      * Дээд талд нь зургийн хэсэг үлдэнэ.
+      *
+      * lg-ээс бага (утас, таблет): хэвтээ мөр — дүрс, гарчиг, товч холбоос.
+      * Гурван карт нэг дэлгэцэнд багтаж, доор нь өөр хэсэг байгаа нь
+      * шууд харагдана. Тайлбар, шошго, том товч зөвхөн өргөн дэлгэцэд.
       */}
-    <div className="relative z-10 mt-8 sm:mt-10 lg:my-auto flex flex-col items-center text-center py-6 sm:py-7 px-4 sm:px-5 rounded-2xl bg-[#040E20]/60 backdrop-blur-[3px]">
+    <div className="relative z-10 my-auto lg:mt-10 flex flex-row lg:flex-col items-center gap-3.5 sm:gap-5 lg:gap-0 text-left lg:text-center p-3 sm:p-4 lg:py-7 lg:px-5 rounded-xl lg:rounded-2xl bg-[#040E20]/60 backdrop-blur-[3px]">
       {/* Гадна давхарга — hover-оор томорно; дотор нь хөвөх хөдөлгөөн (transform давхцахгүй) */}
-      <div className="mb-4 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3">
-        <div className="pi-tile w-[76px] h-[76px] sm:w-[84px] sm:h-[84px] rounded-[24px] bg-gradient-to-br from-white via-white to-sky-100 ring-1 ring-white/80 shadow-xl shadow-sky-950/50 flex items-center justify-center">
-          <Icon className="w-[58px] h-[58px] sm:w-16 sm:h-16" />
+      <div className="shrink-0 lg:mb-4 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-3">
+        <div className="pi-tile w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-[84px] lg:h-[84px] rounded-[18px] lg:rounded-[24px] bg-gradient-to-br from-white via-white to-sky-100 ring-1 ring-white/80 shadow-xl shadow-sky-950/50 flex items-center justify-center">
+          <Icon className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16" />
         </div>
       </div>
 
-      <h2 className="whitespace-nowrap text-[1.45rem] sm:text-[1.65rem] lg:text-[clamp(1.2rem,1.75vw,1.65rem)] leading-tight font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
-        {title}
-      </h2>
+      <div className="min-w-0 flex-1 lg:flex-none w-full flex flex-col items-start lg:items-center">
+        <h2 className="whitespace-nowrap text-lg sm:text-[1.4rem] lg:text-[clamp(1.2rem,1.75vw,1.65rem)] leading-tight font-black tracking-tight text-white group-hover:text-brand-bright transition duration-300">
+          {title}
+        </h2>
 
-      <p className="mt-2 min-h-[2.6em] flex items-center justify-center text-[11px] sm:text-xs font-semibold tracking-wider text-brand-bright uppercase leading-snug">
-        {subtitle}
-      </p>
+        <p className="mt-1 lg:mt-2 lg:min-h-[2.6em] flex items-center lg:justify-center text-[10px] sm:text-[11px] lg:text-xs font-semibold tracking-wider text-brand-bright uppercase leading-snug">
+          {subtitle}
+        </p>
 
-      <p className="mt-3 text-[13px] sm:text-sm text-ink-muted leading-relaxed max-w-sm lg:min-h-[9.75em] xl:min-h-[6.5em]">
-        {description}
-      </p>
+        {/* Утас, таблет — жижиг товч */}
+        <span className="lg:hidden mt-2 inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-brand text-white text-[11px] font-bold uppercase tracking-wide shadow-md shadow-sky-950/40">
+          {cta}
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        </span>
 
-      {/* 2×2 тор — шошго хэдэн үгтэй байсан ч бүх картад ижил өндөртэй */}
-      <div className="mt-5 grid grid-cols-2 gap-2 w-full max-w-sm">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="min-h-11 flex items-center justify-center text-center py-1.5 px-2 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-[11px] sm:text-xs font-medium leading-tight opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all"
-          >
-            {tag}
-          </span>
-        ))}
+        <p className="hidden lg:block mt-3 text-sm text-ink-muted leading-relaxed max-w-sm lg:min-h-[9.75em] xl:min-h-[6.5em]">
+          {description}
+        </p>
+
+        {/* 2×2 тор — шошго хэдэн үгтэй байсан ч бүх картад ижил өндөртэй */}
+        <div className="hidden lg:grid mt-5 grid-cols-2 gap-2 w-full max-w-sm">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="min-h-11 flex items-center justify-center text-center py-1.5 px-2 rounded-md bg-white/[0.05] border border-white/[0.08] text-ink-muted text-xs font-medium leading-tight opacity-80 group-hover:opacity-100 group-hover:border-sky-500/40 group-hover:text-white transition-all"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
 
-    {/* Товч */}
-    <div className="relative z-10 w-full pt-4">
+    {/* Товч — өргөн дэлгэцэд */}
+    <div className="hidden lg:block relative z-10 w-full pt-4">
       <div
-        className={`w-full py-3.5 px-4 rounded-xl text-white font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 ${
+        className={`w-full py-3.5 px-4 rounded-xl text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 ${
           featured
             ? 'bg-brand group-hover:bg-brand-hover border border-sky-300/50 shadow-xl shadow-sky-900/50'
             : 'bg-brand/50 group-hover:bg-brand border border-sky-600/50 group-hover:border-sky-300 shadow-lg shadow-sky-950/50'
@@ -218,7 +229,7 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
          * Оронд нь хэсэг бүрд харагдах байрлалынх нь дагуу хүрээ өгөв.
          */
         className={`relative z-10 flex-1 w-full flex flex-col lg:flex-row ${
-          NARROW ? 'lg:max-w-7xl lg:mx-auto lg:gap-5 lg:p-4 lg:py-6' : ''
+          NARROW ? 'gap-3 p-3 sm:gap-4 sm:p-4 lg:max-w-7xl lg:mx-auto lg:gap-5 lg:p-4 lg:py-6' : ''
         }`}
       >
         {/* Дараалал: Сэлбэг → Засвар → Норм дүрэм (утас, дэлгэц хоёуланд) */}
