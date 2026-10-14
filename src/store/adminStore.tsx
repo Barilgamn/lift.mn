@@ -3,6 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { Elevator, ServiceRecord, SparePart, Submission, SubmissionStatus } from '../types';
 import { friendlyError, getSupabase, isSupabaseConfigured } from '../lib/supabase';
 import { storageRefs } from '../lib/attachments';
+import { PRODUCT_BUCKET, storedImagePaths } from '../lib/productImages';
 import {
   elevatorToRow, productToRow, recordToRow,
   rowToElevator, rowToProduct, rowToRecord, rowToSubmission,
@@ -271,9 +272,18 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const deleteProduct = useCallback(async (id: string) => {
     const sb = await getSupabase();
+    // Устгахаас өмнө зургуудын холбоосыг авна — сангаас цэвэрлэхэд
+    const { data: row } = await sb.from('products').select('image, variants').eq('id', id).maybeSingle();
     const { error } = await sb.from('products').delete().eq('id', id);
     if (error) return friendlyError(error);
     setProducts((prev) => prev.filter((p) => p.id !== id));
+    // Зургийн сан дахь файлуудыг цэвэрлэнэ — бүтэлгүйтсэн ч бараа устсан хэвээр
+    const variants: { image?: string }[] = Array.isArray(row?.variants) ? row.variants : [];
+    const paths = storedImagePaths([row?.image, ...variants.map((v) => v.image)]);
+    if (paths.length) {
+      const { error: rmError } = await sb.storage.from(PRODUCT_BUCKET).remove(paths);
+      if (rmError) console.warn('Барааны зургийг сангаас устгаж чадсангүй:', rmError.message);
+    }
     return null;
   }, []);
 

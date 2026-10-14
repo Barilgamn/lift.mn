@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { submitForm } from '../lib/submitForm';
+import { thumbUrl } from '../lib/productImages';
 import { PhotoAttach, Photo } from './PhotoAttach';
 import { 
   X, 
@@ -168,7 +169,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       className="p-3.5 rounded-xl bg-surface-3/60 border border-neutral-700/80 flex gap-3 items-center"
                     >
                       <img 
-                        src={item.part.image} 
+                        src={thumbUrl(item.part.image)} 
                         alt={item.part.name}
                         className="w-16 h-16 rounded-lg object-cover bg-surface-0 shrink-0"
                       />

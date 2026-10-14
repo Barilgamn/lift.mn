@@ -417,6 +417,7 @@ export const PartsView: React.FC<PartsViewProps> = ({
                       <ProductImage
                         src={part.image}
                         alt={part.name}
+                        thumb
                         className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
                         fallbackClassName="w-full h-full bg-surface-2 rounded-xl"
                         iconClassName="w-8 h-8 text-ink-subtle opacity-40"

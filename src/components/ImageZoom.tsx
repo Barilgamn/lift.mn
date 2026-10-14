@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, ZoomIn } from 'lucide-react';
+import { thumbUrl } from '../lib/productImages';
 
 /**
  * Зургийг бүтэн дэлгэцээр томруулж харуулах давхарга.
@@ -66,8 +67,12 @@ export const ZoomableImage: React.FC<{
   fallbackClassName: string;
   iconClassName?: string;
   children?: React.ReactNode;
-}> = ({ src, alt, onZoom, className, fallbackClassName, iconClassName, children }) => {
+  /** Жижиг дүрсэнд сангийн жижиг хувилбарыг харуулна, томруулахад бүтэн зураг */
+  thumb?: boolean;
+}> = ({ src, alt, onZoom, className, fallbackClassName, iconClassName, children, thumb = false }) => {
   const [failed, setFailed] = useState(false);
+  const [useFull, setUseFull] = useState(!thumb);
+  const shown = useFull ? src : thumbUrl(src);
 
   // Зураг байхгүй эсвэл ачаалагдаагүй бол орлуулагчийг харуулна — эс бөгөөс
   // хөтчийн "тасарсан зураг" тэмдэг гарч ирнэ
@@ -82,10 +87,11 @@ export const ZoomableImage: React.FC<{
       className={`group/zoom relative overflow-hidden cursor-zoom-in ${fallbackClassName}`}
     >
       <img
-        src={src}
+        src={shown}
         alt={alt}
         loading="lazy"
-        onError={() => setFailed(true)}
+        decoding="async"
+        onError={() => (shown !== src ? setUseFull(true) : setFailed(true))}
         className={className}
       />
       <span className="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-lg bg-black/55 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/zoom:opacity-100 transition-opacity">

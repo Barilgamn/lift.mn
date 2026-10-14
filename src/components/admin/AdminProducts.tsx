@@ -3,7 +3,8 @@ import { Pencil, Plus, Search, Trash2, Upload, X } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { ProductVariant, SparePart } from '../../types';
 import { Badge, PageHead, Panel } from './adminUi';
-import { attachPhoto, formatBytes } from '../../lib/photoAttach';
+import { formatBytes } from '../../lib/photoAttach';
+import { uploadProductImage } from '../../lib/productImages';
 import { productPriceLabel } from '../../lib/variants';
 import { ProductImage } from '../ProductImage';
 
@@ -17,9 +18,6 @@ const CATEGORIES: Array<{ value: SparePart['category']; label: string }> = [
   { value: 'brake', label: 'Тоормос' },
   { value: 'oil', label: 'Тос' },
 ];
-
-/** localStorage-д багтаах зургийн дээд хэмжээ */
-const MAX_IMAGE_BYTES = 200 * 1024;
 
 const emptyProduct = (): SparePart => ({
   id: `part-${Date.now()}`,
@@ -55,10 +53,10 @@ const VariantEditor: React.FC<{
   const pick = async (id: string, file: File) => {
     setBusyId(id);
     setError('');
-    const result = await attachPhoto(file);
+    const result = await uploadProductImage(file);
     setBusyId(null);
     if (result.status === 'failed') { setError(result.message); return; }
-    patch(id, { image: result.dataUrl });
+    patch(id, { image: result.url });
   };
 
   return (
@@ -94,6 +92,7 @@ const VariantEditor: React.FC<{
                       <ProductImage
                         src={v.image}
                         alt={v.code || 'Загвар'}
+                        thumb
                         className="w-full h-full object-contain"
                         fallbackClassName="w-full h-full bg-paper-3"
                         iconClassName="w-4 h-4 text-ink-dark-subtle"
@@ -158,7 +157,7 @@ const VariantEditor: React.FC<{
 
               {v.image?.startsWith('data:') && (
                 <p className="mt-1.5 text-[10px] text-ink-dark-subtle">
-                  Шинэ зураг · {formatBytes(Math.floor(v.image.length * 0.75))}
+                  Баазад хадгалсан зураг · {formatBytes(Math.floor(v.image.length * 0.75))}
                 </p>
               )}
             </li>
@@ -171,7 +170,7 @@ const VariantEditor: React.FC<{
       {variants.length > 0 && (
         <p className="mt-2 text-[11px] text-ink-dark-subtle leading-relaxed">
           Үнийг 0 орхивол сайт дээр "Үнийн санал авах" товч гарч, хүсэлт нь "Үнийн санал" хэсэгт ирнэ. Нөөц 0 бол
-          "Захиалгаар" гэж тэмдэглэгдэнэ.
+          "Захиалгаар" гэж тэмдэглэгдэнэ. Зураггүй загварт бүтээгдэхүүний үндсэн зураг харагдана.
         </p>
       )}
     </div>
@@ -190,17 +189,24 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
   const area = 'w-full px-3 py-2 rounded-lg bg-paper-2 border border-line-light text-sm text-ink-dark placeholder:text-ink-dark-subtle focus:border-brand focus:outline-none';
   const label = 'block text-[11px] font-bold uppercase tracking-wider text-ink-dark-muted mb-1.5';
 
-  const pickFile = (file: File) => {
-    if (file.size > MAX_IMAGE_BYTES) {
-      setError(`Зураг ${Math.round(file.size / 1024)} КБ байна. ${MAX_IMAGE_BYTES / 1024} КБ-аас бага зураг сонгоно уу, эсвэл зургийн холбоос ашиглана уу.`);
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => { set('image', String(reader.result)); setError(''); };
-    reader.readAsDataURL(file);
-  };
-
   const [busy, setBusy] = useState(false);
+  const [imageBusy, setImageBusy] = useState(false);
+  const [imageNote, setImageNote] = useState('');
+
+  const pickFile = async (file: File) => {
+    setImageBusy(true);
+    setError('');
+    setImageNote('');
+    const result = await uploadProductImage(file);
+    setImageBusy(false);
+    if (result.status === 'failed') { setError(result.message); return; }
+    set('image', result.url);
+    setImageNote(
+      result.stored === 'storage'
+        ? `Өндөр чанартай хадгаллаа · ${formatBytes(result.bytes)}`
+        : `Зургийн сан тохируулаагүй тул баазад жижигрүүлж хадгаллаа · ${formatBytes(result.bytes)}`
+    );
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,10 +307,10 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
               placeholder="Зургийн холбоос (https://...)" className={field} />
             <div className="flex flex-wrap items-center gap-2">
               <input ref={fileRef} type="file" accept="image/*" className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) pickFile(f); }} />
-              <button type="button" onClick={() => fileRef.current?.click()}
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) void pickFile(f); e.target.value = ''; }} />
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={imageBusy}
                 className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-line-light text-ink-dark-muted hover:text-brand hover:border-brand text-xs font-bold cursor-pointer transition-colors">
-                <Upload className="w-3.5 h-3.5" /> Файл сонгох
+                <Upload className="w-3.5 h-3.5" /> {imageBusy ? 'Боловсруулж байна…' : 'Файл сонгох'}
               </button>
               {p.image && (
                 <button type="button" onClick={() => set('image', '')}
@@ -314,8 +320,8 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
               )}
             </div>
             <p className="text-[11px] text-ink-dark-subtle">
-              Файл сонгоход зураг хөтчийн санах ойд хадгалагдана. Багтаамж хязгаартай тул
-              {' '}{MAX_IMAGE_BYTES / 1024} КБ хүртэл. Том зурагт холбоос ашиглана уу.
+              {imageNote ||
+                'Утасны камерын зургийг шууд сонгож болно — тод (1600px) болон картад зориулсан жижиг хувилбарыг автоматаар үүсгэнэ. Цагаан дэвсгэр дээр, бүтээгдэхүүн бүтнээрээ харагдах зураг хамгийн сайн.'}
             </p>
           </div>
         </div>
@@ -324,7 +330,7 @@ const ProductForm: React.FC<{ initial: SparePart; onDone: () => void }> = ({ ini
       {error && <p className="text-xs text-red-700">{error}</p>}
 
       <div className="flex gap-2 pt-1">
-        <button type="submit" disabled={busy}
+        <button type="submit" disabled={busy || imageBusy}
           className="h-10 px-4 rounded-lg bg-brand hover:bg-brand-hover disabled:opacity-60 text-white text-xs font-bold cursor-pointer transition-colors">
           {busy ? 'Хадгалж байна…' : 'Хадгалах'}
         </button>
@@ -383,6 +389,7 @@ export const AdminProducts: React.FC = () => {
               <ProductImage
                 src={p.image}
                 alt={p.name}
+                thumb
                 className="w-full h-full object-contain p-2"
                 fallbackClassName="w-full h-full bg-paper-3"
                 iconClassName="w-7 h-7 text-ink-dark-subtle"

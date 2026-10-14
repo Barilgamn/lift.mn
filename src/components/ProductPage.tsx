@@ -202,9 +202,10 @@ export const ProductPage: React.FC<{
                   className="flex items-center gap-3 p-3 rounded-xl bg-surface-2 border border-line hover:border-brand transition-colors"
                 >
                   <ZoomableImage
-                    src={v.image}
+                    src={v.image || part.image}
                     alt={`${part.name} — ${v.code}`}
                     onZoom={(src, alt) => setZoom({ src, alt })}
+                    thumb
                     className="w-full h-full object-contain"
                     fallbackClassName="w-[72px] h-[72px] shrink-0 rounded-lg bg-white"
                   >
@@ -285,6 +286,7 @@ export const ProductPage: React.FC<{
                     <ProductImage
                       src={s.image}
                       alt={s.name}
+                      thumb
                       className="w-full h-28 object-contain p-3 group-hover/sug:scale-105 transition-transform duration-300"
                       fallbackClassName="w-full h-28 bg-surface-1"
                       iconClassName="w-6 h-6 text-ink-subtle opacity-40"

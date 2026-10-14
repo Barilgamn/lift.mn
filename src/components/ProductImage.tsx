@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ImageOff } from 'lucide-react';
+import { thumbUrl } from '../lib/productImages';
 
 interface ProductImageProps {
   src?: string;
@@ -10,6 +11,8 @@ interface ProductImageProps {
   fallbackClassName?: string;
   iconClassName?: string;
   loading?: 'lazy' | 'eager';
+  /** Жижиг харагдах газарт сангийн жижиг хувилбарыг (`-sm`) ачаална */
+  thumb?: boolean;
 }
 
 /**
@@ -27,10 +30,19 @@ export const ProductImage: React.FC<ProductImageProps> = ({
   fallbackClassName = 'bg-surface-3',
   iconClassName = 'w-6 h-6 opacity-40',
   loading = 'lazy',
+  thumb = false,
 }) => {
-  const [failed, setFailed] = useState(false);
+  // 0 — үндсэн (эсвэл жижиг) хувилбар, 1 — жижиг нь алга бол бүтэн зураг, 2 — бүтэлгүй
+  const [stage, setStage] = useState(0);
+  const [prevSrc, setPrevSrc] = useState(src);
+  if (prevSrc !== src) {
+    setPrevSrc(src);
+    setStage(0);
+  }
+  const small = thumb ? thumbUrl(src) : src;
+  const current = stage === 0 ? small : src;
 
-  if (!src || failed) {
+  if (!src || stage === 2) {
     return (
       <div
         role="img"
@@ -44,10 +56,11 @@ export const ProductImage: React.FC<ProductImageProps> = ({
 
   return (
     <img
-      src={src}
+      src={current}
       alt={alt}
       loading={loading}
-      onError={() => setFailed(true)}
+      decoding="async"
+      onError={() => setStage(stage === 0 && small !== src ? 1 : 2)}
       className={className}
     />
   );
