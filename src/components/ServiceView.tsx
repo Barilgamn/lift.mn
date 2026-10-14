@@ -39,13 +39,24 @@ const HERO_STATS = [
   { icon: Building2, value: '350+', label: 'Гэрээт объект' },
 ] as const;
 
-/** Дэд цэсний тодорхойлолт */
+/**
+ * "Танд юу хэрэгтэй вэ?" — хүний хэлээр бичсэн дөрвөн сонголт.
+ * `label` нь товчны нэр (дэлгэц уншигч, тест), `title`/`hint` нь харагдах бичиг.
+ */
 const SERVICE_TABS = [
-  { id: 'request', label: 'Засварын хүсэлт илгээх', icon: FileText },
-  { id: 'booking', label: 'Цаг захиалах', icon: Calendar },
-  { id: 'tariffs', label: 'Засварын хөлс & Тариф', icon: BadgeCheck },
-  { id: 'track', label: 'Хүсэлтийн явц шалгах', icon: Truck },
+  { id: 'request', label: 'Засварын хүсэлт илгээх', title: 'Лифт эвдэрсэн', hint: 'Засварын хүсэлт илгээх', icon: Wrench },
+  { id: 'booking', label: 'Цаг захиалах', title: 'Үзлэг, үйлчилгээ', hint: 'Инженерийн цаг авах', icon: Calendar },
+  { id: 'tariffs', label: 'Засварын хөлс & Тариф', title: 'Үнэ, гэрээ', hint: 'Засварын хөлс, СӨХ-ийн гэрээ', icon: BadgeCheck },
+  { id: 'track', label: 'Хүсэлтийн явц шалгах', title: 'Миний хүсэлт', hint: 'Хаана явааг шалгах', icon: Truck },
 ] as const;
+
+/** Маягтын алхмын гарчиг — 1. Холбоо барих, 2. Хаяг, 3. Асуудал */
+const StepTitle: React.FC<{ n: number; children: React.ReactNode; first?: boolean }> = ({ n, children, first }) => (
+  <div className={`flex items-center gap-2.5 ${first ? '' : 'pt-5 mt-1 border-t border-line'}`}>
+    <span className="w-7 h-7 rounded-full bg-brand text-white text-xs font-black flex items-center justify-center shrink-0">{n}</span>
+    <span className="text-sm sm:text-base font-black text-ink">{children}</span>
+  </div>
+);
 
 /** Хүсэлт илгээснээс хойших дөрвөн алхам */
 const SERVICE_STEPS = [
@@ -100,7 +111,21 @@ interface ServiceViewProps {
 }
 
 export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => {
-  const [activeTab, setActiveTab] = useState<'request' | 'booking' | 'tariffs' | 'track'>('request');
+  const [activeTab, setActiveTabState] = useState<'request' | 'booking' | 'tariffs' | 'track'>('request');
+  /** Сонголт солигдоход агуулга руу гүйлгэнэ — утсанд сонголтын доор шууд гарна */
+  const setActiveTab = (tab: 'request' | 'booking' | 'tariffs' | 'track') => {
+    setActiveTabState(tab);
+    window.requestAnimationFrame(() => {
+      const el = document.getElementById('service-content');
+      if (!el) return;
+      const top = el.getBoundingClientRect().top;
+      // Агуулгын эхлэл дэлгэцийн доод хэсэгт эсвэл дээгүүр байвал л гүйлгэнэ
+      if (top > window.innerHeight * 0.6 || top < 0) {
+        const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    });
+  };
   // Нийтийн цэс нь `sticky top-0` бөгөөд өндөр нь дэлгэцээс хамаарч өөрчлөгддөг.
   // Дэд цэс түүний доор яг наалдахын тулд өндрийг нь хэмжиж авна.
   const [navOffset, setNavOffset] = useState(0);
@@ -283,28 +308,28 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                 <span>Засвар · Оношилгоо · Үзлэг</span>
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-4">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-ink mb-5 sm:mb-4">
                 Лифтний засвар
                 <span className="block text-brand-bright">үйлчилгээний төв</span>
               </h1>
 
-              <p className="text-sm md:text-base text-ink-muted leading-relaxed max-w-2xl mb-7">
+              <p className="hidden sm:block text-sm md:text-base text-ink-muted leading-relaxed max-w-2xl mb-7">
                 Гэнэтийн эвдрэлийн дуудлага, хуваарьт үзлэг оношилгооны цаг захиалга,
                 СӨХ болон байгууллагын сар бүрийн гэрээт үйлчилгээний тарифыг нэг дороос.
               </p>
 
               {/* Товч үзүүлэлтүүд */}
-              <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <dl className="grid grid-cols-4 gap-1.5 sm:gap-3">
                 {HERO_STATS.map((stat) => (
                   <div
                     key={stat.label}
-                    className="p-3.5 rounded-xl bg-[#040E20]/70 border border-line backdrop-blur-[3px]"
+                    className="p-2 sm:p-3.5 rounded-xl bg-[#040E20]/70 border border-line backdrop-blur-[3px] text-center sm:text-left"
                   >
-                    <stat.icon className="w-4 h-4 text-brand-bright mb-2" />
-                    <dt className="text-lg md:text-xl font-black text-ink leading-none font-mono">
+                    <stat.icon className="hidden sm:block w-4 h-4 text-brand-bright mb-2" />
+                    <dt className="text-sm sm:text-lg md:text-xl font-black text-ink leading-none font-mono">
                       {stat.value}
                     </dt>
-                    <dd className="text-[11px] text-ink-muted mt-1.5 leading-snug">
+                    <dd className="text-[9px] sm:text-[11px] text-ink-muted mt-1 sm:mt-1.5 leading-tight sm:leading-snug">
                       {stat.label}
                     </dd>
                   </div>
@@ -363,33 +388,39 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
         </div>
       </section>
 
-      {/* Дэд цэс — гүйлгэх үед дээр наалддаг */}
-      <div
-        id="service-tabs"
-        className="sticky z-30 bg-surface-1/95 backdrop-blur-md border-b border-line"
-        style={{ top: navOffset }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav
-            aria-label="Засварын үйлчилгээний хэсгүүд"
-            className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1 py-2.5"
-          >
+      {/* Танд юу хэрэгтэй вэ? — дөрвөн том сонголт (хуучин хэвтээ таб) */}
+      <div id="service-tabs" className="theme-light bg-surface-1 border-b border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-5 sm:pt-8 sm:pb-6">
+          <h2 className="text-lg sm:text-xl font-black text-ink">Танд юу хэрэгтэй вэ?</h2>
+          <p className="text-xs sm:text-sm text-ink-muted mt-0.5 mb-3.5">Доорхоос сонгоно уу. Хүн гацсан бол шууд{' '}
+            <a href={`tel:+976${HOTLINE.replace('-', '')}`} className="font-bold text-danger whitespace-nowrap underline underline-offset-2">{HOTLINE}</a> руу залгаарай.
+          </p>
+          <nav aria-label="Засварын үйлчилгээний хэсгүүд" className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             {SERVICE_TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   id={`tab-${tab.id}`}
+                  type="button"
+                  aria-label={tab.label}
                   aria-pressed={isActive}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer border ${
+                  className={`group/tab min-h-[4.5rem] p-3 sm:p-4 rounded-2xl border-2 text-left flex items-center gap-3 transition cursor-pointer ${
                     isActive
-                      ? 'bg-brand text-white border-brand shadow-lg shadow-brand/25'
-                      : 'bg-surface-2 text-ink-muted border-line hover:text-ink hover:border-line-strong'
+                      ? 'bg-brand border-brand text-white shadow-lg shadow-brand/25'
+                      : 'bg-surface-2 border-line text-ink hover:border-brand'
                   }`}
                 >
-                  <tab.icon className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap">{tab.label}</span>
+                  <span className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-sky-50 text-brand'
+                  }`}>
+                    <tab.icon className="w-5 h-5" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm sm:text-base font-black leading-tight">{tab.title}</span>
+                    <span className={`block text-[11px] sm:text-xs leading-snug mt-0.5 ${isActive ? 'text-white/85' : 'text-ink-muted'}`}>{tab.hint}</span>
+                  </span>
                 </button>
               );
             })}
@@ -398,7 +429,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
       </div>
 
       {/* 2. Main Tab Contents */}
-      <section className="theme-light bg-surface-1 py-12 md:py-16">
+      <section id="service-content" className="theme-light bg-surface-1 py-8 md:py-14" style={{ scrollMarginTop: navOffset + 12 }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* TAB 1: ЗАХИАЛГЫН ХҮСЭЛТ ИЛГЭЭХ */}
@@ -408,10 +439,12 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
               
               <div className="mb-6">
                 <h2 className="text-xl md:text-2xl font-black text-ink">
-                  Лифтний Засварын Хүсэлт Илгээх Маягт
+                  Засварын хүсэлт илгээх
                 </h2>
-                <p className="text-xs text-ink-muted mt-1">
-                  Эвдрэл, доголдлын мэдээллийг илгээснээр манай инженерүүд дуудлагыг системд бүртгэж, шуурхай холбогдох болно.
+                <p className="text-xs sm:text-sm text-ink-muted mt-1 leading-relaxed">
+                  Гурван алхмыг бөглөөд илгээнэ үү — инженер тань руу удахгүй залгана.
+                  Хүн гацсан бол маягт бөглөлгүй{' '}
+                  <a href={`tel:+976${HOTLINE.replace('-', '')}`} className="font-bold text-danger whitespace-nowrap">{HOTLINE}</a> руу залгаарай.
                 </p>
               </div>
 
@@ -475,10 +508,12 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
               ) : (
                 <form onSubmit={handleServiceSubmit} className="space-y-4 text-xs">
                   
+                  <StepTitle n={1} first>Холбоо барих мэдээлэл</StepTitle>
+
                   {/* Client Type */}
                   <div>
                     <label className="block font-semibold text-ink-muted mb-1.5">
-                      Захиалагчийн статус *
+                      Та хэн бэ? *
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {['СӨХ', 'Бизнес / Оффис', 'Түрээслэгч', 'Иргэн'].map((t) => (
@@ -502,7 +537,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block font-semibold text-ink-muted mb-1">
-                        Холбоо барих хүний нэр *
+                        Таны нэр *
                       </label>
                       <input 
                         type="text"
@@ -528,6 +563,8 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                   </div>
 
+                  <StepTitle n={2}>Лифт хаана байна?</StepTitle>
+
                   {/* District & Address */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -549,7 +586,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                     <div>
                       <label className="block font-semibold text-ink-muted mb-1">
-                        Байршил, Хотхон, Байр, Орц *
+                        Хаяг — хотхон, байр, орц *
                       </label>
                       <input 
                         type="text"
@@ -562,11 +599,13 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                   </div>
 
+                  <StepTitle n={3}>Юу болсон бэ?</StepTitle>
+
                   {/* Brand & Issue type */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block font-semibold text-ink-muted mb-1">
-                        Лифтний брэнд / загвар
+                        Лифтний брэнд (мэдэхгүй бол «Бусад»)
                       </label>
                       <select
                         value={brand}
@@ -580,7 +619,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     </div>
                     <div>
                       <label className="block font-semibold text-ink-muted mb-1">
-                        Эвдрэлийн төрөл *
+                        Ямар асуудал гарсан бэ? *
                       </label>
                       <select
                         value={issueType}
@@ -600,7 +639,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   {/* Urgency */}
                   <div>
                     <label className="block font-semibold text-ink-muted mb-1">
-                      Яаралтай зэрэг
+                      Хэр яаралтай вэ?
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
@@ -612,7 +651,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
-                        Яаралтай (Өнөөдөр)
+                        Яаралтай<span className="block font-medium text-[10px] opacity-80">өнөөдөр</span>
                       </button>
                       <button
                         type="button"
@@ -623,7 +662,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
-                        Энгийн (24 цагт)
+                        Энгийн<span className="block font-medium text-[10px] opacity-80">24 цагийн дотор</span>
                       </button>
                       <button
                         type="button"
@@ -634,7 +673,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                             : 'bg-surface-3 border-line text-ink-muted'
                         }`}
                       >
-                        Төлөвлөгөөт үзлэг
+                        Үзлэг<span className="block font-medium text-[10px] opacity-80">цаг тохирно</span>
                       </button>
                     </div>
                   </div>
@@ -642,7 +681,7 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                   {/* Details */}
                   <div>
                     <label className="block font-semibold text-ink-muted mb-1">
-                      Эвдрэлийн дэлгэрэнгүй тайлбар
+                      Нэмэлт тайлбар <span className="font-normal text-ink-subtle">(заавал биш)</span>
                     </label>
                     <textarea 
                       rows={3}
@@ -663,10 +702,10 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     <button
                       type="submit"
                       disabled={serviceSending}
-                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
+                      className="w-full min-h-[3.25rem] py-3 px-4 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-base flex items-center justify-center gap-2.5 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
                     >
-                      <Wrench className="w-4 h-4" />
-                      <span>{serviceSending ? 'Илгээж байна…' : 'Засварын дуудлага / хүсэлт илгээх'}</span>
+                      <Send className="w-5 h-5 shrink-0" />
+                      <span className="whitespace-nowrap">{serviceSending ? 'Илгээж байна…' : 'Хүсэлт илгээх'}</span>
                     </button>
                   </div>
 
@@ -798,10 +837,10 @@ export const ServiceView: React.FC<ServiceViewProps> = ({ onOpenEmergency }) => 
                     <button
                       type="submit"
                       disabled={bookingSending}
-                      className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
+                      className="w-full min-h-[3.25rem] py-3 px-4 rounded-xl bg-brand hover:bg-brand-hover text-white font-black text-base flex items-center justify-center gap-2.5 cursor-pointer shadow-lg shadow-brand/30 disabled:opacity-60 disabled:cursor-wait"
                     >
-                      <Calendar className="w-4 h-4" />
-                      <span>{bookingSending ? 'Илгээж байна…' : 'Үзлэгийн цаг захиалгыг илгээх'}</span>
+                      <Calendar className="w-5 h-5 shrink-0" />
+                      <span className="whitespace-nowrap">{bookingSending ? 'Илгээж байна…' : 'Үзлэгийн цаг авах'}</span>
                     </button>
                   </div>
 
