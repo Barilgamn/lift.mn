@@ -11,6 +11,7 @@
 --   elevators — Лифтүүд, газрын зураг, засварын түүх
 --   products  — Бүтээгдэхүүн, зураг
 --   users     — Хэрэглэгч нэмэх, хасах, эрх, нууц үг солих
+--   crm       — Харилцагч байгууллага, хэлцэл (supabase/crm.sql)
 --
 -- Эрх бүрийг өгөгдлийн сан өөрөө (RLS) шалгана — цэснээс нуухаас гадна
 -- эрхгүй өгөгдөл огт уншигдахгүй, засагдахгүй.
@@ -31,14 +32,14 @@ begin
     alter table public.profiles add column permissions text[] not null default '{}';
     -- Одоо байгаа админууд бүх эрхээ хадгална
     update public.profiles
-       set permissions = array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users']
+       set permissions = array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users', 'crm']
      where role = 'admin';
   end if;
 end $$;
 
 alter table public.profiles drop constraint if exists profiles_permissions_check;
 alter table public.profiles add constraint profiles_permissions_check
-  check (permissions <@ array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users']::text[]);
+  check (permissions <@ array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users', 'crm']::text[]);
 
 /** Одоогийн хэрэглэгч тухайн эрхтэй эсэх */
 create or replace function public.has_perm(p text)
@@ -367,12 +368,14 @@ grant execute on function public.admin_delete_user(uuid) to authenticated;
 
 -- ------------------------------------------------- baatarkhuu.ch@lift.mn
 
--- Supabase дээр үүсгэсэн хэрэглэгчийг бүрэн эрхтэй админ болгоно
+-- Supabase дээр үүсгэсэн хэрэглэгчийг бүрэн эрхтэй админ болгоно.
+-- Аль хэдийн админ бол (эрхийг нь өөрчилсөн байж магадгүй) хөндөхгүй.
 insert into public.profiles (id, email, name, role, permissions)
 select id, email, '', 'admin',
-       array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users']
+       array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users', 'crm']
   from auth.users
  where lower(email) = 'baatarkhuu.ch@lift.mn'
 on conflict (id) do update
   set role = 'admin',
-      permissions = array['requests', 'quotes', 'naadam', 'elevators', 'products', 'users'];
+      permissions = excluded.permissions
+  where public.profiles.role <> 'admin';

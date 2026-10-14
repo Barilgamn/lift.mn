@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowUpDown, ClipboardList, Package, Tag, Wrench } from 'lucide-react';
+import { AlertTriangle, ArrowUpDown, Briefcase, ClipboardList, Package, Tag, Wrench } from 'lucide-react';
+import { useCrm } from '../../store/crmStore';
+import { isOpenDeal, moneyShort } from '../../lib/crm';
 import { isPriceQuote } from '../../lib/priceQuote';
+import { isNaadamEntry } from '../../data/naadamData';
 import { useAdminStore } from '../../store/adminStore';
 import { Badge, ELEVATOR_STATUS, PageHead, Panel, SUBMISSION_KIND, SUBMISSION_STATUS } from './adminUi';
 
@@ -29,17 +32,24 @@ const StatCard: React.FC<{
 
 export const AdminDashboard: React.FC = () => {
   const { submissions, elevators, serviceRecords, products, can } = useAdminStore();
-  const seesSubmissions = can('requests') || can('quotes') || can('naadam');
+  const seesSubmissions = can('requests') || can('quotes');
+  const crm = useCrm();
+  const openDeals = crm.deals.filter(isOpenDeal);
+  const dayEnd = new Date(); dayEnd.setHours(23, 59, 59, 999);
+  const dueTasks = crm.activities.filter((a) => a.kind === 'task' && !a.done && a.dueAt && new Date(a.dueAt) <= dayEnd);
   // Хүсэлтийн жагсаалт руу очих холбоос — эрхтэй хэсэг рүү
-  const submissionsLink = can('requests') ? '/admin/submissions' : can('quotes') ? '/admin/quotes' : '/admin/naadam';
+  const submissionsLink = can('requests') ? '/admin/submissions' : '/admin/quotes';
 
-  const newCount = submissions.filter((s) => s.status === 'new').length;
+  // Наадмын бүртгэл "Спортын наадам" цэсэнд — энд зөвхөн засвар, бүтээгдэхүүний хүсэлт
+  const requests = submissions.filter((s) => !isNaadamEntry(s));
+  const newCount = requests.filter((s) => s.status === 'new').length;
   const openQuotes = submissions.filter((s) => isPriceQuote(s) && s.status === 'new').length;
   const faults = elevators.filter((e) => e.status === 'fault' || e.status === 'offline');
   const lowStock = products.filter((p) => p.stockCount > 0 && p.stockCount <= 5);
   const outOfStock = products.filter((p) => p.stockCount === 0);
 
-  const recentSubs = [...submissions].slice(0, 6);
+  const recentSubs = requests.slice(0, 6);
+  const unlinked = requests.filter((r) => !r.companyId && r.status !== 'done').length;
   const recentRecords = [...serviceRecords].slice(0, 5);
 
   return (
@@ -83,6 +93,21 @@ export const AdminDashboard: React.FC = () => {
             label="Нөөц дуусаж буй сэлбэг" tone={outOfStock.length ? 'danger' : lowStock.length ? 'warn' : 'brand'} />
         )}
       </div>
+
+      {can('crm') && !crm.notInstalled && (
+        <Link
+          to="/admin/crm"
+          id="dash-crm"
+          className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 p-4 rounded-xl bg-paper border border-line-light hover:border-brand transition-colors"
+        >
+          <span className="flex items-center gap-2 text-sm font-bold text-ink-dark"><Briefcase className="w-4 h-4 text-brand" /> CRM</span>
+          <span className="text-xs text-ink-dark-muted"><b className="text-ink-dark text-sm tabular-nums">{openDeals.length}</b> нээлттэй хэлцэл · <b className="font-mono text-ink-dark">{moneyShort(openDeals.reduce((t, d) => t + d.amount, 0))}</b></span>
+          <span className={`text-xs ${dueTasks.length ? 'text-amber-800 font-bold' : 'text-ink-dark-muted'}`}><b className="text-sm tabular-nums">{dueTasks.length}</b> өнөөдрийн / хэтэрсэн ажил</span>
+          <span className="text-xs text-ink-dark-muted"><b className="text-ink-dark text-sm tabular-nums">{crm.companies.length}</b> харилцагч</span>
+          {unlinked > 0 && <span className="text-xs text-ink-dark-muted"><b className="text-ink-dark text-sm tabular-nums">{unlinked}</b> хүсэлт харилцагчгүй</span>}
+          <span className="ml-auto text-xs font-bold text-brand">Нээх →</span>
+        </Link>
+      )}
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Сүүлийн хүсэлтүүд */}

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Eye, EyeOff, KeyRound, Loader2, Pencil, RefreshCw, ShieldCheck, Trash2, UserPlus, X } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, Loader2, Pencil, RefreshCw, ShieldCheck, Trash2, UserPlus } from 'lucide-react';
 import { useAdminStore } from '../../store/adminStore';
 import { PERMS, PERM_PRESETS, permLabel, type Perm } from '../../lib/permissions';
 import {
   createUser, deleteUser, listUsers, passwordProblem, setUserPassword, updateUser,
   type ManagedUser,
 } from '../../lib/adminUsers';
-import { Badge, PageHead, Panel } from './adminUi';
+import { AdminModal, Badge, PageHead, Panel } from './adminUi';
 
 const field =
   'w-full h-10 px-3 rounded-lg bg-paper-2 border border-line-light text-sm text-ink-dark ' +
@@ -28,36 +28,6 @@ function randomPassword(length = 12): string {
 
 const formatDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString('mn-MN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-
-/** Админы цонх */
-export const AdminModal: React.FC<{ title: string; onClose: () => void; children: React.ReactNode }> = ({
-  title, onClose, children,
-}) => {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
-  return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center sm:p-6" onClick={onClose} role="presentation">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        onClick={(e) => e.stopPropagation()}
-        className="theme-light w-full sm:max-w-lg max-h-[88dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-paper border border-line-light"
-      >
-        <div className="sticky top-0 z-10 bg-paper border-b border-line-light px-5 py-3.5 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-ink-dark">{title}</h2>
-          <button type="button" onClick={onClose} aria-label="Хаах" className="p-1.5 rounded-lg hover:bg-paper-3 text-ink-dark-muted cursor-pointer">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="px-5 py-4">{children}</div>
-      </div>
-    </div>
-  );
-};
 
 /** Нууц үг + давтах талбар, харуулах/нуух, санамсаргүй үүсгэх */
 const PasswordFields: React.FC<{

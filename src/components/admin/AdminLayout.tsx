@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowUpDown,
+  Briefcase,
   ClipboardList,
   KeyRound,
   LayoutDashboard,
@@ -22,6 +23,7 @@ import { AdminStoreProvider, useAdminStore } from '../../store/adminStore';
 import { LiftMnLogo } from '../LiftMnLogo';
 import { AdminLogin } from './AdminLogin';
 import { PasswordDialog } from './AdminUsers';
+import { CrmProvider } from '../../store/crmStore';
 
 /** Цэс — `perm` байхгүй бол бүх эрхтэй хэрэглэгчид харагдана */
 export const ADMIN_NAV: {
@@ -29,7 +31,8 @@ export const ADMIN_NAV: {
   badge?: 'quotes' | 'naadam'; perm?: Perm;
 }[] = [
   { to: '/admin', end: true, label: 'Хяналтын самбар', icon: LayoutDashboard },
-  { to: '/admin/submissions', label: 'Бүртгэлүүд', icon: ClipboardList, perm: 'requests' },
+  { to: '/admin/crm', label: 'CRM', icon: Briefcase, perm: 'crm' },
+  { to: '/admin/submissions', label: 'Хүсэлтүүд', icon: ClipboardList, perm: 'requests' },
   { to: '/admin/quotes', label: 'Үнийн санал', icon: Tag, badge: 'quotes', perm: 'quotes' },
   { to: '/admin/naadam', label: 'Спортын наадам', icon: Trophy, badge: 'naadam', perm: 'naadam' },
   { to: '/admin/map', label: 'Газрын зураг', icon: MapIcon, perm: 'elevators' },
@@ -63,7 +66,8 @@ const AdminChrome: React.FC = () => {
   const newNaadam = submissions.filter((s) => isNaadamEntry(s) && s.status === 'new').length;
 
   return (
-    // Админ хэсэг Google орчуулгад өртөхгүй (маягтын утга эвдэрнэ)
+    <CrmProvider enabled={can('crm')}>
+    {/* Админ хэсэг Google орчуулгад өртөхгүй (маягтын утга эвдэрнэ) */}
     <div translate="no" className="notranslate theme-light min-h-dvh bg-surface-2 text-ink flex flex-col">
       <header className="sticky top-0 z-30 bg-paper border-b border-line-light">
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 h-16">
@@ -166,6 +170,7 @@ const AdminChrome: React.FC = () => {
         </div>
       </main>
     </div>
+    </CrmProvider>
   );
 };
 

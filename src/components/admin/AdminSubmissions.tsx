@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { isPriceQuote, isPublicDetailKey } from '../../lib/priceQuote';
 import { isNaadamEntry } from '../../data/naadamData';
 import { attachmentName, downloadAttachment, isDocumentEntry } from '../../lib/attachments';
+import { CrmLinkPanel } from './crm/CrmLinkPanel';
+import { useCrm } from '../../store/crmStore';
 
 const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
   { value: 'all', label: 'Бүгд' },
@@ -21,21 +23,26 @@ const KIND_FILTERS: Array<{ value: SubmissionKind | 'all'; label: string }> = [
 const STATUS_ORDER: SubmissionStatus[] = ['new', 'in-progress', 'done'];
 
 export const AdminSubmissions: React.FC = () => {
-  const { submissions, setSubmissionStatus, deleteSubmission } = useAdminStore();
+  const { submissions, setSubmissionStatus, deleteSubmission, can } = useAdminStore();
+  const { companies } = useCrm();
+  const companyName = (id?: string | null) => (id ? companies.find((c) => c.id === id)?.name : undefined);
   const [kind, setKind] = useState<SubmissionKind | 'all'>('all');
   const [status, setStatus] = useState<SubmissionStatus | 'all'>('all');
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState<Submission | null>(null);
 
+  // Наадмын бүртгэл өөрийн цэстэй — энд зөвхөн засвар, бүтээгдэхүүний хүсэлт
+  const requests = useMemo(() => submissions.filter((s) => !isNaadamEntry(s)), [submissions]);
+
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return submissions.filter((s) => {
+    return requests.filter((s) => {
       if (kind !== 'all' && s.kind !== kind) return false;
       if (status !== 'all' && s.status !== status) return false;
       if (!q) return true;
       return [s.id, s.contactName, s.phone, s.summary].join(' ').toLowerCase().includes(q);
     });
-  }, [submissions, kind, status, query]);
+  }, [requests, kind, status, query]);
 
   // Хавсаргасан зургийг (data: угтвартай) текст талбаруудаас салгана —
   // эс бөгөөс base64 мөр нь дэлгэрэнгүй цонхыг дүүргэнэ.
@@ -52,8 +59,8 @@ export const AdminSubmissions: React.FC = () => {
   return (
     <div>
       <PageHead
-        title="Бүртгэлүүд"
-        lead="Сайтаар ирсэн бүх маягтын хүсэлт — засвар, яаралтай дуудлага, цаг захиалга, үнийн санал, сэлбэг хайх, захиалга."
+        title="Хүсэлтүүд"
+        lead="Сайтаар ирсэн засвар үйлчилгээ, бүтээгдэхүүний хүсэлт — засвар, яаралтай дуудлага, цаг захиалга, үнийн санал, сэлбэг хайх, захиалга. Наадмын бүртгэл өөрийн цэсэнд."
       />
 
       {/* Шүүлтүүр */}
@@ -100,8 +107,8 @@ export const AdminSubmissions: React.FC = () => {
       </Panel>
 
       <div className="mb-3 text-xs text-ink-dark-muted">
-        {rows.length} бүртгэл
-        {rows.length !== submissions.length && ` (нийт ${submissions.length}-аас)`}
+        {rows.length} хүсэлт
+        {rows.length !== requests.length && ` (нийт ${requests.length}-аас)`}
       </div>
 
       {/* Жагсаалт */}
@@ -136,6 +143,7 @@ export const AdminSubmissions: React.FC = () => {
                     <td className="px-5 py-3 text-xs text-ink-dark max-w-xs truncate">{s.summary}</td>
                     <td className="px-5 py-3 text-xs text-ink-dark-muted whitespace-nowrap">
                       {s.contactName}<br /><span className="font-mono">{s.phone}</span>
+                      {companyName(s.companyId) && <span className="block text-[11px] font-bold text-brand truncate max-w-[12rem]">{companyName(s.companyId)}</span>}
                     </td>
                     <td className="px-5 py-3 text-xs text-ink-dark-muted whitespace-nowrap">{s.createdAt}</td>
                     <td className="px-5 py-3"><Badge tone={SUBMISSION_STATUS[s.status].tone}>{SUBMISSION_STATUS[s.status].label}</Badge></td>
@@ -272,6 +280,10 @@ export const AdminSubmissions: React.FC = () => {
                     ))}
                   </ul>
                 </div>
+              )}
+
+              {can('crm') && (
+                <CrmLinkPanel submission={open} onLinked={(companyId) => setOpen({ ...open, companyId })} />
               )}
 
               <div className="mt-5 pt-4 border-t border-line-light">

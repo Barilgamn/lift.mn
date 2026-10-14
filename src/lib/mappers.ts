@@ -15,6 +15,7 @@ export const rowToElevator = (r: Row): Elevator => ({
   contractType: r.contract_type, status: r.status,
   lastServiceAt: r.last_service_at, nextServiceAt: r.next_service_at,
   contactName: r.contact_name, contactPhone: r.contact_phone,
+  companyId: r.company_id ?? null,
 });
 
 export const elevatorToRow = (e: Partial<Elevator>): Row => {
@@ -58,6 +59,7 @@ export const rowToSubmission = (r: Row): Submission => ({
   createdAt: String(r.created_at ?? '').slice(0, 16).replace('T', ' '),
   contactName: r.contact_name, phone: r.phone, summary: r.summary,
   status: r.status, details: r.details ?? {},
+  companyId: r.company_id ?? null,
 });
 
 export const rowToProduct = (r: Row): SparePart => {

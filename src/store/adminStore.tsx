@@ -63,6 +63,9 @@ interface AdminStore {
   updateElevator: (id: string, patch: Partial<Elevator>) => Promise<string | null>;
   saveProduct: (product: SparePart) => Promise<string | null>;
   deleteProduct: (id: string) => Promise<string | null>;
+  /** Хүсэлт, лифтийг CRM-ийн байгууллагатай холбох (null — салгах) */
+  linkSubmissionCompany: (id: string, companyId: string | null) => Promise<string | null>;
+  linkElevatorCompany: (id: string, companyId: string | null) => Promise<string | null>;
 }
 
 /**
@@ -121,9 +124,9 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const none = Promise.resolve({ data: [], error: null });
     // Эрхгүй хүснэгтийг татахгүй — RLS ч гэсэн хоосон буцаана
     const [el, rec, sub, prod] = await Promise.all([
-      has('elevators') ? sb.from('elevators').select('*').order('building') : none,
+      has('elevators') || has('crm') ? sb.from('elevators').select('*').order('building') : none,
       has('elevators') ? sb.from('service_records').select('*').order('date', { ascending: false }) : none,
-      has('requests') || has('quotes') || has('naadam')
+      has('requests') || has('quotes') || has('naadam') || has('crm')
         ? sb.from('submissions').select('*').order('created_at', { ascending: false })
         : none,
       has('products') ? sb.from('products').select('*').order('name') : none,
@@ -308,15 +311,31 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return null;
   }, []);
 
+  const linkSubmissionCompany = useCallback(async (id: string, companyId: string | null) => {
+    const sb = await getSupabase();
+    const { error } = await sb.rpc('crm_link_submission', { p_submission: id, p_company: companyId });
+    if (error) return friendlyError(error);
+    setSubmissions((prev) => prev.map((x) => (x.id === id ? { ...x, companyId } : x)));
+    return null;
+  }, []);
+
+  const linkElevatorCompany = useCallback(async (id: string, companyId: string | null) => {
+    const sb = await getSupabase();
+    const { error } = await sb.rpc('crm_link_elevator', { p_elevator: id, p_company: companyId });
+    if (error) return friendlyError(error);
+    setElevators((prev) => prev.map((x) => (x.id === id ? { ...x, companyId } : x)));
+    return null;
+  }, []);
+
   const value = useMemo<AdminStore>(() => ({
     status, user, notConfigured: !isSupabaseConfigured, loadError,
     can, login, logout,
     elevators, serviceRecords, submissions, products,
     setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
-    saveProduct, deleteProduct,
+    saveProduct, deleteProduct, linkSubmissionCompany, linkElevatorCompany,
   }), [status, user, loadError, can, login, logout, elevators, serviceRecords, submissions, products,
        setSubmissionStatus, updateSubmission, deleteSubmission, addServiceRecord, addElevator, updateElevator,
-       saveProduct, deleteProduct]);
+       saveProduct, deleteProduct, linkSubmissionCompany, linkElevatorCompany]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };

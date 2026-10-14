@@ -31,6 +31,11 @@ const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 const AdminQuotes = lazy(() => import('./components/admin/AdminQuotes'));
 const AdminNaadam = lazy(() => import('./components/admin/AdminNaadam'));
 const AdminUsers = lazy(() => import('./components/admin/AdminUsers'));
+const CrmLayout = lazy(() => import('./components/admin/crm/CrmLayout'));
+const CrmCompanies = lazy(() => import('./components/admin/crm/CrmCompanies'));
+const CrmCompanyPage = lazy(() => import('./components/admin/crm/CrmCompanyPage'));
+const CrmPipeline = lazy(() => import('./components/admin/crm/CrmPipeline'));
+const CrmTasks = lazy(() => import('./components/admin/crm/CrmTasks'));
 import { CartDrawer } from './components/CartDrawer';
 import { ProductPage } from './components/ProductPage';
 
@@ -259,6 +264,12 @@ export default function App() {
           <Route path="elevators" element={<AdminElevators />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="crm" element={<CrmLayout />}>
+            <Route index element={<CrmCompanies />} />
+            <Route path="deals" element={<CrmPipeline />} />
+            <Route path="tasks" element={<CrmTasks />} />
+            <Route path="c/:id" element={<CrmCompanyPage />} />
+          </Route>
         </Route>
 
         {/* Танихгүй зам — портал руу буцаана */}

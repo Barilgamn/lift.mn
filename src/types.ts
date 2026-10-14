@@ -96,6 +96,8 @@ export interface Elevator {
   nextServiceAt: string;
   contactName: string;
   contactPhone: string;
+  /** CRM-ийн харилцагч байгууллага (СӨХ г.м) */
+  companyId?: string | null;
 }
 
 export type ServiceKind = 'routine' | 'repair' | 'emergency' | 'inspection';
@@ -136,4 +138,6 @@ export interface Submission {
   status: SubmissionStatus;
   /** Маягтын бүрэн агуулга — дэлгэрэнгүйд харуулна */
   details: Record<string, string>;
+  /** CRM-ийн харилцагч байгууллага */
+  companyId?: string | null;
 }

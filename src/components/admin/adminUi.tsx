@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
 import { ElevatorStatus, ServiceKind, SubmissionKind, SubmissionStatus } from '../../types';
 
 /** Админ хэсгийн бүх хуудсанд ижил төлөвийн тэмдэглэгээ */
@@ -79,3 +80,34 @@ export const Panel: React.FC<{ className?: string; children: React.ReactNode }> 
 }) => (
   <div className={`rounded-xl bg-paper border border-line-light ${className}`}>{children}</div>
 );
+
+/** Админы цонх */
+export const AdminModal: React.FC<{ title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }> = ({
+  title, onClose, children, wide = false,
+}) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center sm:p-6" onClick={onClose} role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(e) => e.stopPropagation()}
+        className={`theme-light w-full ${wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'} max-h-[88dvh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-paper border border-line-light`}
+      >
+        <div className="sticky top-0 z-10 bg-paper border-b border-line-light px-5 py-3.5 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-ink-dark">{title}</h2>
+          <button type="button" onClick={onClose} aria-label="Хаах" className="p-1.5 rounded-lg hover:bg-paper-3 text-ink-dark-muted cursor-pointer">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="px-5 py-4">{children}</div>
+      </div>
+    </div>
+  );
+};
+
