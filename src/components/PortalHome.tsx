@@ -153,6 +153,16 @@ const PortalCard: React.FC<PortalCardProps> = ({
   </section>
 );
 
+/** Наадам эхлэх хүртэлх хоног: 0 — өнөөдөр/маргааш эхэлж байна, null — дууссан */
+function naadamDaysLeft(now = Date.now()): number | null {
+  const start = new Date(NAADAM.startsAt).getTime();
+  const end = start + 2 * 86400000;
+  if (now >= end) return null;
+  return Math.max(0, Math.ceil((start - now) / 86400000));
+}
+
+const daysLabel = (d: number) => (d === 0 ? 'Өнөөдөр эхэлнэ' : `${d} хоног үлдлээ`);
+
 interface PortalHomeProps {
   onSelectSection: (section: ActiveSection) => void;
 }
@@ -160,6 +170,8 @@ interface PortalHomeProps {
 export const PortalHome: React.FC<PortalHomeProps> = ({ 
   onSelectSection, 
 }) => {
+  // Наадам эхлэх хүртэл үлдсэн хоног (Улаанбаатарын цагаар). Дууссан бол харуулахгүй.
+  const daysLeft = naadamDaysLeft();
   return (
     <div 
       id="portal-container"
@@ -193,24 +205,46 @@ export const PortalHome: React.FC<PortalHomeProps> = ({
         }}
         className="group relative z-20 block shrink-0 overflow-hidden bg-white border-b border-slate-200"
       >
-        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(186,230,253,0.7),transparent_55%),radial-gradient(ellipse_at_right,rgba(251,207,232,0.45),transparent_50%)]" />
+        {/* Хөдөлгөөнтэй дэвсгэр — өнгөний туяа аажим хөдөлж, гэрэл гүйнэ (index.css: nb-*) */}
+        <div aria-hidden="true" className="nb-glow absolute -inset-x-[10%] inset-y-0 bg-[radial-gradient(ellipse_at_left,rgba(186,230,253,0.75),transparent_55%),radial-gradient(ellipse_at_right,rgba(251,207,232,0.5),transparent_50%)]" />
+        <div aria-hidden="true" className="nb-sheen pointer-events-none absolute inset-y-0 -left-1/3 w-1/3" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-[4.5rem] flex items-center gap-3 sm:gap-5">
-          <div className="min-w-0 flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
-            <span style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }} className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-[#0E5DA8] leading-tight truncate">
+          <div className="min-w-0 flex flex-col md:flex-row md:items-baseline md:gap-3">
+            <span style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }} className="text-[17px] min-[380px]:text-lg sm:text-2xl font-bold uppercase tracking-tight text-[#0E5DA8] leading-tight truncate">
               {NAADAM.edition} спортын их наадам
             </span>
             <span className="text-[11px] sm:text-sm font-bold text-slate-600 truncate">
-              {NAADAM.dateLabel} · {NAADAM.venue}
+              {NAADAM.dateLabel}
+              {daysLeft !== null && (
+                <span id="naadam-days" className="text-[#C2410C]">
+                  {' · '}
+                  <span className="relative inline-flex w-2 h-2 mr-1 align-middle -translate-y-px" aria-hidden="true">
+                    <span className="nb-ping absolute inline-flex w-full h-full rounded-full bg-orange-500/70" />
+                    <span className="relative inline-flex w-2 h-2 rounded-full bg-orange-500" />
+                  </span>
+                  {daysLeft === 0 ? daysLabel(0) : (
+                    <>{daysLeft} хоног<span className="hidden min-[380px]:inline"> үлдлээ</span></>
+                  )}
+                </span>
+              )}
+              {/* Хаяг зөвхөн icon-гүй өргөн (lg) дэлгэцэд — бусад үед зай хүрэлцэхгүй */}
+              <span className="hidden lg:inline xl:hidden"> · {NAADAM.venue}</span>
             </span>
           </div>
-          <div className="hidden lg:flex items-center gap-3 ml-auto" aria-hidden="true">
-            {SPORTS.map((sp) => (
-              <img key={sp.id} src={sp.icon} alt="" className={`${sp.wide ? 'h-6' : 'h-8'} w-auto`} />
+          <div className="hidden xl:flex items-center gap-3 ml-auto" aria-hidden="true">
+            {SPORTS.map((sp, i) => (
+              <img
+                key={sp.id}
+                src={sp.icon}
+                alt=""
+                style={{ animationDelay: `${i * 0.18}s` }}
+                className={`nb-sport ${sp.wide ? 'h-6' : 'h-8'} w-auto`}
+              />
             ))}
           </div>
-          <span className="ml-auto lg:ml-4 shrink-0 inline-flex items-center gap-1.5 h-10 sm:h-11 px-3 sm:px-5 rounded-xl bg-[#F7C600] group-hover:bg-[#ffd21f] text-[#0B3F78] text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-md shadow-amber-500/25 transition">
+          <span className="nb-cta ml-auto xl:ml-4 shrink-0 inline-flex items-center gap-1.5 h-10 sm:h-11 px-2.5 min-[380px]:px-3 sm:px-5 rounded-xl bg-[#F7C600] group-hover:bg-[#ffd21f] text-[#0B3F78] text-[11px] min-[380px]:text-xs sm:text-sm font-extrabold uppercase min-[380px]:tracking-wider shadow-md shadow-amber-500/25 transition">
             Бүртгүүлэх
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="nb-arrow hidden min-[380px]:block w-4 h-4" />
           </span>
         </div>
       </a>

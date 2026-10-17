@@ -424,3 +424,55 @@ html.is-translated body {
   .pi-line, .pi-check { stroke-dashoffset: 0; }
   .pi-seal { opacity: 1; }
 }
+
+/* ---------------------------------------------------------------------------
+ * Нүүрний наадмын баннер — зөөлөн хөдөлгөөн (PortalHome, #portal-naadam-banner)
+ * ------------------------------------------------------------------------- */
+.nb-glow { animation: nb-drift 14s ease-in-out infinite alternate; }
+@keyframes nb-drift {
+  0% { transform: translateX(-6%); }
+  100% { transform: translateX(6%); }
+}
+
+/* Баннерыг гэрэл гүйж гарна */
+.nb-sheen {
+  background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.75) 50%, transparent 100%);
+  transform: skewX(-18deg);
+  animation: nb-sheen 6s ease-in-out infinite;
+}
+@keyframes nb-sheen {
+  0%, 55% { left: -35%; }
+  85%, 100% { left: 115%; }
+}
+
+/* Спортын icon ээлжилж үсэрнэ */
+.nb-sport { animation: nb-bob 2.8s ease-in-out infinite; transform-origin: center bottom; }
+@keyframes nb-bob {
+  0%, 60%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(-5px) rotate(-4deg); }
+  38% { transform: translateY(0) rotate(2deg); }
+}
+.group:hover .nb-sport { animation-duration: 1.4s; }
+
+/* Бүртгүүлэх товч зөөлөн гэрэлтэж, сум урагш түлхэгдэнэ */
+.nb-cta { animation: nb-cta 2.6s ease-in-out infinite; }
+@keyframes nb-cta {
+  0%, 100% { box-shadow: 0 4px 10px -2px rgba(245,158,11,0.30), 0 0 0 0 rgba(247,198,0,0.55); }
+  50% { box-shadow: 0 4px 14px -2px rgba(245,158,11,0.45), 0 0 0 7px rgba(247,198,0,0); }
+}
+.nb-arrow { animation: nb-nudge 1.3s ease-in-out infinite; }
+@keyframes nb-nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+/* Үлдсэн хоногийн цэг */
+.nb-ping { animation: nb-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes nb-ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-glow, .nb-sheen, .nb-sport, .nb-cta, .nb-arrow, .nb-ping { animation: none !important; }
+  .nb-sheen { display: none; }
+}
